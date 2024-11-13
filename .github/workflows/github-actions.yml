@@ -56,7 +56,7 @@ jobs:
       - name: Deploy to prod
         uses: appleboy/ssh-action@master
         id: deploy-prod
-        if: contains(github.ref, 'main')
+        if: contains(github.ref, 'main') || github.event_name == 'pull_request'
         with:
           host: ${{ secrets.HOST_PROD }}
           username: ubuntu
@@ -66,6 +66,7 @@ jobs:
             sudo docker ps
             sudo docker stop docker-test-prod || true
             sudo docker rm docker-test-prod || true
+            sudo docker image rm ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_REPO }} || true
             sudo docker pull ${{ secrets.DOCKER_USERNAME }}/docker-test-prod
             sudo docker run -d -p 8080:8080 \
               -e DB_URL=${{ secrets.DB_URL }} \
@@ -77,7 +78,7 @@ jobs:
       - name: Deploy to dev
         uses: appleboy/ssh-action@master
         id: deploy-dev
-        if: contains(github.ref, 'develop')
+        if: contains(github.ref, 'develop') || github.event_name == 'pull_request'
         with:
           host: ${{ secrets.HOST_DEV }}
           username: ${{ secrets.USERNAME }}
@@ -88,6 +89,7 @@ jobs:
             sudo docker ps
             sudo docker stop docker-test-dev || true
             sudo docker rm docker-test-dev || true
+            sudo docker image rm ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_REPO }} || true
             sudo docker pull ${{ secrets.DOCKER_USERNAME }}/docker-test-dev
             sudo docker run -d -p 8081:8080 \
               -e DB_URL=${{ secrets.DB_URL }} \
