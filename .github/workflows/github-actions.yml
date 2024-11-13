@@ -21,6 +21,9 @@ jobs:
         with:
           java-version: '17'
           distribution: 'temurin'
+      - name: Grant execute permission to Gradle wrapper
+        run: chmod +x ./gradlew
+
       - name: Gradle Caching
         uses: actions/cache@v3
         with:
@@ -61,6 +64,8 @@ jobs:
           envs: GITHUB_SHA
           script: |
             sudo docker ps
+            sudo docker stop docker-test-prod || true
+            sudo docker rm docker-test-prod || true
             sudo docker pull ${{ secrets.DOCKER_USERNAME }}/docker-test-prod
             sudo docker run -d -p 8080:8080 \
               -e DB_URL=${{ secrets.DB_URL }} \
@@ -81,6 +86,8 @@ jobs:
           key: ${{ secrets.PRIVATE_KEY }}
           script: |
             sudo docker ps
+            sudo docker stop docker-test-dev || true
+            sudo docker rm docker-test-dev || true
             sudo docker pull ${{ secrets.DOCKER_USERNAME }}/docker-test-dev
             sudo docker run -d -p 8081:8080 \
               -e DB_URL=${{ secrets.DB_URL }} \
