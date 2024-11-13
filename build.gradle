@@ -38,3 +38,8 @@ dependencies {
 tasks.named('test') {
 	useJUnitPlatform()
 }
+
+// .jar 파일 이름 설정
+jar {
+	archiveFileName = 'demo-0.0.1-SNAPSHOT.jar'
+}
