@@ -1,7 +1,7 @@
-FROM openjdk:17-jdk-slim
+FROM openjdk:17-jdk
 
-WORKDIR /app
+ARG JAR_FILE=build/libs/*.jar
 
-COPY build/libs/demo-0.0.1-SNAPSHOT.jar /app/application.jar
+COPY ${JAR_FILE} app.jar
 
-CMD ["java", "-jar", "/app/application.jar"]
+ENTRYPOINT ["java", "-jar", "-Dspring.profiles.active=prod", "/app.jar"]
