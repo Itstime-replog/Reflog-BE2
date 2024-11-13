@@ -6,7 +6,6 @@ on:
   pull_request:
     branches: ["main", "develop"]
 
-
 permissions:
   contents: read
 
@@ -21,6 +20,7 @@ jobs:
         with:
           java-version: '17'
           distribution: 'temurin'
+
       - name: Grant execute permission to Gradle wrapper
         run: chmod +x ./gradlew
 
@@ -37,26 +37,15 @@ jobs:
       - name: Build with Gradle
         run: ./gradlew build -x test
 
-      - name: Docker build & push to prod
-        if: contains(github.ref, 'main')
+      - name: Docker build & push
         run: |
           echo ${{ secrets.DOCKER_PASSWORD }} | docker login -u ${{ secrets.DOCKER_USERNAME }} --password-stdin
-          docker build -f Dockerfile -t ${{ secrets.DOCKER_USERNAME }}/docker-test-prod .
-          docker push ${{ secrets.DOCKER_USERNAME }}/docker-test-prod
+          docker build -f Dockerfile -t ${{ secrets.DOCKER_USERNAME }}/docker-test .
+          docker push ${{ secrets.DOCKER_USERNAME }}/docker-test
 
-      - name: Docker build & push to dev
-        if: contains(github.ref, 'develop')
-        run: |
-          echo ${{ secrets.DOCKER_PASSWORD }} | docker login -u ${{ secrets.DOCKER_USERNAME }} --password-stdin
-          docker build -f Dockerfile -t ${{ secrets.DOCKER_USERNAME }}/docker-test-dev .
-          docker push ${{ secrets.DOCKER_USERNAME }}/docker-test-dev
-
-
-
-      - name: Deploy to prod
+      - name: Deploy
         uses: appleboy/ssh-action@master
-        id: deploy-prod
-        if: contains(github.ref, 'main') || github.event_name == 'pull_request'
+        id: deploy
         with:
           host: ${{ secrets.HOST_PROD }}
           username: ubuntu
@@ -64,36 +53,13 @@ jobs:
           envs: GITHUB_SHA
           script: |
             sudo docker ps
-            sudo docker stop docker-test-prod || true
-            sudo docker rm docker-test-prod || true
-            sudo docker image rm ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_REPO }} || true
-            sudo docker pull ${{ secrets.DOCKER_USERNAME }}/docker-test-prod
+            sudo docker stop docker-test || true
+            sudo docker rm docker-test || true
+            sudo docker pull ${{ secrets.DOCKER_USERNAME }}/docker-test
             sudo docker run -d -p 8080:8080 \
               -e DB_URL=${{ secrets.DB_URL }} \
               -e DB_USERNAME=${{ secrets.DB_USERNAME }} \
               -e DB_PASSWORD=${{ secrets.DB_PASSWORD }} \
-              ${{ secrets.DOCKER_USERNAME }}/docker-test-prod
-            sudo docker image prune -f
-
-      - name: Deploy to dev
-        uses: appleboy/ssh-action@master
-        id: deploy-dev
-        if: contains(github.ref, 'develop') || github.event_name == 'pull_request'
-        with:
-          host: ${{ secrets.HOST_DEV }}
-          username: ${{ secrets.USERNAME }}
-          password: ${{ secrets.PASSWORD }}
-          port: 22
-          key: ${{ secrets.PRIVATE_KEY }}
-          script: |
-            sudo docker ps
-            sudo docker stop docker-test-dev || true
-            sudo docker rm docker-test-dev || true
-            sudo docker image rm ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_REPO }} || true
-            sudo docker pull ${{ secrets.DOCKER_USERNAME }}/docker-test-dev
-            sudo docker run -d -p 8081:8080 \
-              -e DB_URL=${{ secrets.DB_URL }} \
-              -e DB_USERNAME=${{ secrets.DB_USERNAME }} \
-              -e DB_PASSWORD=${{ secrets.DB_PASSWORD }} \
-              ${{ secrets.DOCKER_USERNAME }}/docker-test-dev
+              -e SPRING_PROFILES_ACTIVE=prod \
+              ${{ secrets.DOCKER_USERNAME }}/docker-test
             sudo docker image prune -f
