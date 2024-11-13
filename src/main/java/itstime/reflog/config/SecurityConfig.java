@@ -14,6 +14,9 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
+import itstime.reflog.member.repository.MemberRepository;
+import itstime.reflog.oauth.handler.OAuth2SuccessHandler;
+import itstime.reflog.oauth.service.CustomOAuth2UserService;
 import lombok.RequiredArgsConstructor;
 
 @EnableWebSecurity
