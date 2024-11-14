@@ -10,8 +10,9 @@ permissions:
   contents: read
 
 jobs:
-  CI-CD:
+  build:
     runs-on: ubuntu-latest
+
     steps:
       - uses: actions/checkout@v3
 
@@ -21,45 +22,42 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
 
+      - name: Set prod.yml
+        run: |
+          cd ./src/main/resources
+          sed -i 's|${DB_URL}|'"${{ secrets.DB_URL }}"'|g' application-prod.yml
+          sed -i 's|${DB_USERNAME}|'"${{ secrets.DB_USERNAME }}"'|g' application-prod.yml
+          sed -i 's|${DB_PASSWORD}|'"${{ secrets.DB_PASSWORD }}"'|g' application-prod.yml
+
       - name: Grant execute permission to Gradle wrapper
         run: chmod +x ./gradlew
 
-      - name: Gradle Caching
-        uses: actions/cache@v3
-        with:
-          path: |
-            ~/.gradle/caches
-            ~/.gradle/wrapper
-          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
-          restore-keys: |
-            ${{ runner.os }}-gradle-
-
       - name: Build with Gradle
-        run: ./gradlew build -x test
+        run: ./gradlew bootJar
 
-      - name: Docker build & push
+      - name: Docker build and push
         run: |
           echo ${{ secrets.DOCKER_PASSWORD }} | docker login -u ${{ secrets.DOCKER_USERNAME }} --password-stdin
-          docker build -f Dockerfile -t ${{ secrets.DOCKER_USERNAME }}/docker-test .
-          docker push ${{ secrets.DOCKER_USERNAME }}/docker-test
+          docker build --platform linux/amd64 -t ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_REPO }} .
+          docker push ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_REPO }}
 
       - name: Deploy
         uses: appleboy/ssh-action@master
-        id: deploy
         with:
           host: ${{ secrets.HOST_PROD }}
-          username: ubuntu
+          username: ${{ secrets.USERNAME }}
           key: ${{ secrets.PRIVATE_KEY }}
-          envs: GITHUB_SHA
+          port: 22
           script: |
-            sudo docker ps
-            sudo docker stop docker-test || true
-            sudo docker rm docker-test || true
-            sudo docker pull ${{ secrets.DOCKER_USERNAME }}/docker-test
-            sudo docker run -d -p 8080:8080 \
-              -e DB_URL=${{ secrets.DB_URL }} \
-              -e DB_USERNAME=${{ secrets.DB_USERNAME }} \
-              -e DB_PASSWORD=${{ secrets.DB_PASSWORD }} \
-              -e SPRING_PROFILES_ACTIVE=prod \
-              ${{ secrets.DOCKER_USERNAME }}/docker-test
+            sudo usermod -aG docker $USER
+            sudo docker stop reflogdocker || true
+            sudo docker rm reflogdocker || true
+            sudo docker image rm ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_REPO }} || true
+            sudo docker pull ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_REPO }}
+            sudo docker run -e SPRING_PROFILES_ACTIVE=prod \
+                            -e DB_URL=${{ secrets.DB_URL }} \
+                            -e DB_USERNAME=${{ secrets.DB_USERNAME }} \
+                            -e DB_PASSWORD=${{ secrets.DB_PASSWORD }} \
+                            -e EC2_HOST=${{ secrets.HOST_PROD }} \
+                            --name reflogdocker -p 8080:8080 -d ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_REPO }}
             sudo docker image prune -f
