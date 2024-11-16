@@ -30,6 +30,8 @@ jobs:
           sed -i 's|${DB_PASSWORD}|'"${{ secrets.DB_PASSWORD }}"'|g' application-prod.yml
           sed -i 's|${KAKAO_CLIENT_ID}|'"${{ secrets.KAKAO_CLIENT_ID }}"'|g' application-prod.yml
           sed -i 's|${KAKAO_CLIENT_SECRET}|'"${{ secrets.KAKAO_CLIENT_SECRET }}"'|g' application-prod.yml
+          sed -i 's|${NAVER_CLIENT_ID}|'"${{ secrets.NAVER_CLIENT_ID }}"'|g' application-prod.yml
+          sed -i 's|${NAVER_CLIENT_SECRET}|'"${{ secrets.NAVER_CLIENT_SECRET }}"'|g' application-prod.yml
 
       - name: Grant execute permission to Gradle wrapper
         run: chmod +x ./gradlew
@@ -63,5 +65,7 @@ jobs:
                             -e EC2_HOST=${{ secrets.HOST_PROD }} \
                             -e KAKAO_CLIENT_ID=${{ secrets.KAKAO_CLIENT_ID }} \
                             -e KAKAO_CLIENT_SECRET=${{ secrets.KAKAO_CLIENT_SECRET }} \
+                            -e KAKAO_CLIENT_ID=${{ secrets.NAVER_CLIENT_ID }} \
+                            -e KAKAO_CLIENT_SECRET=${{ secrets.NAVER_CLIENT_SECRET }} \
                             --name reflogdocker -p 8080:8080 -d ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_REPO }}
             sudo docker image prune -f
