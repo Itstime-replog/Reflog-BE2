@@ -17,49 +17,55 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import itstime.reflog.member.repository.MemberRepository;
 import itstime.reflog.oauth.handler.OAuth2SuccessHandler;
 import itstime.reflog.oauth.service.CustomOAuth2UserService;
+import itstime.reflog.oauth.token.JwtTokenProvider;
+import itstime.reflog.oauth.filter.TokenAuthenticationFilter;
 import lombok.RequiredArgsConstructor;
 
 @EnableWebSecurity
 @Configuration
 @RequiredArgsConstructor
 public class SecurityConfig {
-	private final OAuth2SuccessHandler successHandler;
-	private final CustomOAuth2UserService customOAuthService;
-	private final MemberRepository memberRepository;
+    private final OAuth2SuccessHandler successHandler;
+    private final CustomOAuth2UserService customOAuthService;
+    private final MemberRepository memberRepository;
+    private final JwtTokenProvider jwtTokenProvider;
 
 
-	@Bean
-	public CorsConfigurationSource corsConfigurationSource() {
-		CorsConfiguration corsConfiguration = new CorsConfiguration();
+    @Bean
+    public CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration corsConfiguration = new CorsConfiguration();
 
-		corsConfiguration.setAllowedOriginPatterns(List.of("*"));
-		corsConfiguration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE","PATCH", "HEAD", "OPTIONS"));
-		corsConfiguration.setAllowedHeaders(List.of("Authorization", "Cache-Control", "Content-Type"));
-		corsConfiguration.setAllowCredentials(true);
+        corsConfiguration.setAllowedOriginPatterns(List.of("*"));
+        corsConfiguration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "PATCH", "HEAD", "OPTIONS"));
+        corsConfiguration.setAllowedHeaders(List.of("Authorization", "Cache-Control", "Content-Type"));
+        corsConfiguration.setAllowCredentials(true);
 
-		UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-		source.registerCorsConfiguration("/**", corsConfiguration);
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", corsConfiguration);
 
-		return source;
-	}
+        return source;
+    }
 
-	@Bean
-	public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-		http
-			.authorizeHttpRequests(requests -> requests
-				.requestMatchers("/test", "/swagger-ui/index.html", "/swagger-ui/**", "/v3/api-docs/**","/swagger-resources/**", "/v3/api-docs").permitAll()
-				.anyRequest().authenticated()           // 나머지 URL은 인증 필요
-			)
-			// .addFilterBefore(new TokenAuthenticationFilter(jwtTokenProvider()), UsernamePasswordAuthenticationFilter.class)
-			.formLogin(FormLoginConfigurer::disable)
-			// OAuth 로그인 설정
-			.oauth2Login(customConfigurer -> customConfigurer
-				.successHandler(successHandler)
-				.userInfoEndpoint(endpointConfig -> endpointConfig.userService(customOAuthService))
-			)
-			.cors(httpSecurityCorsConfigurer -> httpSecurityCorsConfigurer.configurationSource(corsConfigurationSource()))
-			.csrf(AbstractHttpConfigurer::disable);
-		return http.build();
-	}
+    @Bean
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+        http
+                .authorizeHttpRequests(requests -> requests
+                        .requestMatchers("/test", "/swagger-ui/index.html", "/swagger-ui/**", "/v3/api-docs/**", "/swagger-resources/**", "/v3/api-docs").permitAll()
+                        .anyRequest().authenticated()           // 나머지 URL은 인증 필요
+                )
+                // .addFilterBefore(new TokenAuthenticationFilter(jwtTokenProvider()), UsernamePasswordAuthenticationFilter.class)
+                .formLogin(FormLoginConfigurer::disable)
+                // OAuth 로그인 설정
+                .oauth2Login(customConfigurer -> customConfigurer
+                        .successHandler(successHandler)
+                        .userInfoEndpoint(endpointConfig -> endpointConfig.userService(customOAuthService))
+                )
+                .cors(httpSecurityCorsConfigurer -> httpSecurityCorsConfigurer.configurationSource(corsConfigurationSource()))
+                .csrf(AbstractHttpConfigurer::disable)
+		        .addFilterBefore(new TokenAuthenticationFilter(jwtTokenProvider, memberRepository), UsernamePasswordAuthenticationFilter.class);
+
+
+        return http.build();
+    }
 
 }
