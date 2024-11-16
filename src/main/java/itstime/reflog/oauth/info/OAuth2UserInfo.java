@@ -9,7 +9,10 @@ public abstract class OAuth2UserInfo {
 		this.attributes = attributes;
 	}
 
-	public Map<String, Object> getAttributes() {
+    protected OAuth2UserInfo() {
+    }
+
+    public Map<String, Object> getAttributes() {
 		return attributes;
 	}
 
