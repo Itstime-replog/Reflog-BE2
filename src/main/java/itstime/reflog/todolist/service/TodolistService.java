@@ -4,6 +4,7 @@ import java.time.LocalDate;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import itstime.reflog.common.code.status.ErrorStatus;
 import itstime.reflog.common.exception.GeneralException;
@@ -20,6 +21,7 @@ public class TodolistService {
 	private final TodolistRepository todolistRepository;
 	private final MemberRepository memberRepository;
 
+	@Transactional
 	public void createTodolist(TodolistDTO.TodolistSaveOrUpdateRequest dto) {
 		Member member = memberRepository.findById(dto.getMemberId())
 			.orElseThrow(() -> new GeneralException(ErrorStatus._MEMBER_NOT_FOUND));
@@ -33,6 +35,7 @@ public class TodolistService {
 		todolistRepository.save(todolist);
 	}
 
+	@Transactional(readOnly = true)
 	public List<TodolistDTO.TodolistResponse> getTodolistByMemberIdAndDate(Long memberId, LocalDate date) {
 		Member member = memberRepository.findById(memberId)
 			.orElseThrow(() -> new GeneralException(ErrorStatus._MEMBER_NOT_FOUND));
@@ -48,6 +51,7 @@ public class TodolistService {
 			.toList();
 	}
 
+	@Transactional
 	public void updateTodolist(Long id, TodolistDTO.TodolistSaveOrUpdateRequest request) {
 		Todolist todolist = todolistRepository.findById(id)
 			.orElseThrow(() -> new GeneralException(ErrorStatus._TODO_NOT_FOUND));
@@ -60,6 +64,7 @@ public class TodolistService {
 		todolistRepository.save(todolist);
 	}
 
+	@Transactional
 	public void deleteTodolist(Long todolistId) {
 		Todolist todolist = todolistRepository.findById(todolistId)
 			.orElseThrow(() -> new GeneralException(ErrorStatus._TODO_NOT_FOUND));
