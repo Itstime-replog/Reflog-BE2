@@ -47,4 +47,10 @@ public class Todolist {
 		this.createdDate = LocalDate.now();
 	}
 
+	public void update(String content, boolean status, Member member) {
+		this.content = content;
+		this.status = status;
+		this.member = member;
+	}
+
 }

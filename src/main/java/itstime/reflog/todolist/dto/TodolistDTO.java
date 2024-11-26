@@ -21,7 +21,6 @@ public class TodolistDTO {
 		private String content;
 
 		@NotNull(message = "status는 null일 수 없습니다.")
-		@AssertFalse(message = "status는 초기 상태에서 false여야 합니다.")
 		private boolean status;
 	}
 

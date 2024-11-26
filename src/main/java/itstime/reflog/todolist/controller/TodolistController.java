@@ -6,6 +6,8 @@ import java.util.List;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -21,6 +23,7 @@ import itstime.reflog.common.code.ErrorReasonDTO;
 import itstime.reflog.common.code.status.ErrorStatus;
 import itstime.reflog.todolist.dto.TodolistDTO;
 import itstime.reflog.todolist.service.TodolistService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @Tag(name = "TODOLIST API", description = "투두리스트에 대한 API입니다.")
@@ -84,7 +87,35 @@ public class TodolistController {
 		return ResponseEntity.ok(CommonApiResponse.onSuccess(todolists));
 	}
 
-
+	@Operation(
+		summary = "투두리스트 수정 API",
+		description = "투두리스트 항목의 일부 정보를 수정합니다. AccessToken 필요.",
+		responses = {
+			@ApiResponse(
+				responseCode = "200",
+				description = "투두리스트 수정 성공",
+				content = @Content(schema = @Schema(implementation = CommonApiResponse.class))
+			),
+			@ApiResponse(
+				responseCode = "404",
+				description = "해당 투두리스트를 찾을 수 없음",
+				content = @Content(schema = @Schema(implementation = CommonApiResponse.class))
+			),
+			@ApiResponse(
+				responseCode = "400",
+				description = "잘못된 요청 데이터",
+				content = @Content(schema = @Schema(implementation = CommonApiResponse.class))
+			)
+		}
+	)
+	@PatchMapping("/todolist/{todolistId}")
+	public ResponseEntity<CommonApiResponse<Void>> updateTodolist(
+		@PathVariable Long todolistId,
+		@RequestBody @Valid TodolistDTO.TodolistSaveOrUpdateRequest request
+	) {
+		todolistService.updateTodolist(todolistId, request);
+		return ResponseEntity.ok(CommonApiResponse.onSuccess(null));
+	}
 
 
 }

@@ -47,4 +47,16 @@ public class TodolistService {
 			))
 			.toList();
 	}
+
+	public void updateTodolist(Long id, TodolistDTO.TodolistSaveOrUpdateRequest request) {
+		Todolist todolist = todolistRepository.findById(id)
+			.orElseThrow(() -> new GeneralException(ErrorStatus._TODO_NOT_FOUND));
+
+		Member member = memberRepository.findById(request.getMemberId())
+			.orElseThrow(() -> new GeneralException(ErrorStatus._MEMBER_NOT_FOUND));
+
+		todolist.update(request.getContent(), request.isStatus(), member);
+
+		todolistRepository.save(todolist);
+	}
 }
