@@ -1,5 +1,8 @@
 package itstime.reflog.todolist.service;
 
+import java.time.LocalDate;
+import java.util.List;
+
 import org.springframework.stereotype.Service;
 
 import itstime.reflog.common.code.status.ErrorStatus;
@@ -28,5 +31,20 @@ public class TodolistService {
 			.build();
 
 		todolistRepository.save(todolist);
+	}
+
+	public List<TodolistDTO.TodolistResponse> getTodolistByMemberIdAndDate(Long memberId, LocalDate date) {
+		Member member = memberRepository.findById(memberId)
+			.orElseThrow(() -> new GeneralException(ErrorStatus._MEMBER_NOT_FOUND));
+
+		List<Todolist> todolists = todolistRepository.findByMemberAndCreatedDate(member, date);
+
+		return todolists.stream()
+			.map(todolist -> new TodolistDTO.TodolistResponse(
+				todolist.getId(),
+				todolist.getContent(),
+				todolist.isStatus()
+			))
+			.toList();
 	}
 }
