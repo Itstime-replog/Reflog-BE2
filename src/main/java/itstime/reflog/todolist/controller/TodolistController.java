@@ -102,8 +102,8 @@ public class TodolistController {
 				content = @Content(schema = @Schema(implementation = CommonApiResponse.class))
 			),
 			@ApiResponse(
-				responseCode = "400",
-				description = "잘못된 요청 데이터",
+				responseCode = "500",
+				description = "서버 에러",
 				content = @Content(schema = @Schema(implementation = CommonApiResponse.class))
 			)
 		}
