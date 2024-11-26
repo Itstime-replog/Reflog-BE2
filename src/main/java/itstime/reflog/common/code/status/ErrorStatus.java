@@ -18,6 +18,10 @@ public enum ErrorStatus implements BaseErrorCode {
 	_FORBIDDEN(HttpStatus.FORBIDDEN, "COMMON403", "금지된 요청입니다."),
 
 	// 멤버 관련 에러
+	_MEMBER_NOT_FOUND(HttpStatus.NOT_FOUND, "MEMBER404", "해당 회원을 찾을 수 없습니다."),
+	_DUPLICATE_MEMBER(HttpStatus.CONFLICT, "MEMBER409", "이미 존재하는 회원입니다."),
+	_INVALID_MEMBER_CREDENTIALS(HttpStatus.UNAUTHORIZED, "MEMBER401", "잘못된 인증 정보입니다."),
+	_MEMBER_ACCESS_DENIED(HttpStatus.FORBIDDEN, "MEMBER403", "해당 회원은 권한이 없습니다."),
 
 	// ...~
 	;
