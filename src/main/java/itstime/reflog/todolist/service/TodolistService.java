@@ -59,4 +59,11 @@ public class TodolistService {
 
 		todolistRepository.save(todolist);
 	}
+
+	public void deleteTodolist(Long todolistId) {
+		Todolist todolist = todolistRepository.findById(todolistId)
+			.orElseThrow(() -> new GeneralException(ErrorStatus._TODO_NOT_FOUND));
+
+		todolistRepository.delete(todolist);
+	}
 }
