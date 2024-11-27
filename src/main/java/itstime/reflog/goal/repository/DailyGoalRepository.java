@@ -9,5 +9,5 @@ import java.util.List;
 
 public interface DailyGoalRepository extends JpaRepository<DailyGoal, Long> {
 
-    List<DailyGoal> findByMemberAndCreatedDate(Member member, LocalDate date);
+    DailyGoal findByMemberAndCreatedDate(Member member, LocalDate date);
 }

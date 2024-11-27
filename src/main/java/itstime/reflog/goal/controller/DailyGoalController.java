@@ -9,9 +9,11 @@ import itstime.reflog.common.CommonApiResponse;
 import itstime.reflog.goal.dto.DailyGoalDTO;
 import itstime.reflog.goal.service.DailyGoalService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Tag(name = "DAILY GOAL API", description = "오늘의 학습 목표에 대한 API입니다.")
@@ -49,5 +51,35 @@ public class DailyGoalController {
             @RequestBody DailyGoalDTO.DailyGoalSaveOrUpdateRequest dto){
             dailyGoalService.createDailyGoal(memberId, dto);
             return ResponseEntity.ok(CommonApiResponse.onSuccess(null));
+    }
+
+    @Operation(
+            summary = "오늘의 학습 목표 조회 API",
+            description = "특정 날짜에 대한 학습 목표를 조회합니다.",
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "학습목표 조회 성공",
+                            content = @Content(schema = @Schema(implementation = CommonApiResponse.class))
+                    ),
+                    @ApiResponse(
+                            responseCode = "404",
+                            description = "해당 회원 또는 학습목표를 찾을 수 없음",
+                            content = @Content(schema = @Schema(implementation = CommonApiResponse.class))
+                    ),
+                    @ApiResponse(
+                            responseCode = "500",
+                            description = "서버 에러",
+                            content = @Content(schema = @Schema(implementation = CommonApiResponse.class))
+                    )
+            }
+    )
+    @GetMapping("/dailyGoal")
+    public ResponseEntity<CommonApiResponse<DailyGoalDTO.DailyGoalResponse>> getDailyGoalByMemberAndDate(
+            @RequestParam Long memberId,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)LocalDate date
+            ){
+        DailyGoalDTO.DailyGoalResponse dailyGoal = dailyGoalService.getDailyGoalByMemberIdAndDate(memberId, date);
+        return ResponseEntity.ok(CommonApiResponse.onSuccess(dailyGoal));
     }
 }

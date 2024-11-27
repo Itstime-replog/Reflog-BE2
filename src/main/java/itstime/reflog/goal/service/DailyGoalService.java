@@ -11,6 +11,7 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Service
@@ -29,5 +30,19 @@ public class DailyGoalService {
                 .member(member)
                 .build();
         dailyGoalRepository.save(dailyGoal);
+    }
+
+    @Transactional
+    public DailyGoalDTO.DailyGoalResponse getDailyGoalByMemberIdAndDate(Long memberId, LocalDate date){
+        Member member = memberRepository.findById(memberId)
+                .orElseThrow(() -> new GeneralException(ErrorStatus._MEMBER_NOT_FOUND));
+
+        DailyGoal dailyGoal = dailyGoalRepository.findByMemberAndCreatedDate(member, date);
+
+        return new DailyGoalDTO.DailyGoalResponse(
+                dailyGoal.getId(),
+                dailyGoal.getContent()
+        );
+
     }
 }

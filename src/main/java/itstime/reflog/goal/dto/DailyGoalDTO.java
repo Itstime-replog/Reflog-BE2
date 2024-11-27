@@ -17,7 +17,7 @@ public class DailyGoalDTO {
 
     @Getter
     @AllArgsConstructor
-    public static class GoalResponse{
+    public static class DailyGoalResponse{
         private final Long goalId;
         private final String content;
     }
