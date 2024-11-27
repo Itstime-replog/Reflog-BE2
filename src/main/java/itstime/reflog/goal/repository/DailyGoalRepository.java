@@ -7,7 +7,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.time.LocalDate;
 import java.util.List;
 
-public interface DailyGoalRepository extends JpaRepository<DailyGoal, Long> {
+public interface DailyGoalRepository extends JpaRepository<DailyGoal, LocalDate> {
 
     DailyGoal findByMemberAndCreatedDate(Member member, LocalDate date);
 }

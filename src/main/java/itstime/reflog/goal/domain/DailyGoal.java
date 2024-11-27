@@ -13,14 +13,16 @@ import java.time.LocalDate;
 @AllArgsConstructor
 public class DailyGoal {
 
+    /* 아이디를 오늘의 날짜로 설정
     @Id
     @Column(name = "goal_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Long id;*/ //
 
     @Column(nullable = false)
     private String content;
 
+    @Id
     @Column(name = "created_date", nullable = false)
     private LocalDate createdDate;
 

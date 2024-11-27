@@ -6,6 +6,8 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
+
 public class DailyGoalDTO {
 
     @Getter
@@ -18,7 +20,7 @@ public class DailyGoalDTO {
     @Getter
     @AllArgsConstructor
     public static class DailyGoalResponse{
-        private final Long goalId;
+        private final LocalDate dailyGoalId;
         private final String content;
     }
 }

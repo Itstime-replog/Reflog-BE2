@@ -12,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -40,9 +41,22 @@ public class DailyGoalService {
         DailyGoal dailyGoal = dailyGoalRepository.findByMemberAndCreatedDate(member, date);
 
         return new DailyGoalDTO.DailyGoalResponse(
-                dailyGoal.getId(),
+                dailyGoal.getCreatedDate(), // getCreatedDate()로 수정, id를 localdate로 변경
                 dailyGoal.getContent()
         );
 
+    }
+
+    @Transactional
+    public void updateDailyGoal(LocalDate dailyGoalId, Long memberId, DailyGoalDTO.DailyGoalSaveOrUpdateRequest request){
+        DailyGoal dailyGoal = dailyGoalRepository.findById(dailyGoalId)
+                .orElseThrow(() -> new GeneralException((ErrorStatus._DAILY_GOAL_NOT_FOUND)));
+
+        Member member = memberRepository.findById(memberId)
+                .orElseThrow(() -> new GeneralException(ErrorStatus._MEMBER_NOT_FOUND));
+
+        dailyGoal.update(request.getContent(), member);
+
+        dailyGoalRepository.save(dailyGoal);
     }
 }
