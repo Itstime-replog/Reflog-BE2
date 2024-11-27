@@ -10,4 +10,7 @@ import java.util.List;
 public interface DailyGoalRepository extends JpaRepository<DailyGoal, LocalDate> {
 
     DailyGoal findByMemberAndCreatedDate(Member member, LocalDate date);
+
+    boolean existsByMemberAndCreatedDate(Member member, LocalDate createdDate);
+
 }

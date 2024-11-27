@@ -26,6 +26,14 @@ public class DailyGoalService {
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(()-> new GeneralException(ErrorStatus._MEMBER_NOT_FOUND));
 
+        // 해당 날짜에 이미 목표가 존재하는지 확인
+        LocalDate today = LocalDate.now();
+        boolean exists = dailyGoalRepository.existsByMemberAndCreatedDate(member, today);
+
+        if (exists) {
+            throw new GeneralException(ErrorStatus._DAILY_GOAL_ALREADY_EXISTS);  // 이미 목표가 존재하는 경우 예외 처리
+        }
+
         DailyGoal dailyGoal = DailyGoal.builder()
                 .content(dto.getContent())
                 .member(member)
