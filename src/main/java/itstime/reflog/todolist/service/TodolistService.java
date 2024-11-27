@@ -22,8 +22,8 @@ public class TodolistService {
 	private final MemberRepository memberRepository;
 
 	@Transactional
-	public void createTodolist(TodolistDTO.TodolistSaveOrUpdateRequest dto) {
-		Member member = memberRepository.findById(dto.getMemberId())
+	public void createTodolist(Long memberId, TodolistDTO.TodolistSaveOrUpdateRequest dto) {
+		Member member = memberRepository.findById(memberId)
 			.orElseThrow(() -> new GeneralException(ErrorStatus._MEMBER_NOT_FOUND));
 
 		Todolist todolist = Todolist.builder()
@@ -52,11 +52,11 @@ public class TodolistService {
 	}
 
 	@Transactional
-	public void updateTodolist(Long id, TodolistDTO.TodolistSaveOrUpdateRequest request) {
-		Todolist todolist = todolistRepository.findById(id)
+	public void updateTodolist(Long todolistId, Long memberId, TodolistDTO.TodolistSaveOrUpdateRequest request) {
+		Todolist todolist = todolistRepository.findById(todolistId)
 			.orElseThrow(() -> new GeneralException(ErrorStatus._TODO_NOT_FOUND));
 
-		Member member = memberRepository.findById(request.getMemberId())
+		Member member = memberRepository.findById(memberId)
 			.orElseThrow(() -> new GeneralException(ErrorStatus._MEMBER_NOT_FOUND));
 
 		todolist.update(request.getContent(), request.isStatus(), member);

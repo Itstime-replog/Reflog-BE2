@@ -54,8 +54,11 @@ public class TodolistController {
 		}
 	)
 	@PostMapping("/todolist")
-	public ResponseEntity<CommonApiResponse<Void>> createTodolist(@RequestBody TodolistDTO.TodolistSaveOrUpdateRequest dto) {
-		todolistService.createTodolist(dto);
+	public ResponseEntity<CommonApiResponse<Void>> createTodolist(
+		@RequestParam Long memberId,
+		@RequestBody TodolistDTO.TodolistSaveOrUpdateRequest dto
+	) {
+		todolistService.createTodolist(memberId, dto);
 		return ResponseEntity.ok(CommonApiResponse.onSuccess(null));
 	}
 
@@ -120,9 +123,10 @@ public class TodolistController {
 	@PatchMapping("/todolist/{todolistId}")
 	public ResponseEntity<CommonApiResponse<Void>> updateTodolist(
 		@PathVariable Long todolistId,
+		@RequestParam Long memberId,
 		@RequestBody @Valid TodolistDTO.TodolistSaveOrUpdateRequest request
 	) {
-		todolistService.updateTodolist(todolistId, request);
+		todolistService.updateTodolist(todolistId, memberId, request);
 		return ResponseEntity.ok(CommonApiResponse.onSuccess(null));
 	}
 
