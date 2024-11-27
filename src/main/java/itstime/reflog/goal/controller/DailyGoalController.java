@@ -114,7 +114,7 @@ public class DailyGoalController {
                     )
             }
     )
-    @PatchMapping("/dailyGoal/{dailyGoalId}")
+    @PatchMapping("/dailyGoal/{createdDate}")
     public ResponseEntity<CommonApiResponse<DailyGoalDTO.DailyGoalResponse>> getDailyGoalByMemberIdAndDate(
             @RequestParam Long memberId,
             @PathVariable @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)LocalDate createdDate,
