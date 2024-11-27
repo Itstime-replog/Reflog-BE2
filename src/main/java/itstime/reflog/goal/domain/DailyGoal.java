@@ -11,7 +11,7 @@ import java.time.LocalDate;
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-public class Goal {
+public class DailyGoal {
 
     @Id
     @Column(name = "goal_id")
@@ -24,7 +24,7 @@ public class Goal {
     @Column(name = "created_date", nullable = false)
     private LocalDate createdDate;
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id", nullable = false)
     private Member member;
 
