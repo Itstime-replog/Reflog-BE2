@@ -13,7 +13,7 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 @JsonPropertyOrder({"isSuccess", "code", "message", "result"})
-public class ApiResponse<T> {
+public class CommonApiResponse<T> {
 
 	@JsonProperty("isSuccess")
 	private final Boolean isSuccess;
@@ -23,16 +23,16 @@ public class ApiResponse<T> {
 	private T result;
 
 	// 성공한 경우 응답 생성
-	public static <T> ApiResponse<T> onSuccess(T result){
-		return new ApiResponse<>(true, SuccessStatus._OK.getCode() , SuccessStatus._OK.getMessage(), result);
+	public static <T> CommonApiResponse<T> onSuccess(T result){
+		return new CommonApiResponse<>(true, SuccessStatus._OK.getCode() , SuccessStatus._OK.getMessage(), result);
 	}
 
-	public static <T> ApiResponse<T> of(BaseCode code, T result){
-		return new ApiResponse<>(true, code.getReasonHttpStatus().getCode() , code.getReasonHttpStatus().getMessage(), result);
+	public static <T> CommonApiResponse<T> of(BaseCode code, T result){
+		return new CommonApiResponse<>(true, code.getReasonHttpStatus().getCode() , code.getReasonHttpStatus().getMessage(), result);
 	}
 
 	// 실패한 경우 응답 생성
-	public static <T> ApiResponse<T> onFailure(String code, String message, T data) {
-		return new ApiResponse<>(true, code, message, data);
+	public static <T> CommonApiResponse<T> onFailure(String code, String message, T data) {
+		return new CommonApiResponse<>(false, code, message, data);
 	}
 }
