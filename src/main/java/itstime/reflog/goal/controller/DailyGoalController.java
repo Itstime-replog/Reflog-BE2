@@ -91,7 +91,7 @@ public class DailyGoalController {
             description = "오늘의 학습 목표를 수정합니다.",
             parameters = {
                     @Parameter(
-                            name = "dailyGoalId",
+                            name = "createdDate",
                             description = "수정하려는 학습 목표 날짜",
                             required = true
                     )
@@ -117,10 +117,10 @@ public class DailyGoalController {
     @PatchMapping("/dailyGoal/{dailyGoalId}")
     public ResponseEntity<CommonApiResponse<DailyGoalDTO.DailyGoalResponse>> getDailyGoalByMemberIdAndDate(
             @RequestParam Long memberId,
-            @PathVariable LocalDate dailyGoalId,
+            @PathVariable @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)LocalDate createdDate,
             @RequestBody @Valid DailyGoalDTO.DailyGoalSaveOrUpdateRequest request
             ){
-        dailyGoalService.updateDailyGoal(dailyGoalId, memberId, request);
+        dailyGoalService.updateDailyGoal(createdDate, memberId, request);
         return ResponseEntity.ok(CommonApiResponse.onSuccess((null))
         );
     }

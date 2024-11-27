@@ -20,7 +20,7 @@ public class DailyGoalDTO {
     @Getter
     @AllArgsConstructor
     public static class DailyGoalResponse{
-        private final LocalDate dailyGoalId;
+        private final LocalDate createdDate;
         private final String content;
     }
 }

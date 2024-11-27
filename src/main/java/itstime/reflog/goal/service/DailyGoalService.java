@@ -48,8 +48,8 @@ public class DailyGoalService {
     }
 
     @Transactional
-    public void updateDailyGoal(LocalDate dailyGoalId, Long memberId, DailyGoalDTO.DailyGoalSaveOrUpdateRequest request){
-        DailyGoal dailyGoal = dailyGoalRepository.findById(dailyGoalId)
+    public void updateDailyGoal(LocalDate createdDate, Long memberId, DailyGoalDTO.DailyGoalSaveOrUpdateRequest request){
+        DailyGoal dailyGoal = dailyGoalRepository.findById(createdDate)
                 .orElseThrow(() -> new GeneralException((ErrorStatus._DAILY_GOAL_NOT_FOUND)));
 
         Member member = memberRepository.findById(memberId)
