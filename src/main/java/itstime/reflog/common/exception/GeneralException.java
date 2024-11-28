@@ -1,7 +1,7 @@
 package itstime.reflog.common.exception;
 
 import itstime.reflog.common.code.BaseErrorCode;
-import itstime.reflog.common.code.ErrorReasonDTO;
+import itstime.reflog.common.code.dto.ErrorReasonDto;
 import lombok.Getter;
 
 @Getter
@@ -19,11 +19,11 @@ public class GeneralException extends RuntimeException {
 		this.code = code;
 	}
 
-	public ErrorReasonDTO getErrorReason(){
+	public ErrorReasonDto getErrorReason(){
 		return this.code.getReason();
 	}
 
-	public ErrorReasonDTO getErrorReasonHttpStatus(){
+	public ErrorReasonDto getErrorReasonHttpStatus(){
 		return this.code.getReasonHttpStatus();
 	}
 }
