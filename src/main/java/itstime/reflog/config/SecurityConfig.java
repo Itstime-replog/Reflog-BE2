@@ -2,6 +2,7 @@ package itstime.reflog.config;
 
 import java.util.List;
 
+import itstime.reflog.oauth.handler.OAuthLoginFailureHandler;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -9,26 +10,22 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.annotation.web.configurers.FormLoginConfigurer;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import itstime.reflog.member.repository.MemberRepository;
-import itstime.reflog.oauth.handler.OAuth2SuccessHandler;
-import itstime.reflog.oauth.service.CustomOAuth2UserService;
-import itstime.reflog.oauth.token.JwtTokenProvider;
-import itstime.reflog.oauth.filter.TokenAuthenticationFilter;
+import itstime.reflog.oauth.handler.OAuthLoginSuccessHandler;
 import lombok.RequiredArgsConstructor;
 
 @EnableWebSecurity
 @Configuration
 @RequiredArgsConstructor
 public class SecurityConfig {
-    private final OAuth2SuccessHandler successHandler;
-    private final CustomOAuth2UserService customOAuthService;
+    private final OAuthLoginSuccessHandler successHandler;
+    private final OAuthLoginFailureHandler oAuthLoginFailureHandler;
+//    private final CustomOAuth2UserService customOAuthService;
     private final MemberRepository memberRepository;
-    private final JwtTokenProvider jwtTokenProvider;
 
 
     @Bean
@@ -58,11 +55,11 @@ public class SecurityConfig {
                 // OAuth 로그인 설정
                 .oauth2Login(customConfigurer -> customConfigurer
                         .successHandler(successHandler)
-                        .userInfoEndpoint(endpointConfig -> endpointConfig.userService(customOAuthService))
+                        .failureHandler(oAuthLoginFailureHandler)
+//                        .userInfoEndpoint(endpointConfig -> endpointConfig.userService(customOAuthService))
                 )
                 .cors(httpSecurityCorsConfigurer -> httpSecurityCorsConfigurer.configurationSource(corsConfigurationSource()))
-                .csrf(AbstractHttpConfigurer::disable)
-		        .addFilterBefore(new TokenAuthenticationFilter(jwtTokenProvider, memberRepository), UsernamePasswordAuthenticationFilter.class);
+                .csrf(AbstractHttpConfigurer::disable);
 
 
         return http.build();
