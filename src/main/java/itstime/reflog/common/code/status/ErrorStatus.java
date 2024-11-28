@@ -3,7 +3,7 @@ package itstime.reflog.common.code.status;
 import org.springframework.http.HttpStatus;
 
 import itstime.reflog.common.code.BaseErrorCode;
-import itstime.reflog.common.code.ErrorReasonDTO;
+import itstime.reflog.common.code.dto.ErrorReasonDto;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -27,8 +27,8 @@ public enum ErrorStatus implements BaseErrorCode {
 	private final String message;
 
 	@Override
-	public ErrorReasonDTO getReason() {
-		return ErrorReasonDTO.builder()
+	public ErrorReasonDto getReason() {
+		return ErrorReasonDto.builder()
 			.message(message)
 			.code(code)
 			.isSuccess(false)
@@ -36,8 +36,8 @@ public enum ErrorStatus implements BaseErrorCode {
 	}
 
 	@Override
-	public ErrorReasonDTO getReasonHttpStatus() {
-		return ErrorReasonDTO.builder()
+	public ErrorReasonDto getReasonHttpStatus() {
+		return ErrorReasonDto.builder()
 			.message(message)
 			.code(code)
 			.isSuccess(false)
