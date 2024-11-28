@@ -6,9 +6,11 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
 import itstime.reflog.common.code.BaseCode;
+import itstime.reflog.common.code.BaseErrorCode;
 import itstime.reflog.common.code.status.SuccessStatus;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import org.springframework.http.ResponseEntity;
 
 @Getter
 @AllArgsConstructor
@@ -23,16 +25,18 @@ public class ApiResponse<T> {
 	private T result;
 
 	// 성공한 경우 응답 생성
-	public static <T> ApiResponse<T> onSuccess(T result){
-		return new ApiResponse<>(true, SuccessStatus._OK.getCode() , SuccessStatus._OK.getMessage(), result);
+	public static <T> ResponseEntity<ApiResponse<T>> onSuccess(BaseCode code, T payload) {
+		ApiResponse<T> response = new ApiResponse<>(true, code.getReasonHttpStatus().getCode(), code.getReasonHttpStatus().getMessage(), payload);
+		return ResponseEntity.status(code.getReasonHttpStatus().getHttpStatus()).body(response);
 	}
 
-	public static <T> ApiResponse<T> of(BaseCode code, T result){
-		return new ApiResponse<>(true, code.getReasonHttpStatus().getCode() , code.getReasonHttpStatus().getMessage(), result);
+	public static <T> ResponseEntity<ApiResponse<T>> onSuccess(BaseCode code) {
+		ApiResponse<T> response = new ApiResponse<>(true, code.getReasonHttpStatus().getCode(), code.getReasonHttpStatus().getMessage(), null);
+		return ResponseEntity.status(code.getReasonHttpStatus().getHttpStatus()).body(response);
 	}
 
 	// 실패한 경우 응답 생성
 	public static <T> ApiResponse<T> onFailure(String code, String message, T data) {
-		return new ApiResponse<>(true, code, message, data);
+		return new ApiResponse<>(false, code, message, data);
 	}
 }
