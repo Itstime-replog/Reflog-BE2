@@ -1,4 +1,4 @@
-package itstime.reflog.common.code;
+package itstime.reflog.common.code.dto;
 
 import org.springframework.http.HttpStatus;
 
@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class ReasonDTO {
+public class ReasonDto {
 	private String message;
 	private String code;
 	private Boolean isSuccess;
