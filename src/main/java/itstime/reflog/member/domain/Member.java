@@ -3,6 +3,7 @@ package itstime.reflog.member.domain;
 import java.util.List;
 
 import itstime.reflog.goal.domain.DailyGoal;
+import itstime.reflog.schedule.domain.Schedule;
 import itstime.reflog.todolist.domain.Todolist;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -50,6 +51,9 @@ public class Member {
 
 	@OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
 	private List<DailyGoal> dailyGoals;
+
+	@OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
+	private List<Schedule> schedules;
 
 	@CreationTimestamp
 	@Column(name = "created_at", nullable = false, length = 20)
