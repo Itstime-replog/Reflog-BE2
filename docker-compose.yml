@@ -1,0 +1,26 @@
+version: '3.8'
+
+services:
+  app:
+    image: yeoljeongping/reflogdocker
+    ports:
+      - "8080:8080"
+    environment:
+      DB_URL: ${DB_URL}
+      DB_USERNAME: ${DB_USERNAME}
+      DB_PASSWORD: ${DB_PASSWORD}
+      KAKAO_CLIENT_ID: ${KAKAO_CLIENT_ID}
+      KAKAO_CLIENT_SECRET: ${KAKAO_CLIENT_SECRET}
+      NAVER_CLIENT_ID : ${NAVER_CLIENT_ID}
+      NAVER_CLIENT_SECRET : ${NAVER_CLIENT_SECRET}
+      JWT_SECRET_KEY: ${JWT_SECRET_KEY}
+
+      hibernate_ddl_auto: update
+      REDIS_HOST: redis
+    depends_on:
+      - redis
+
+  redis:
+    image: "redis:latest"
+    ports:
+      - "6379:6379"
