@@ -12,6 +12,14 @@ spring:
     hibernate:
       ddl-auto: update
 
+    redis:
+      pool:
+        min-idle: 0
+        max-idle: 8
+        max-active: 8
+      port: 6379
+      host: redis
+
   security:
     oauth2:
       client:
