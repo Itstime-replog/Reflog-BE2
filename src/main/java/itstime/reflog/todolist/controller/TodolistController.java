@@ -21,7 +21,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import itstime.reflog.common.CommonApiResponse;
-import itstime.reflog.todolist.dto.TodolistDTO;
+import itstime.reflog.todolist.dto.TodolistDto;
 import itstime.reflog.todolist.service.TodolistService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -54,7 +54,7 @@ public class TodolistController {
 	@PostMapping("/todolist")
 	public ResponseEntity<CommonApiResponse<Void>> createTodolist(
 		@RequestParam Long memberId,
-		@RequestBody TodolistDTO.TodolistSaveOrUpdateRequest dto
+		@RequestBody TodolistDto.TodolistSaveOrUpdateRequest dto
 	) {
 		todolistService.createTodolist(memberId, dto);
 		return ResponseEntity.ok(CommonApiResponse.onSuccess(null));
@@ -82,11 +82,11 @@ public class TodolistController {
 		}
 	)
 	@GetMapping("/todolist")
-	public ResponseEntity<CommonApiResponse<List<TodolistDTO.TodolistResponse>>> getTodolistByMemberIdAndDate(
+	public ResponseEntity<CommonApiResponse<List<TodolistDto.TodolistResponse>>> getTodolistByMemberIdAndDate(
 		@RequestParam Long memberId,
 		@RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date
 	) {
-		List<TodolistDTO.TodolistResponse> todolists = todolistService.getTodolistByMemberIdAndDate(memberId, date);
+		List<TodolistDto.TodolistResponse> todolists = todolistService.getTodolistByMemberIdAndDate(memberId, date);
 		return ResponseEntity.ok(CommonApiResponse.onSuccess(todolists));
 	}
 
@@ -122,7 +122,7 @@ public class TodolistController {
 	public ResponseEntity<CommonApiResponse<Void>> updateTodolist(
 		@PathVariable Long todolistId,
 		@RequestParam Long memberId,
-		@RequestBody @Valid TodolistDTO.TodolistSaveOrUpdateRequest request
+		@RequestBody @Valid TodolistDto.TodolistSaveOrUpdateRequest request
 	) {
 		todolistService.updateTodolist(todolistId, memberId, request);
 		return ResponseEntity.ok(CommonApiResponse.onSuccess(null));

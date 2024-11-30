@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
 
-public class DailyGoalDTO {
+public class DailyGoalDto {
 
     @Getter
     @NoArgsConstructor(access = AccessLevel.PRIVATE)
