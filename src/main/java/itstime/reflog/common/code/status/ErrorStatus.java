@@ -30,7 +30,11 @@ public enum ErrorStatus implements BaseErrorCode {
 	//DailyGoal 관련 에러
 	_DAILY_GOAL_NOT_FOUND(HttpStatus.NOT_FOUND, "GOAL404", "오늘의 목표를 찾을 수 없습니다."),
 	_DAILY_GOAL_UPDATE_NOT_ALLOWED(HttpStatus.FORBIDDEN, "GOAL403", "오늘의 목표를 수정할 권한이 없습니다."),
-	_DAILY_GOAL_ALREADY_EXISTS(HttpStatus.CONFLICT, "GOAL409", "이미 해당 날짜에 학습 목표가 존재합니다.");
+	_DAILY_GOAL_ALREADY_EXISTS(HttpStatus.CONFLICT, "GOAL409", "이미 해당 날짜에 학습 목표가 존재합니다."),
+
+	// TodoList 관련 에러
+	_SCHEDULE_NOT_FOUND(HttpStatus.NOT_FOUND, "TODO404", "해당 일정등록을 찾을 수 없습니다."),
+	_SCHEDULE_UPDATE_NOT_ALLOWED(HttpStatus.FORBIDDEN, "TODO403", "일정등록을 수정할 권한이 없습니다.");
 
 	private final HttpStatus httpStatus;
 	private final String code;
