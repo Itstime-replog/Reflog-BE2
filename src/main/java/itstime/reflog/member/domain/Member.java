@@ -51,6 +51,9 @@ public class Member {
 	@OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
 	private List<DailyGoal> dailyGoals;
 
+	@OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
+	private List<DailyGoal> retrospects;
+
 	@CreationTimestamp
 	@Column(name = "created_at", nullable = false, length = 20)
 	private LocalDateTime createdAt;
