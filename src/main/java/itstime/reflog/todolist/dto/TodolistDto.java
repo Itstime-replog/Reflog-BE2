@@ -1,6 +1,5 @@
 package itstime.reflog.todolist.dto;
 
-import jakarta.validation.constraints.AssertFalse;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;
@@ -8,7 +7,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-public class TodolistDTO {
+public class TodolistDto {
 
 	@Getter
 	@NoArgsConstructor(access = AccessLevel.PRIVATE)

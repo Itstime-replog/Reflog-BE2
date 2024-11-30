@@ -7,7 +7,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import itstime.reflog.common.CommonApiResponse;
-import itstime.reflog.goal.dto.DailyGoalDTO;
+import itstime.reflog.goal.dto.DailyGoalDto;
 import itstime.reflog.goal.service.DailyGoalService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -16,8 +16,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
-import java.util.Date;
-import java.util.List;
 
 @Tag(name = "DAILY GOAL API", description = "오늘의 학습 목표에 대한 API입니다.")
 @RestController
@@ -51,7 +49,7 @@ public class DailyGoalController {
     @PostMapping("/dailyGoal")
     public ResponseEntity<CommonApiResponse<Void>> createDailyGoal(
             @RequestParam Long memberId,
-            @RequestBody DailyGoalDTO.DailyGoalSaveOrUpdateRequest dto){
+            @RequestBody DailyGoalDto.DailyGoalSaveOrUpdateRequest dto){
             dailyGoalService.createDailyGoal(memberId, dto);
             return ResponseEntity.ok(CommonApiResponse.onSuccess(null));
     }
@@ -78,11 +76,11 @@ public class DailyGoalController {
             }
     )
     @GetMapping("/dailyGoal")
-    public ResponseEntity<CommonApiResponse<DailyGoalDTO.DailyGoalResponse>> getDailyGoalByMemberAndDate(
+    public ResponseEntity<CommonApiResponse<DailyGoalDto.DailyGoalResponse>> getDailyGoalByMemberAndDate(
             @RequestParam Long memberId,
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)LocalDate date
             ){
-        DailyGoalDTO.DailyGoalResponse dailyGoal = dailyGoalService.getDailyGoalByMemberIdAndDate(memberId, date);
+        DailyGoalDto.DailyGoalResponse dailyGoal = dailyGoalService.getDailyGoalByMemberIdAndDate(memberId, date);
         return ResponseEntity.ok(CommonApiResponse.onSuccess(dailyGoal));
     }
 
@@ -115,10 +113,10 @@ public class DailyGoalController {
             }
     )
     @PatchMapping("/dailyGoal/{createdDate}")
-    public ResponseEntity<CommonApiResponse<DailyGoalDTO.DailyGoalResponse>> getDailyGoalByMemberIdAndDate(
+    public ResponseEntity<CommonApiResponse<DailyGoalDto.DailyGoalResponse>> getDailyGoalByMemberIdAndDate(
             @RequestParam Long memberId,
             @PathVariable @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)LocalDate createdDate,
-            @RequestBody @Valid DailyGoalDTO.DailyGoalSaveOrUpdateRequest request
+            @RequestBody @Valid DailyGoalDto.DailyGoalSaveOrUpdateRequest request
             ){
         dailyGoalService.updateDailyGoal(createdDate, memberId, request);
         return ResponseEntity.ok(CommonApiResponse.onSuccess((null))

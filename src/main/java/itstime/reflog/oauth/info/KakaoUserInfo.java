@@ -1,14 +1,14 @@
-package itstime.reflog.oauth.info.impl;
+package itstime.reflog.oauth.info;
+
+import itstime.reflog.member.domain.Provider;
+import lombok.AllArgsConstructor;
 
 import java.util.Map;
 
-import itstime.reflog.oauth.info.OAuth2UserInfo;
+@AllArgsConstructor
+public class KakaoUserInfo implements OAuth2UserInfo {
 
-public class KakaoOAuth2UserInfo extends OAuth2UserInfo {
-
-	public KakaoOAuth2UserInfo(Map<String, Object> attributes) {
-		super(attributes);
-	}
+	private Map<String, Object> attributes;
 
 	@Override
 	public String getProviderId() {
@@ -24,6 +24,11 @@ public class KakaoOAuth2UserInfo extends OAuth2UserInfo {
 		}
 
 		return (String) properties.get("nickname");
+	}
+
+	@Override
+	public String getProvider() {
+		return Provider.KAKAO_PROVIDER.getProvider();
 	}
 
 	@Override

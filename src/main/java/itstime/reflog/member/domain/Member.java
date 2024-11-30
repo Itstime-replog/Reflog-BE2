@@ -18,6 +18,11 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
+
+import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Entity
 @Getter
@@ -29,12 +34,13 @@ public class Member {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
+	private UUID memberId;
+
 	private String providerId;
 
-	@Enumerated(EnumType.STRING)
-	private ProviderType providerType;
+	private String provider;
 
-	@Column(nullable = false, unique = true)
+	@Column(name = "name", nullable = false, unique = true)
 	private String name;
 
 	private String profileImageUrl;
@@ -45,4 +51,11 @@ public class Member {
 	@OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
 	private List<DailyGoal> dailyGoals;
 
+	@CreationTimestamp
+	@Column(name = "created_at", nullable = false, length = 20)
+	private LocalDateTime createdAt;
+
+	@UpdateTimestamp
+	@Column(name = "updated_at", length = 20)
+	private LocalDateTime updatedAt;
 }
