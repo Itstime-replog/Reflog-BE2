@@ -6,19 +6,21 @@ spring:
     driver-class-name: com.mysql.cj.jdbc.Driver
   jpa:
     database-platform: org.hibernate.dialect.MySQLDialect
-
     open-in-view: false
     show-sql: true
     hibernate:
       ddl-auto: update
 
-    redis:
+  redis:
+    data:
+      port: 6379
+      host: redis
       pool:
         min-idle: 0
         max-idle: 8
         max-active: 8
-      port: 6379
-      host: redis
+
+
 
   security:
     oauth2:
@@ -56,6 +58,7 @@ spring:
             tokenUri: https://nid.naver.com/oauth2.0/token
             userInfoUri: https://openapi.naver.com/v1/nid/me
             userNameAttribute: response
+
 jwt:
   secret: ${JWT_SECRET_KEY}
   redirect: http://localhost:8080/login?name=%s&access_token=%s&refresh_token=%s
@@ -66,4 +69,3 @@ jwt:
 
 server:
   port: 8080
-
