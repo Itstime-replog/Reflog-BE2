@@ -15,7 +15,7 @@ services:
       NAVER_CLIENT_SECRET : ${NAVER_CLIENT_SECRET}
       JWT_SECRET_KEY: ${JWT_SECRET_KEY}
 
-      #SPRING_PROFILES_ACTIVE: prod # prod 프로파일 활성화
+      SPRING_PROFILES_ACTIVE: prod # prod 프로파일 활성화
 
       hibernate_ddl_auto: create
       REDIS_HOST: redis

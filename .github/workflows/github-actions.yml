@@ -47,7 +47,7 @@ jobs:
           target: "/home/ubuntu/deploy/"
 
       - name: Docker build and push
-        run: docker build -t ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_REPO }} .
+        run: docker build -t yeoljeongping/reflogdocker .
 
       - name: docker login
         uses: docker/login-action@v2
@@ -56,7 +56,7 @@ jobs:
           password: ${{secrets.DOCKER_PASSWORD}}
 
       - name: docker Hub push
-        run: docker push ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_REPO }}
+        run: docker push yeoljeongping/reflogdocker
 
   deploy:
     needs: build-docker-image

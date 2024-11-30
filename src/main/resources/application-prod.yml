@@ -56,14 +56,14 @@ spring:
             tokenUri: https://nid.naver.com/oauth2.0/token
             userInfoUri: https://openapi.naver.com/v1/nid/me
             userNameAttribute: response
+jwt:
+  secret: ${JWT_SECRET_KEY}
+  redirect: http://localhost:8080/login?name=%s&access_token=%s&refresh_token=%s
+  access-token:
+    expiration-time: 3600000    # 1시간
+  refresh-token:
+    expiration-time: 604800000
 
 server:
   port: 8080
 
-  jwt:
-    secret: ${JWT_SECRET_KEY}
-    redirect: http://localhost:8080/login?name=%s&access_token=%s&refresh_token=%s
-    access-token:
-      expiration-time: 3600000    # 1시간
-    refresh-token:
-      expiration-time: 604800000
