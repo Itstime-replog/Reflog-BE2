@@ -17,7 +17,7 @@ import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 import itstime.reflog.common.CommonApiResponse;
-import itstime.reflog.common.code.dto.ErrorReasonDTO;
+import itstime.reflog.common.code.dto.ErrorReasonDto;
 import itstime.reflog.common.code.status.ErrorStatus;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.ConstraintViolationException;

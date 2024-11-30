@@ -21,8 +21,6 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import itstime.reflog.common.CommonApiResponse;
-import itstime.reflog.common.code.ErrorReasonDTO;
-import itstime.reflog.common.code.status.ErrorStatus;
 import itstime.reflog.todolist.dto.TodolistDTO;
 import itstime.reflog.todolist.service.TodolistService;
 import jakarta.validation.Valid;
