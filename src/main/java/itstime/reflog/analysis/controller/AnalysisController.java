@@ -5,13 +5,18 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import itstime.reflog.analysis.dto.AnalysisDto;
 import itstime.reflog.analysis.service.AnalysisService;
 import itstime.reflog.common.CommonApiResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.time.LocalDate;
 
 @Tag(name = "ANALYSIS APLI", description = "분석보고서에 대한 API입니다.")
 @RestController
@@ -43,5 +48,11 @@ public class AnalysisController {
 
     )
     @GetMapping("/analysis")
-    public ResponseEntity<>
+    public ResponseEntity<CommonApiResponse<AnalysisDto.AnalysisDtoResponse>> getWeeklyAnalysis(
+            @RequestParam Long memberId,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date
+    ){
+        AnalysisDto.AnalysisDtoResponse analysis = analysisService.getWeeklyTodoList(memberId, date);
+        return ResponseEntity.ok(CommonApiResponse.onSuccess(analysis));
+    }
 }
