@@ -34,7 +34,10 @@ public enum ErrorStatus implements BaseErrorCode {
 
 	// TodoList 관련 에러
 	_SCHEDULE_NOT_FOUND(HttpStatus.NOT_FOUND, "TODO404", "해당 일정등록을 찾을 수 없습니다."),
-	_SCHEDULE_UPDATE_NOT_ALLOWED(HttpStatus.FORBIDDEN, "TODO403", "일정등록을 수정할 권한이 없습니다.");
+	_SCHEDULE_UPDATE_NOT_ALLOWED(HttpStatus.FORBIDDEN, "TODO403", "일정등록을 수정할 권한이 없습니다."),
+
+	//Analysis 관련 에러
+	_ANALYSIS_NOT_FOUND(HttpStatus.NOT_FOUND, "GOAL404", "오늘의 목표를 찾을 수 없습니다.");
 
 	private final HttpStatus httpStatus;
 	private final String code;

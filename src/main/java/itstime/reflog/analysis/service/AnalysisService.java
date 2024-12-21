@@ -3,6 +3,7 @@ package itstime.reflog.analysis.service;
 import itstime.reflog.analysis.dto.AnalysisDto;
 import itstime.reflog.common.code.status.ErrorStatus;
 import itstime.reflog.common.exception.GeneralException;
+import itstime.reflog.goal.domain.DailyGoal;
 import itstime.reflog.member.domain.Member;
 import itstime.reflog.member.repository.MemberRepository;
 import itstime.reflog.todolist.domain.Todolist;
@@ -27,13 +28,19 @@ public class AnalysisService {
 
     @Transactional
     public AnalysisDto.AnalysisDtoResponse getWeeklyTodoList(Long memberId, LocalDate date){
+
+        LocalDate today = LocalDate.now();
+        if (date.isAfter(today)) {
+            throw new GeneralException(ErrorStatus._ANALYSIS_NOT_FOUND);
+        }
+
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new GeneralException(ErrorStatus._MEMBER_NOT_FOUND));
 
         LocalDate thisMonday = date.with(DayOfWeek.MONDAY);
         LocalDate nextMonday = thisMonday.plusDays(7);
 
-        List<Todolist> weeklyTodos = todolistRepository.findByMemberAndCreatedDate(member, date).stream()
+        List<Todolist> weeklyTodos = todolistRepository.findByMember(member).stream()
                 .filter(todo ->
                         !todo.getCreatedDate().isBefore(thisMonday) &&
                                 todo.getCreatedDate().isBefore(nextMonday)
