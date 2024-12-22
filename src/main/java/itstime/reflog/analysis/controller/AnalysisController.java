@@ -27,7 +27,7 @@ public class AnalysisController {
 
     @Operation(
             summary = "주간 분석 보고서 조회 API",
-            description = "특정 날짜에 해당하는 주간 분석 보고서를 조회합니다.",
+            description = "특정 날짜에 해당하는 주간 분석 보고서를 조회합니다. 개선점 키워드 부분은 아직 없습니다.",
             responses = {
                     @ApiResponse(
                             responseCode = "200",
