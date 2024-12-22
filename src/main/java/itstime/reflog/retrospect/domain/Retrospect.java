@@ -34,9 +34,6 @@ public class Retrospect {
 	@Column(nullable = false)
 	private String title;
 
-	@Column(nullable = false)
-	private String studyType;
-
 	@Column(name = "created_date")
 	private LocalDate createdDate;
 
@@ -55,6 +52,9 @@ public class Retrospect {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "member_id", nullable = false)
 	private Member member;
+
+	@OneToMany(mappedBy = "retrospect", cascade = CascadeType.ALL, orphanRemoval = true)
+	private List<StudyType> studyTypes;
 
 	@OneToMany(mappedBy = "retrospect", cascade = CascadeType.ALL)
 	private List<Good> goods;
