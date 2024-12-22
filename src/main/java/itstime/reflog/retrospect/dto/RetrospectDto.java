@@ -19,7 +19,7 @@ public class RetrospectDto {
 
 	@Getter
 	@NoArgsConstructor(access = AccessLevel.PRIVATE)
-	public static class RetrospectSaveRequest {
+	public static class RetrospectSaveOrUpdateRequest {
 
 		@NotBlank(message = "제목은 비어 있을 수 없습니다.")
 		private String title; // 제목

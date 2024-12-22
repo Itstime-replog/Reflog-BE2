@@ -19,9 +19,11 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
 @Getter
+@Setter
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
@@ -60,6 +62,21 @@ public class Retrospect {
 	private List<Good> goods;
 
 	@OneToMany(mappedBy = "retrospect", cascade = CascadeType.ALL)
-	private List<Good> bads;
+	private List<Bad> bads;
+
+	public void updateStudyTypes(List<StudyType> newStudyTypes) {
+		this.studyTypes.clear();
+		this.studyTypes.addAll(newStudyTypes);
+	}
+
+	public void updateGoods(List<Good> newGoods) {
+		this.goods.clear();
+		this.goods.addAll(newGoods);
+	}
+
+	public void updateBads(List<Bad> newBads) {
+		this.bads.clear();
+		this.bads.addAll(newBads);
+	}
 
 }

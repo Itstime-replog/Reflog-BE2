@@ -2,6 +2,7 @@ package itstime.reflog.retrospect.controller;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -46,7 +47,7 @@ public class RetrospectController {
 	@PostMapping
 	public ResponseEntity<CommonApiResponse<Void>> createRetrospect(
 		@RequestParam Long memberId,
-		@Valid @RequestBody RetrospectDto.RetrospectSaveRequest dto
+		@Valid @RequestBody RetrospectDto.RetrospectSaveOrUpdateRequest dto
 	){
 		retrospectService.createRetrospect(memberId, dto);
 		return ResponseEntity.ok(CommonApiResponse.onSuccess(null));
@@ -76,5 +77,13 @@ public class RetrospectController {
 		@RequestParam Long retrospectId) {
 		RetrospectDto.RetrospectResponse response = retrospectService.getRetrospect(retrospectId);
 		return ResponseEntity.ok(CommonApiResponse.onSuccess(response));
+	}
+
+	@PatchMapping
+	public ResponseEntity<CommonApiResponse<Void>> updateRetrospect(
+		@RequestParam Long retrospectId,
+		@Valid @RequestBody RetrospectDto.RetrospectSaveOrUpdateRequest dto) {
+		retrospectService.updateRetrospect(retrospectId, dto);
+		return ResponseEntity.ok(CommonApiResponse.onSuccess(null));
 	}
 }
