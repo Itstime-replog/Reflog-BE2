@@ -20,7 +20,7 @@ public class AnalysisDto {
         private List<Good> goods;
         private List<Bad> bads;
         private List<Achievement> achievements;
-        private List<StudyType> types;
+        //private List<StudyType> types;
         private List<Improvement>Improvements;
     }
 
