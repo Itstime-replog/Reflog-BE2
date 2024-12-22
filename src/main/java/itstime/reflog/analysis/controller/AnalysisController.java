@@ -52,7 +52,37 @@ public class AnalysisController {
             @RequestParam Long memberId,
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date
     ){
-        AnalysisDto.AnalysisDtoResponse analysis = analysisService.getWeeklyTodoList(memberId, date);
+        AnalysisDto.AnalysisDtoResponse analysis = analysisService.getWeeklyAnalysisReport(memberId, date);
+        return ResponseEntity.ok(CommonApiResponse.onSuccess(analysis));
+    }
+    @Operation(
+            summary = "월간 분석 보고서 조회 API",
+            description = "특정 날짜에 해당하는 월간 분석 보고서를 조회합니다. 개선점 키워드 부분은 아직 없습니다.",
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "월간 보고서 조회 성공",
+                            content = @Content(schema = @Schema(implementation = CommonApiResponse.class))
+                    ),
+                    @ApiResponse(
+                            responseCode = "400",
+                            description = "해당 회원 또는 해당 월의 월간 분석보고서를 찾을 수 없음",
+                            content = @Content(schema = @Schema(implementation = CommonApiResponse.class))
+                    ),
+                    @ApiResponse(
+                            responseCode = "500",
+                            description = "서버 에러",
+                            content = @Content(schema = @Schema(implementation = CommonApiResponse.class))
+                    )
+            }
+
+    )
+    @GetMapping("/monthly-analysis")
+    public ResponseEntity<CommonApiResponse<AnalysisDto.AnalysisDtoResponse>> getMonthlyAnalysis(
+            @RequestParam Long memberId,
+            @RequestParam Integer month
+    ){
+        AnalysisDto.AnalysisDtoResponse analysis = analysisService.getMonthlyAnalysisReport(memberId, month);
         return ResponseEntity.ok(CommonApiResponse.onSuccess(analysis));
     }
 }
