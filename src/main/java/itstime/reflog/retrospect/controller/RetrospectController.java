@@ -14,6 +14,7 @@ import itstime.reflog.common.CommonApiResponse;
 import itstime.reflog.retrospect.domain.Retrospect;
 import itstime.reflog.retrospect.dto.RetrospectDto;
 import itstime.reflog.retrospect.service.RetrospectService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @Tag(name = "RETROSPECT API", description = "회고일지에 대한 API입니다.")
@@ -44,7 +45,7 @@ public class RetrospectController {
 	@PostMapping
 	public ResponseEntity<CommonApiResponse<Void>> createRetrospect(
 		@RequestParam Long memberId,
-		@RequestBody RetrospectDto.RetrospectSaveRequest dto
+		@Valid @RequestBody RetrospectDto.RetrospectSaveRequest dto
 	){
 		retrospectService.createRetrospect(memberId, dto);
 		return ResponseEntity.ok(CommonApiResponse.onSuccess(null));
