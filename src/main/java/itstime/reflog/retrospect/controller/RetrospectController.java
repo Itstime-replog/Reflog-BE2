@@ -53,6 +53,24 @@ public class RetrospectController {
 	}
 
 
+	@Operation(
+		summary = "회고일지 조회 API",
+		description = "새로운 회고일지 항목을 조회합니다. AccessToken 필요.",
+		responses = {
+			@ApiResponse(
+				responseCode = "200",
+				description = "회고일지 조회 성공"
+			),
+			@ApiResponse(
+				responseCode = "404",
+				description = "해당 회고일지를 찾을 수 없음"
+			),
+			@ApiResponse(
+				responseCode = "500",
+				description = "서버 에러"
+			)
+		}
+	)
 	@GetMapping
 	public ResponseEntity<CommonApiResponse<RetrospectDto.RetrospectResponse>> getRetrospect(
 		@RequestParam Long retrospectId) {
