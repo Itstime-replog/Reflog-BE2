@@ -2,13 +2,16 @@ package itstime.reflog.retrospect.dto;
 
 import java.time.LocalDate;
 import java.util.List;
-
+import java.util.stream.Collectors;
+import itstime.reflog.retrospect.domain.*;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -49,5 +52,42 @@ public class RetrospectDto {
 
 		@NotNull(message = "공개 여부는 필수입니다.")
 		private boolean visibility; // 공개 여부
+	}
+
+	@Getter
+	@Builder
+	@AllArgsConstructor
+	@NoArgsConstructor(access = AccessLevel.PRIVATE)
+	public static class RetrospectResponse {
+
+		private String title;
+		private LocalDate createdDate;
+		private List<String> studyTypes;
+		private int progressLevel;
+		private int understandingLevel;
+		private List<String> goodContents;
+		private List<String> badContents;
+		private String actionPlan;
+		private boolean visibility;
+
+		public static RetrospectResponse fromEntity(Retrospect retrospect) {
+			return RetrospectResponse.builder()
+				.title(retrospect.getTitle())
+				.createdDate(retrospect.getCreatedDate())
+				.studyTypes(retrospect.getStudyTypes().stream()
+					.map(StudyType::getType)
+					.collect(Collectors.toList()))
+				.progressLevel(retrospect.getProgressLevel())
+				.understandingLevel(retrospect.getUnderstandingLevel())
+				.goodContents(retrospect.getGoods().stream()
+					.map(good -> good.getContent())
+					.collect(Collectors.toList()))
+				.badContents(retrospect.getBads().stream()
+					.map(bad -> bad.getContent())
+					.collect(Collectors.toList()))
+				.actionPlan(retrospect.getActionPlan())
+				.visibility(retrospect.isVisibility())
+				.build();
+		}
 	}
 }

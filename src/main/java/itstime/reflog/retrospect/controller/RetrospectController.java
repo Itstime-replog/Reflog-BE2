@@ -1,6 +1,7 @@
 package itstime.reflog.retrospect.controller;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -49,5 +50,13 @@ public class RetrospectController {
 	){
 		retrospectService.createRetrospect(memberId, dto);
 		return ResponseEntity.ok(CommonApiResponse.onSuccess(null));
+	}
+
+
+	@GetMapping
+	public ResponseEntity<CommonApiResponse<RetrospectDto.RetrospectResponse>> getRetrospect(
+		@RequestParam Long retrospectId) {
+		RetrospectDto.RetrospectResponse response = retrospectService.getRetrospect(retrospectId);
+		return ResponseEntity.ok(CommonApiResponse.onSuccess(response));
 	}
 }

@@ -70,4 +70,12 @@ public class RetrospectService {
 			.toList();
 		badRepository.saveAll(bads);
 	}
+
+	@Transactional(readOnly = true)
+	public RetrospectDto.RetrospectResponse getRetrospect(Long retrospectId) {
+		Retrospect retrospect = retrospectRepository.findById(retrospectId)
+			.orElseThrow(() -> new GeneralException(ErrorStatus._RETROSPECT_NOT_FOUND));
+
+		return RetrospectDto.RetrospectResponse.fromEntity(retrospect);
+	}
 }
