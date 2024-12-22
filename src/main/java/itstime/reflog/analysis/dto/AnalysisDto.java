@@ -20,8 +20,9 @@ public class AnalysisDto {
         private List<Good> goods;
         private List<Bad> bads;
         private List<Achievement> achievements;
+        private List<UnderstandingLevel> understandingLevels;
         //private List<StudyType> types;
-        private List<Improvement>Improvements;
+        //private List<Improvement>Improvements;
     }
 
     public static class Good {
@@ -52,7 +53,7 @@ public class AnalysisDto {
             this.percentage = percentage;
         }
     }
-    public static class StudyType {
+    /*public static class StudyType {
         private String type;
         private int percentage;
 
@@ -68,6 +69,16 @@ public class AnalysisDto {
         public Improvement(String content, int rank) {
             this.content = content;
             this.rank = rank;
+        }
+    }*/
+
+    public static class UnderstandingLevel {
+        private String day;
+        private int percentage;
+
+        public UnderstandingLevel(String day, int percentage) {
+            this.day = day;
+            this.percentage = percentage;
         }
     }
 }

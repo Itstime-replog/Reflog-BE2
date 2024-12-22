@@ -18,6 +18,7 @@ import org.springframework.stereotype.Service;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.util.AbstractMap;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -109,8 +110,34 @@ public class AnalysisService {
                 })
                 .collect(Collectors.toList());
 
+        //수행도
+        List<AnalysisDto.Achievement> achievements =
+                Arrays.stream(DayOfWeek.values()) // 모든 요일을 순회,, 회고없는날 수행도0
+                        .map(day -> {
+                            // 주어진 요일의 수행도 가져오기 (없으면 0)
+                            int progress = weeklyRetrospect.stream()
+                                    .filter(retrospect -> retrospect.getCreatedDate().getDayOfWeek() == day)
+                                    .mapToInt(Retrospect::getProgressLevel)
+                                    .findFirst() // 첫 번째 수행도 가져오기
+                                    .orElse(0); // 없으면 0 반환
+                            return new AnalysisDto.Achievement(day.toString(), progress);
+                        })
+                        .collect(Collectors.toList());
 
-        return new AnalysisDto.AnalysisDtoResponse(totalTodos, completedTodos, totalRetrospect, topGoods, topBads,);
+        //이해도
+        List<AnalysisDto.UnderstandingLevel> understandingLevels =
+                Arrays.stream(DayOfWeek.values())
+                        .map(day -> {
+                            int understanding = weeklyRetrospect.stream()
+                                    .filter(retrospect -> retrospect.getCreatedDate().getDayOfWeek() == day)
+                                    .mapToInt(Retrospect::getUnderstandingLevel)
+                                    .findFirst()
+                                    .orElse(0);
+                            return new AnalysisDto.UnderstandingLevel(day.toString(), understanding);
+                        })
+                        .collect(Collectors.toList());
+
+        return new AnalysisDto.AnalysisDtoResponse(totalTodos, completedTodos, totalRetrospect, topGoods, topBads,achievements,understandingLevels);
     }
 
 
