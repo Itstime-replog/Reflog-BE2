@@ -30,7 +30,7 @@ public class RetrospectService {
 	private final BadRepository badRepository;
 
 	@Transactional
-	public void createRetrospect(Long memberId, RetrospectDto.RetrospectSaveRequest dto) {
+	public void createRetrospect(Long memberId, RetrospectDto.RetrospectSaveOrUpdateRequest dto) {
 		Member member = memberRepository.findById(memberId)
 			.orElseThrow(() -> new GeneralException(ErrorStatus._MEMBER_NOT_FOUND));
 
@@ -77,5 +77,43 @@ public class RetrospectService {
 			.orElseThrow(() -> new GeneralException(ErrorStatus._RETROSPECT_NOT_FOUND));
 
 		return RetrospectDto.RetrospectResponse.fromEntity(retrospect);
+	}
+
+	@Transactional
+	public void updateRetrospect(Long retrospectId, RetrospectDto.RetrospectSaveOrUpdateRequest dto) {
+		Retrospect retrospect = retrospectRepository.findById(retrospectId)
+			.orElseThrow(() -> new GeneralException(ErrorStatus._RETROSPECT_NOT_FOUND));
+
+		retrospect.setTitle(dto.getTitle());
+		retrospect.setCreatedDate(dto.getCreatedDate());
+		retrospect.setProgressLevel(dto.getProgressLevel());
+		retrospect.setUnderstandingLevel(dto.getUnderstandingLevel());
+		retrospect.setActionPlan(dto.getActionPlan());
+		retrospect.setVisibility(dto.isVisibility());
+
+		List<StudyType> newStudyTypes = dto.getStudyTypes().stream()
+			.map(type -> StudyType.builder()
+				.type(type)
+				.retrospect(retrospect)
+				.build())
+			.toList();
+		retrospect.updateStudyTypes(newStudyTypes);
+
+		List<Good> newGoods = dto.getGoodContents().stream()
+			.map(content -> Good.builder()
+				.content(content)
+				.retrospect(retrospect)
+				.build())
+			.toList();
+		retrospect.updateGoods(newGoods);
+
+		List<Bad> newBads = dto.getBadContents().stream()
+			.map(content -> Bad.builder()
+				.content(content)
+				.retrospect(retrospect)
+				.build())
+			.toList();
+		retrospect.updateBads(newBads);
+
 	}
 }
