@@ -53,6 +53,9 @@ public class Member {
 	private List<DailyGoal> dailyGoals;
 
 	@OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
+	private List<DailyGoal> retrospects;
+
+	@OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
 	private List<Schedule> schedules;
 
 	@CreationTimestamp
