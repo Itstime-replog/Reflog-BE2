@@ -1,9 +1,6 @@
 package itstime.reflog.analysis.dto;
 
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.util.List;
 
@@ -25,6 +22,7 @@ public class AnalysisDto {
         //private List<Improvement>Improvements;
     }
 
+    @Data
     public static class Good {
         private String content;
         private int percentage;
@@ -35,6 +33,7 @@ public class AnalysisDto {
         }
 
     }
+    @Data
     public static class Bad {
         private String content;
         private int percentage;
@@ -44,6 +43,7 @@ public class AnalysisDto {
             this.percentage = percentage;
         }
     }
+    @Data
     public static class Achievement {
         private String day;
         private int percentage;
@@ -72,6 +72,7 @@ public class AnalysisDto {
         }
     }*/
 
+    @Data
     public static class UnderstandingLevel {
         private String day;
         private int percentage;
