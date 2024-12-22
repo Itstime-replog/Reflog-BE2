@@ -40,7 +40,9 @@ public enum ErrorStatus implements BaseErrorCode {
 	_RETROSPECT_NOT_FOUND(HttpStatus.NOT_FOUND, "RETROSPECT404", "해당 회고일지를 찾을 수 없습니다."),
 
 	//Analysis 관련 에러
-	_ANALYSIS_NOT_FOUND(HttpStatus.NOT_FOUND, "GOAL404", "오늘의 목표를 찾을 수 없습니다.");
+	_ANALYSIS_NOT_FOUND(HttpStatus.NOT_FOUND, "ANALYSIS404", "분석보고서를 찾을 수 없습니다."),
+	_ANALYSIS_NOT_ALREADY(HttpStatus.NOT_FOUND, "ANALYSIS400", "아직 분석보고서가 생성되지 않았습니다."),
+	;
 
 	private final HttpStatus httpStatus;
 	private final String code;

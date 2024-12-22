@@ -43,6 +43,9 @@ public class AnalysisService {
         if (date.isAfter(today)) {
             throw new GeneralException(ErrorStatus._ANALYSIS_NOT_FOUND);
         }
+        if (date.isAfter(today.with(DayOfWeek.MONDAY).minusDays(1))) {
+            throw new GeneralException(ErrorStatus._ANALYSIS_NOT_ALREADY);
+        }
 
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new GeneralException(ErrorStatus._MEMBER_NOT_FOUND));
@@ -110,6 +113,38 @@ public class AnalysisService {
                 })
                 .collect(Collectors.toList());
 
+        //학습유형
+        Map<String, Long> typeFrequency = weeklyRetrospect.stream()
+                .flatMap(retrospect -> retrospect.getStudyTypes().stream()
+                        .map(type -> type.getType()))
+                .collect(Collectors.groupingBy(type -> type, Collectors.counting()));
+        long totalTypeCount = typeFrequency.values().stream()
+                .mapToLong(Long::longValue).sum();
+
+        List<Map.Entry<String, Long>> sortedEntries = typeFrequency.entrySet().stream()
+                .sorted((e1, e2) -> Long.compare(e2.getValue(), e1.getValue()))
+                .collect(Collectors.toList());
+
+        List<AnalysisDto.StudyType> topType = sortedEntries.stream()
+                .limit(4)
+                .map(entry -> {
+                    int percentage = (int) Math.round((double) entry.getValue() / totalTypeCount * 100);
+                    return new AnalysisDto.StudyType(entry.getKey(), percentage);
+                })
+                .collect(Collectors.toList());
+
+        // 나머지 항목 처리
+        long otherCount = sortedEntries.stream()
+                .skip(4)
+                .mapToLong(Map.Entry::getValue)
+                .sum();
+
+        if (otherCount > 0) {
+            int otherPercentage = (int) Math.round((double) otherCount / totalTypeCount * 100);
+            topType.add(new AnalysisDto.StudyType("Other", otherPercentage));
+        }
+
+
         //수행도
         List<AnalysisDto.Achievement> achievements =
                 Arrays.stream(DayOfWeek.values()) // 모든 요일을 순회,, 회고없는날 수행도0
@@ -137,7 +172,8 @@ public class AnalysisService {
                         })
                         .collect(Collectors.toList());
 
-        return new AnalysisDto.AnalysisDtoResponse(totalTodos, completedTodos, totalRetrospect, topGoods, topBads,achievements,understandingLevels);
+
+        return new AnalysisDto.AnalysisDtoResponse(totalTodos, completedTodos, totalRetrospect, topGoods, topBads,achievements,understandingLevels, topType);
     }
 
 

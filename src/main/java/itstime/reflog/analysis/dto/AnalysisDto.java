@@ -18,7 +18,7 @@ public class AnalysisDto {
         private List<Bad> bads;
         private List<Achievement> achievements;
         private List<UnderstandingLevel> understandingLevels;
-        //private List<StudyType> types;
+        private List<StudyType> types;
         //private List<Improvement>Improvements;
     }
 
@@ -53,7 +53,8 @@ public class AnalysisDto {
             this.percentage = percentage;
         }
     }
-    /*public static class StudyType {
+    @Data
+    public static class StudyType {
         private String type;
         private int percentage;
 
@@ -62,7 +63,7 @@ public class AnalysisDto {
             this.percentage = percentage;
         }
     }
-    public static class Improvement {
+    /*public static class Improvement {
         private String content;
         private int rank;
 
