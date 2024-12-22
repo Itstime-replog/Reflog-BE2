@@ -53,10 +53,10 @@ public class Member {
 	private List<DailyGoal> dailyGoals;
 
 	@OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
-	private List<Schedule> schedules;
+	private List<DailyGoal> retrospects;
 
 	@OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
-	private List<DailyGoal> retrospects;
+	private List<Schedule> schedules;
 
 	@CreationTimestamp
 	@Column(name = "created_at", nullable = false, length = 20)
