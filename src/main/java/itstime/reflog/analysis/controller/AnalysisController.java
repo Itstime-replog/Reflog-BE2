@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.time.LocalDate;
 
-@Tag(name = "ANALYSIS APLI", description = "분석보고서에 대한 API입니다.")
+@Tag(name = "ANALYSIS API", description = "분석보고서에 대한 API입니다.")
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1")
@@ -47,7 +47,7 @@ public class AnalysisController {
             }
 
     )
-    @GetMapping("/analysis")
+    @GetMapping("/weekly-analysis")
     public ResponseEntity<CommonApiResponse<AnalysisDto.AnalysisDtoResponse>> getWeeklyAnalysis(
             @RequestParam Long memberId,
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date
