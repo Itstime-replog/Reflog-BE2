@@ -32,7 +32,7 @@ public class EmailService {
 		try {
 			MimeMessageHelper mimeMessageHelper = new MimeMessageHelper(mimeMessage, false, "UTF-8");
 			mimeMessageHelper.setTo(email); // 수신자
-			mimeMessageHelper.setSubject("Reminder from Retrospect Service"); // 메일 제목
+			mimeMessageHelper.setSubject("Reflog - 회고일지를 작성해주세요!"); // 메일 제목
 			mimeMessageHelper.setText(setContext(templateName, date), true); // 메일 본문
 
 			javaMailSender.send(mimeMessage);
