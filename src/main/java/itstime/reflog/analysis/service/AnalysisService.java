@@ -144,6 +144,8 @@ public class AnalysisService {
             int otherPercentage = (int) Math.round((double) otherCount / totalTypeCount * 100);
             topType.add(new AnalysisDto.StudyType("Other", otherPercentage));
         }
+        AnalysisDto.StudyTypes studyTypes = new AnalysisDto.StudyTypes((int) totalTypeCount, topType);
+
 
 
         //수행도
@@ -174,7 +176,7 @@ public class AnalysisService {
                         .collect(Collectors.toList());
 
 
-        return new AnalysisDto.AnalysisDtoResponse(totalTodos, completedTodos, totalRetrospect, topGoods, topBads,achievements,understandingLevels, topType);
+        return new AnalysisDto.AnalysisDtoResponse(totalTodos, completedTodos, totalRetrospect, topGoods, topBads,achievements,understandingLevels, studyTypes);
     }
 
     @Transactional
@@ -284,6 +286,9 @@ public class AnalysisService {
             topType.add(new AnalysisDto.StudyType("Other", otherPercentage));
         }
 
+        AnalysisDto.StudyTypes studyTypes = new AnalysisDto.StudyTypes((int) totalTypeCount, topType);
+
+
         // 수행도
         List<AnalysisDto.Achievement> achievements = Arrays.stream(DayOfWeek.values()) // 요일 순회
                 .map(day -> {
@@ -310,7 +315,7 @@ public class AnalysisService {
                 })
                 .collect(Collectors.toList());
 
-        return new AnalysisDto.AnalysisDtoResponse(totalTodos, completedTodos, totalRetrospect, topGoods, topBads, achievements, understandingLevels, topType);
+        return new AnalysisDto.AnalysisDtoResponse(totalTodos, completedTodos, totalRetrospect, topGoods, topBads, achievements, understandingLevels, studyTypes);
     }
 
 }

@@ -18,7 +18,7 @@ public class AnalysisDto {
         private List<Bad> bads;
         private List<Achievement> achievements;
         private List<UnderstandingLevel> understandingLevels;
-        private List<StudyType> types;
+        private StudyTypes types;
         //private List<Improvement>Improvements;
     }
 
@@ -51,6 +51,16 @@ public class AnalysisDto {
         public Achievement(String day, int percentage) {
             this.day = day;
             this.percentage = percentage;
+        }
+    }
+    @Data
+    public static class StudyTypes {
+        private int totalType;
+        private List<StudyType> type;
+
+        public StudyTypes(int totalType, List<StudyType> type) {
+            this.totalType = totalType;
+            this.type = type;
         }
     }
     @Data
