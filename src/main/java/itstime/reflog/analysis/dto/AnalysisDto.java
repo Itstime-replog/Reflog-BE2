@@ -22,56 +22,50 @@ public class AnalysisDto {
         //private List<Improvement>Improvements;
     }
 
-    @Data
+    @Builder
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
     public static class Good {
         private String content;
         private int percentage;
-
-        public Good(String content, int percentage) {
-            this.content = content;
-            this.percentage = percentage;
-        }
-
     }
-    @Data
+
+    @Builder
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
     public static class Bad {
         private String content;
         private int percentage;
-
-        public Bad(String content, int percentage) {
-            this.content = content;
-            this.percentage = percentage;
-        }
     }
-    @Data
+
+    @Builder
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
     public static class Achievement {
         private String day;
         private int percentage;
-
-        public Achievement(String day, int percentage) {
-            this.day = day;
-            this.percentage = percentage;
-        }
     }
-    @Data
+
+    @Builder
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
     public static class StudyTypes {
         private int totalType;
         private List<StudyType> type;
-
-        public StudyTypes(int totalType, List<StudyType> type) {
-            this.totalType = totalType;
-            this.type = type;
-        }
     }
-    @Data
+
+    @Builder
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
     public static class StudyType {
         private String type;
         private int percentage;
 
-        public StudyType(String type, int percentage) {
-            this.type = type;
-            this.percentage = percentage;
-        }
     }
     /*public static class Improvement {
         private String content;
@@ -83,14 +77,12 @@ public class AnalysisDto {
         }
     }*/
 
-    @Data
+    @Builder
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
     public static class UnderstandingLevel {
         private String day;
         private int percentage;
-
-        public UnderstandingLevel(String day, int percentage) {
-            this.day = day;
-            this.percentage = percentage;
-        }
     }
 }
