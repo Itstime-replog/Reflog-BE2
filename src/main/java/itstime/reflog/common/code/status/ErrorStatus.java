@@ -37,7 +37,11 @@ public enum ErrorStatus implements BaseErrorCode {
 	_SCHEDULE_UPDATE_NOT_ALLOWED(HttpStatus.FORBIDDEN, "TODO403", "일정등록을 수정할 권한이 없습니다."),
 
 	// Retrospect 관련 에러
-	_RETROSPECT_NOT_FOUND(HttpStatus.NOT_FOUND, "RETROSPECT404", "해당 회고일지를 찾을 수 없습니다.");
+	_RETROSPECT_NOT_FOUND(HttpStatus.NOT_FOUND, "RETROSPECT404", "해당 회고일지를 찾을 수 없습니다."),
+
+	_ANALYSIS_NOT_FOUND(HttpStatus.NOT_FOUND, "ANALYSIS404", "분석보고서를 찾을 수 없습니다."),
+	_ANALYSIS_NOT_ALREADY(HttpStatus.NOT_FOUND, "ANALYSIS400", "아직 분석보고서가 생성되지 않았습니다.");
+			;
 
 	private final HttpStatus httpStatus;
 	private final String code;
