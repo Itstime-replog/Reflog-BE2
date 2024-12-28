@@ -11,4 +11,5 @@ import itstime.reflog.todolist.domain.Todolist;
 public interface TodolistRepository extends JpaRepository<Todolist, Long> {
 
 	List<Todolist> findByMemberAndCreatedDate(Member member, LocalDate date);
+	List<Todolist> findByMember(Member member);
 }
