@@ -41,8 +41,7 @@ public class AnalysisService {
     private final OpenAiService openAiService;
     private final ImprovementRepository improvementRepository;
 
-    //@Scheduled(cron = "0 0 0 * * MON")
-    @Scheduled(cron = "0 17 0 * * SUN")
+    @Scheduled(cron = "0 0 0 * * MON")
     @Transactional
     public void runWeeklyAnalysis() {
         List<Member> members = memberRepository.findAll();
