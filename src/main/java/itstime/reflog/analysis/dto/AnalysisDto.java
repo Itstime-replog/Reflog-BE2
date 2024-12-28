@@ -28,7 +28,7 @@ public class AnalysisDto {
         private List<BadResponse> bads;
         private List<StudyTypeResponse> studyTypes;
         private LocalDate startDate;
-        //private List<Improvement>Improvements;
+        private List<String>improvements;
 
         public static AnalysisDto.AnalysisDtoResponse fromEntity(WeeklyAnalysis analysis) {
             return AnalysisDtoResponse.builder()
@@ -119,52 +119,4 @@ public class AnalysisDto {
         private int percentage;  // 비율
     }
 
-
-
-
-    /*@Builder
-    @Getter
-    @NoArgsConstructor
-    @AllArgsConstructor
-    public static class Achievement {
-        private String day;
-        private int percentage;
-    }
-
-    @Builder
-    @Getter
-    @NoArgsConstructor
-    @AllArgsConstructor
-    public static class StudyTypes {
-        private int totalType;
-        private List<StudyType> type;
-    }
-
-    @Builder
-    @Getter
-    @NoArgsConstructor
-    @AllArgsConstructor
-    public static class StudyType {
-        private String type;
-        private int percentage;
-
-    }
-    /*public static class Improvement {
-        private String content;
-        private int rank;
-
-        public Improvement(String content, int rank) {
-            this.content = content;
-            this.rank = rank;
-        }
-    }
-
-    @Builder
-    @Getter
-    @NoArgsConstructor
-    @AllArgsConstructor
-    public static class UnderstandingLevel {
-        private String day;
-        private int percentage;
-    }*/
 }

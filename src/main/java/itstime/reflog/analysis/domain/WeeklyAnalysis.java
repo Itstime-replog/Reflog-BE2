@@ -38,6 +38,9 @@ public class WeeklyAnalysis {
     private long totalStudyType;
 
     @OneToMany(mappedBy = "weeklyAnalysis", cascade = CascadeType.ALL)
+    List<Improvement> improvements;
+
+    @OneToMany(mappedBy = "weeklyAnalysis", cascade = CascadeType.ALL)
     List<AnalysisGoodBad> analysisGoodsBads;
 
     @OneToMany(mappedBy = "weeklyAnalysis", cascade = CascadeType.ALL)

@@ -1,14 +1,9 @@
 package itstime.reflog.analysis.service;
 
-import itstime.reflog.analysis.domain.AnalysisGoodBad;
-import itstime.reflog.analysis.domain.AnalysisStudyType;
-import itstime.reflog.analysis.domain.AnalysisUnderstandingAchievement;
-import itstime.reflog.analysis.domain.WeeklyAnalysis;
+import itstime.reflog.ai.service.OpenAiService;
+import itstime.reflog.analysis.domain.*;
 import itstime.reflog.analysis.dto.AnalysisDto;
-import itstime.reflog.analysis.repository.AnalysisGoodBadRepository;
-import itstime.reflog.analysis.repository.AnalysisRepository;
-import itstime.reflog.analysis.repository.AnalysisStudyTypeRepository;
-import itstime.reflog.analysis.repository.AnalysisUnderstandingAchievementRepository;
+import itstime.reflog.analysis.repository.*;
 import itstime.reflog.common.code.status.ErrorStatus;
 import itstime.reflog.common.exception.GeneralException;
 import itstime.reflog.member.domain.Member;
@@ -43,8 +38,11 @@ public class AnalysisService {
     private final AnalysisGoodBadRepository analysisGoodBadRepository;
     private final AnalysisStudyTypeRepository analysisStudyTypeRepository;
     private final AnalysisUnderstandingAchievementRepository analysisUnderstandingAchievementRepository;
+    private final OpenAiService openAiService;
+    private final ImprovementRepository improvementRepository;
 
-    @Scheduled(cron = "0 0 0 * * MON")  // 매주 월요일 자정에 실행
+    //@Scheduled(cron = "0 0 0 * * MON")
+    @Scheduled(cron = "0 17 0 * * SUN")
     @Transactional
     public void runWeeklyAnalysis() {
         List<Member> members = memberRepository.findAll();
@@ -134,6 +132,23 @@ public class AnalysisService {
             understandingLevels.add(new AnalysisDto.UnderstandingLevel(dayOfWeek.toString(), (int) avgUnderstanding));
         }
 
+        List<String> feedbacks = weeklyRetrospect.stream()
+                .map(Retrospect::getActionPlan)
+                .toList();
+
+        // Extract keywords using OpenAiService
+        List<String> keywords = openAiService.extractKeywords(feedbacks);
+
+        // Get the top 3 keywords
+        Map<String, Long> keywordFrequency = keywords.stream()
+                .collect(Collectors.groupingBy(keyword -> keyword, Collectors.counting()));
+
+        List<String> topKeywords = keywordFrequency.entrySet().stream()
+                .sorted(Map.Entry.<String, Long>comparingByValue().reversed())
+                .limit(5)
+                .map(Map.Entry::getKey)
+                .toList();
+
         // 엔티티 저장
         WeeklyAnalysis weeklyAnalysis = WeeklyAnalysis.builder()
                 .member(member)
@@ -196,6 +211,14 @@ public class AnalysisService {
                         .build())
                 .collect(Collectors.toList());
         analysisUnderstandingAchievementRepository.saveAll(analysisUnderstandings);
+
+        List<Improvement> improvements = topKeywords.stream()
+                .map(improvement -> Improvement.builder()
+                        .content(improvement)
+                        .weeklyAnalysis(weeklyAnalysis) // 연관관계 설정
+                        .build())
+                .collect(Collectors.toList());
+        improvementRepository.saveAll(improvements);
     }
 
     @Transactional
