@@ -1,0 +1,52 @@
+package itstime.reflog.community.domain;
+
+import java.time.LocalDateTime;
+import java.util.List;
+
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.CollectionTable;
+import jakarta.persistence.Column;
+import jakarta.persistence.ElementCollection;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.Lob;
+import jakarta.persistence.OneToMany;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+
+@Entity
+@Getter
+@Builder
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor
+public class Community {
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private Long id;
+
+	private String title; // 제목
+
+	private String content; // 게시글 내용
+
+	@ElementCollection
+	@CollectionTable(name = "community_post_types", joinColumns = @JoinColumn(name = "community_id"))
+	@Column(name = "post_type")
+	private List<String> postTypes; // 글 유형 (최대 2개)
+
+	@ElementCollection
+	@CollectionTable(name = "community_learning_types", joinColumns = @JoinColumn(name = "community_id"))
+	@Column(name = "learning_type")
+	private List<String> learningTypes; // 학습 유형 (최대 2개)
+
+	@OneToMany(mappedBy = "community", cascade = CascadeType.ALL, orphanRemoval = true)
+	private List<UploadedFile> uploadedFiles; // 업로드된 파일들 (PDF 및 이미지)
+
+	private LocalDateTime createdAt; // 생성일
+	private LocalDateTime updatedAt; // 수정일
+}
