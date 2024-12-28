@@ -23,6 +23,10 @@ public enum ErrorStatus implements BaseErrorCode {
 	_INVALID_MEMBER_CREDENTIALS(HttpStatus.UNAUTHORIZED, "MEMBER401", "잘못된 인증 정보입니다."),
 	_MEMBER_ACCESS_DENIED(HttpStatus.FORBIDDEN, "MEMBER403", "해당 회원은 권한이 없습니다."),
 
+	// MyPage 관련 에러
+	_MYPAGE_NOT_FOUND(HttpStatus.NOT_FOUND, "MYPAGE404", "해당 마이페이지를 찾을 수 없습니다."),
+
+
 	// TodoList 관련 에러
 	_TODO_NOT_FOUND(HttpStatus.NOT_FOUND, "TODO404", "해당 투두리스트를 찾을 수 없습니다."),
 	_TODO_UPDATE_NOT_ALLOWED(HttpStatus.FORBIDDEN, "TODO403", "투두리스트를 수정할 권한이 없습니다."),
