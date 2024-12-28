@@ -2,6 +2,7 @@ package itstime.reflog.member.domain;
 
 import java.util.List;
 
+import itstime.reflog.community.domain.Community;
 import itstime.reflog.goal.domain.DailyGoal;
 import itstime.reflog.schedule.domain.Schedule;
 import itstime.reflog.todolist.domain.Todolist;
@@ -57,6 +58,9 @@ public class Member {
 
 	@OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
 	private List<Schedule> schedules;
+
+	@OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
+	private List<Community> communities;
 
 	@CreationTimestamp
 	@Column(name = "created_at", nullable = false, length = 20)

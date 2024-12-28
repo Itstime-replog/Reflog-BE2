@@ -3,16 +3,19 @@ package itstime.reflog.community.domain;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import itstime.reflog.member.domain.Member;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.CollectionTable;
 import jakarta.persistence.Column;
 import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.Lob;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -46,6 +49,10 @@ public class Community {
 
 	@OneToMany(mappedBy = "community", cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<UploadedFile> uploadedFiles; // 업로드된 파일들 (PDF 및 이미지)
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "member_id", nullable = false)
+	private Member member;
 
 	private LocalDateTime createdAt; // 생성일
 	private LocalDateTime updatedAt; // 수정일
