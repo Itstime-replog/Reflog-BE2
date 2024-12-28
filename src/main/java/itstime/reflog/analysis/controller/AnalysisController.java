@@ -27,7 +27,7 @@ public class AnalysisController {
 
     @Operation(
             summary = "주간 분석 보고서 조회 API",
-            description = "특정 날짜에 해당하는 주간 분석 보고서를 조회합니다. 개선점 키워드 부분은 아직 없습니다.",
+            description = "매주 월요일 날짜에 해당하는 주간 분석 보고서를 조회합니다. 개선점 키워드 부분은 아직 없습니다. 12/16 요청시 16~22에 해당하는 데이터 반환",
             responses = {
                     @ApiResponse(
                             responseCode = "200",
@@ -55,7 +55,7 @@ public class AnalysisController {
         AnalysisDto.AnalysisDtoResponse analysis = analysisService.getWeeklyAnalysisReport(memberId, date);
         return ResponseEntity.ok(CommonApiResponse.onSuccess(analysis));
     }
-    @Operation(
+    /*@Operation(
             summary = "월간 분석 보고서 조회 API",
             description = "특정 날짜에 해당하는 월간 분석 보고서를 조회합니다. 개선점 키워드 부분은 아직 없습니다.",
             responses = {
@@ -84,5 +84,5 @@ public class AnalysisController {
     ){
         AnalysisDto.AnalysisDtoResponse analysis = analysisService.getMonthlyAnalysisReport(memberId, month);
         return ResponseEntity.ok(CommonApiResponse.onSuccess(analysis));
-    }
+    }*/
 }

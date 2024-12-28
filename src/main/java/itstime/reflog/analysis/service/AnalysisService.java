@@ -1,18 +1,26 @@
 package itstime.reflog.analysis.service;
 
+import itstime.reflog.analysis.domain.AnalysisGoodBad;
+import itstime.reflog.analysis.domain.AnalysisStudyType;
+import itstime.reflog.analysis.domain.AnalysisUnderstandingAchievement;
+import itstime.reflog.analysis.domain.WeeklyAnalysis;
 import itstime.reflog.analysis.dto.AnalysisDto;
+import itstime.reflog.analysis.repository.AnalysisGoodBadRepository;
+import itstime.reflog.analysis.repository.AnalysisRepository;
+import itstime.reflog.analysis.repository.AnalysisStudyTypeRepository;
+import itstime.reflog.analysis.repository.AnalysisUnderstandingAchievementRepository;
 import itstime.reflog.common.code.status.ErrorStatus;
 import itstime.reflog.common.exception.GeneralException;
 import itstime.reflog.member.domain.Member;
 import itstime.reflog.member.repository.MemberRepository;
-import itstime.reflog.retrospect.domain.Bad;
-import itstime.reflog.retrospect.domain.Good;
 import itstime.reflog.retrospect.domain.Retrospect;
+import itstime.reflog.retrospect.dto.RetrospectDto;
 import itstime.reflog.retrospect.repository.RetrospectRepository;
 import itstime.reflog.todolist.domain.Todolist;
 import itstime.reflog.todolist.repository.TodolistRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.time.DayOfWeek;
@@ -31,38 +39,36 @@ public class AnalysisService {
     private final TodolistRepository todolistRepository;
     private final MemberRepository memberRepository;
     private final RetrospectRepository retrospectRepository;
+    private final AnalysisRepository analysisRepository;
+    private final AnalysisGoodBadRepository analysisGoodBadRepository;
+    private final AnalysisStudyTypeRepository analysisStudyTypeRepository;
+    private final AnalysisUnderstandingAchievementRepository analysisUnderstandingAchievementRepository;
+
+    @Scheduled(cron = "0 0 0 * * MON")  // 매주 월요일 자정에 실행
+    @Transactional
+    public void runWeeklyAnalysis() {
+        List<Member> members = memberRepository.findAll();
+        members.forEach(member -> {
+            createWeeklyAnalysis(member.getId());
+        });
+    }
 
     @Transactional
-    public AnalysisDto.AnalysisDtoResponse getWeeklyAnalysisReport(Long memberId, LocalDate date){
-
-        //현재 날짜보다 이후 날짜 조회시 예외 발생
-        LocalDate today = LocalDate.now();
-        if (date.isAfter(today)) {
-            throw new GeneralException(ErrorStatus._ANALYSIS_NOT_FOUND);
-        }
-
-        //일주일이 지나지 않은 상태에서 조회시 예외 발생
-        if (date.isAfter(today.with(DayOfWeek.MONDAY).minusDays(1))) {
-            throw new GeneralException(ErrorStatus._ANALYSIS_NOT_ALREADY);
-        }
-
+    public void createWeeklyAnalysis(Long memberId) {
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new GeneralException(ErrorStatus._MEMBER_NOT_FOUND));
 
-        //특정 날짜에 해당하는 주 데이터 조회
-        LocalDate thisMonday = date.with(DayOfWeek.MONDAY);
-        LocalDate nextMonday = thisMonday.plusDays(7);
+        LocalDate today = LocalDate.now();
+        LocalDate lastMonday = today.with(DayOfWeek.MONDAY).minusWeeks(1);
+        LocalDate thisMonday = today.with(DayOfWeek.MONDAY);
 
-        //투두
-        List<Todolist> weeklyTodos = calculateTodo(thisMonday, nextMonday,member);
+        // 투두, 회고, 기타 계산 수행
+        List<Todolist> weeklyTodos = calculateTodo(lastMonday, thisMonday, member);
+        List<Retrospect> weeklyRetrospect = calculateRetrospect(lastMonday, thisMonday, member);
 
+        // 총 수행도와 완료 수 계산
         int totalTodos = weeklyTodos.size();
-        int completedTodos = (int) weeklyTodos.stream()
-                .filter(todos -> todos.isStatus())
-                .count();
-
-        //회고
-        List<Retrospect> weeklyRetrospect = calculateRetrospect(thisMonday, nextMonday, member);
+        int completedTodos = (int) weeklyTodos.stream().filter(Todolist::isStatus).count();
 
         //회고 수
         int totalRetrospect = weeklyRetrospect.size();
@@ -81,18 +87,18 @@ public class AnalysisService {
                 .mapToLong(l->l).sum();
 
         //잘한점
-        List<AnalysisDto.Good> topGoods = calculateSortedGoodBadAndType(frequencyGood,
-                entry -> new AnalysisDto.Good(entry.getKey(),
+        List<AnalysisDto.GoodResponse> topGoods = calculateSortedGoodBadAndType(frequencyGood,
+                entry -> new AnalysisDto.GoodResponse(entry.getKey(),
                         (int) Math.round((double) entry.getValue() / totalGoodCount * 100)),false);
 
         //부족한점
-        List<AnalysisDto.Bad> topBads = calculateSortedGoodBadAndType(frequencyBad,
-                entry -> new AnalysisDto.Bad(entry.getKey(),
+        List<AnalysisDto.BadResponse> topBads = calculateSortedGoodBadAndType(frequencyBad,
+                entry -> new AnalysisDto.BadResponse(entry.getKey(),
                         (int) Math.round((double) entry.getValue() / totalBadCount * 100)), false);
 
         //학습유형 가변리스트
-        List<AnalysisDto.StudyType> topType = new ArrayList<>(calculateSortedGoodBadAndType(frequencyType,
-                entry -> new AnalysisDto.StudyType(entry.getKey(),
+        List<AnalysisDto.StudyTypeResponse> topType = new ArrayList<>(calculateSortedGoodBadAndType(frequencyType,
+                entry -> new AnalysisDto.StudyTypeResponse(entry.getKey(),
                         (int) Math.round((double) entry.getValue() / totalTypeCount * 100)),true));
 
         // 학습유형 나머지 항목 처리 : 합 -> 나머지로 %
@@ -105,10 +111,8 @@ public class AnalysisService {
         //나머지항목 > 0: 리스트에 추가
         if (otherCount > 0) {
             int otherPercentage = (int) Math.round((double) otherCount / totalTypeCount * 100);
-            topType.add(new AnalysisDto.StudyType("Other", otherPercentage));
+            topType.add(new AnalysisDto.StudyTypeResponse("Other", otherPercentage));
         }
-
-        AnalysisDto.StudyTypes studyTypes = new AnalysisDto.StudyTypes((int) totalTypeCount, topType);
 
         //수행도
         List<AnalysisDto.Achievement> achievements = new ArrayList<>();
@@ -116,7 +120,7 @@ public class AnalysisService {
         List<AnalysisDto.UnderstandingLevel> understandingLevels = new ArrayList<>();
 
         // 요일 순회
-        for (LocalDate currentDate = thisMonday; currentDate.isBefore(nextMonday); currentDate = currentDate.plusDays(1)) {
+        for (LocalDate currentDate = lastMonday; currentDate.isBefore(thisMonday); currentDate = currentDate.plusDays(1)) {
 
             //요일
             DayOfWeek dayOfWeek = currentDate.getDayOfWeek();
@@ -130,105 +134,97 @@ public class AnalysisService {
             understandingLevels.add(new AnalysisDto.UnderstandingLevel(dayOfWeek.toString(), (int) avgUnderstanding));
         }
 
+        // 엔티티 저장
+        WeeklyAnalysis weeklyAnalysis = WeeklyAnalysis.builder()
+                .member(member)
+                .startDate(lastMonday)
+                .todos(totalTodos)
+                .completedTodos(completedTodos)
+                .retrospects(totalRetrospect)
+                .totalStudyType(totalTypeCount)
+                .startDate(lastMonday)
+                .build();
 
-        return new AnalysisDto.AnalysisDtoResponse(totalTodos, completedTodos, totalRetrospect, topGoods, topBads,achievements,understandingLevels, studyTypes);
+        analysisRepository.save(weeklyAnalysis);
+
+        List<AnalysisGoodBad> analysisGoods = topGoods.stream()
+                .map(good -> AnalysisGoodBad.builder()
+                        .content(good.getContent())
+                        .percentage(good.getPercentage())
+                        .type("good")
+                        .weeklyAnalysis(weeklyAnalysis) // 연관관계 설정
+                        .build())
+                .collect(Collectors.toList());
+        analysisGoodBadRepository.saveAll(analysisGoods);
+
+        List<AnalysisGoodBad> analysisBads = topBads.stream()
+                .map(bad -> AnalysisGoodBad.builder()
+                        .content(bad.getContent())
+                        .percentage(bad.getPercentage())
+                        .type("bad")
+                        .weeklyAnalysis(weeklyAnalysis) // 연관관계 설정
+                        .build())
+                .collect(Collectors.toList());
+
+        analysisGoodBadRepository.saveAll(analysisBads);
+
+        List<AnalysisStudyType> analysisStudyTypes = topType.stream()
+                .map(type -> AnalysisStudyType.builder()
+                        .type(type.getType())
+                        .percentage(type.getPercentage())
+                        .weeklyAnalysis(weeklyAnalysis) // 연관관계 설정
+                        .build())
+                .collect(Collectors.toList());
+        analysisStudyTypeRepository.saveAll(analysisStudyTypes);
+
+        List<AnalysisUnderstandingAchievement> analysisAchievements = achievements.stream()
+                .map(achievement -> AnalysisUnderstandingAchievement.builder()
+                        .day(achievement.getDay())
+                        .percentage(achievement.getPercentage())
+                        .type("achievement")
+                        .weeklyAnalysis(weeklyAnalysis) // 연관관계 설정
+                        .build())
+                .collect(Collectors.toList());
+        analysisUnderstandingAchievementRepository.saveAll(analysisAchievements);
+
+        List<AnalysisUnderstandingAchievement> analysisUnderstandings = understandingLevels.stream()
+                .map(understandingLevel -> AnalysisUnderstandingAchievement.builder()
+                        .day(understandingLevel.getDay())
+                        .percentage(understandingLevel.getPercentage())
+                        .type("understanding")
+                        .weeklyAnalysis(weeklyAnalysis) // 연관관계 설정
+                        .build())
+                .collect(Collectors.toList());
+        analysisUnderstandingAchievementRepository.saveAll(analysisUnderstandings);
     }
 
     @Transactional
-    public AnalysisDto.AnalysisDtoResponse getMonthlyAnalysisReport(Long memberId, Integer month) {
-        LocalDate today = LocalDate.now();
+    public AnalysisDto.AnalysisDtoResponse getWeeklyAnalysisReport(Long memberId, LocalDate date) {
 
-        if (month > today.getMonthValue()) {
+
+        //현재 날짜보다 이후 날짜 조회시 예외 발생
+        LocalDate today = LocalDate.now();
+        if (date.isAfter(today)) {
             throw new GeneralException(ErrorStatus._ANALYSIS_NOT_FOUND);
         }
 
-        // 이번 달의 분석은 불가능
-        if (month == today.getMonthValue() && today.getYear() == today.getYear()) {
+        //일주일이 지나지 않은 상태에서 조회시 예외 발생
+        if (date.isAfter(today.with(DayOfWeek.MONDAY).minusDays(1))) {
             throw new GeneralException(ErrorStatus._ANALYSIS_NOT_ALREADY);
         }
 
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new GeneralException(ErrorStatus._MEMBER_NOT_FOUND));
 
-        // 현재 연도를 기준으로 특정 월의 첫날과 다음 달 첫날을 계산
-        LocalDate startOfMonth = LocalDate.of(today.getYear(), month, 1);
-        LocalDate startOfNextMonth = startOfMonth.plusMonths(1);
 
-        List<Todolist> weeklyTodos = calculateTodo(startOfMonth, startOfNextMonth,member);
+        WeeklyAnalysis analysis = analysisRepository.findByMemberAndStartDate(member, date);
 
-        int totalTodos = weeklyTodos.size();
-        int completedTodos = (int) weeklyTodos.stream()
-                .filter(todos -> todos.isStatus())
-                .count();
-
-        //회고
-        List<Retrospect> monthlyRetrospect = calculateRetrospect(startOfMonth, startOfNextMonth, member);
-
-        //회고 수
-        int totalRetrospect = monthlyRetrospect.size();
-
-        //<잘한점/부족한점/학습유형,빈도수>
-        Map<String, Long> frequencyGood = calculateFrequencyGoodBadAndType(monthlyRetrospect, 1);
-        Map<String, Long> frequencyBad = calculateFrequencyGoodBadAndType(monthlyRetrospect, 2);
-        Map<String, Long> frequencyType = calculateFrequencyGoodBadAndType(monthlyRetrospect, 3);
-
-        //전체 개수
-        long totalGoodCount = frequencyGood.values().stream()
-                .mapToLong(l->l).sum();
-        long totalBadCount = frequencyBad.values().stream()
-                .mapToLong(l->l).sum();
-        long totalTypeCount = frequencyType.values().stream()
-                .mapToLong(l->l).sum();
-
-        //잘한점
-        List<AnalysisDto.Good> topGoods = calculateSortedGoodBadAndType(frequencyGood,
-                entry -> new AnalysisDto.Good(entry.getKey(),
-                        (int) Math.round((double) entry.getValue() / totalGoodCount * 100)),false);
-
-        //부족한점
-        List<AnalysisDto.Bad> topBads = calculateSortedGoodBadAndType(frequencyBad,
-                entry -> new AnalysisDto.Bad(entry.getKey(),
-                        (int) Math.round((double) entry.getValue() / totalBadCount * 100)), false);
-
-        //학습유형 가변리스트
-        List<AnalysisDto.StudyType> topType = new ArrayList<>(calculateSortedGoodBadAndType(frequencyType,
-                entry -> new AnalysisDto.StudyType(entry.getKey(),
-                        (int) Math.round((double) entry.getValue() / totalTypeCount * 100)),true));
-
-        // 학습유형 나머지 항목 처리 : 합 -> 나머지로 %
-        long otherCount = frequencyType.entrySet().stream()
-                .sorted(Map.Entry.<String, Long>comparingByValue().reversed())
-                .skip(4)  // 상위 4개를 제외
-                .mapToLong(Map.Entry::getValue)
-                .sum();
-
-        //나머지항목 > 0: 리스트에 추가
-        if (otherCount > 0) {
-            int otherPercentage = (int) Math.round((double) otherCount / totalTypeCount * 100);
-            topType.add(new AnalysisDto.StudyType("Other", otherPercentage));
+        // 분석 보고서가 없다면 예외 발생
+        if (analysis == null) {
+            throw new GeneralException(ErrorStatus._ANALYSIS_NOT_FOUND);  // 적절한 예외 처리
         }
 
-        AnalysisDto.StudyTypes studyTypes = new AnalysisDto.StudyTypes((int) totalTypeCount, topType);
-
-        //수행도
-        List<AnalysisDto.Achievement> achievements = new ArrayList<>();
-        //이해도
-        List<AnalysisDto.UnderstandingLevel> understandingLevels = new ArrayList<>();
-
-        // 요일 순회
-        for (LocalDate currentDate = startOfMonth; currentDate.isBefore(startOfNextMonth); currentDate = currentDate.plusDays(1)) {
-            //요일
-            DayOfWeek dayOfWeek = currentDate.getDayOfWeek();
-
-            // 해당 요일에 대한 수행도 평균 계산
-            double avgProgress = calculateProgressAvg(monthlyRetrospect, dayOfWeek);
-            achievements.add(new AnalysisDto.Achievement(dayOfWeek.toString(), (int) avgProgress));
-
-            // 해당 요일에 대한 이해도 평균 계산
-            double avgUnderstanding = calculateUnderstandingAvg(monthlyRetrospect, dayOfWeek);
-            understandingLevels.add(new AnalysisDto.UnderstandingLevel(dayOfWeek.toString(), (int) avgUnderstanding));
-        }
-        return new AnalysisDto.AnalysisDtoResponse(totalTodos, completedTodos, totalRetrospect, topGoods, topBads, achievements, understandingLevels, studyTypes);
+        return AnalysisDto.AnalysisDtoResponse.fromEntity(analysis);
     }
 
     private List<Todolist> calculateTodo(LocalDate start, LocalDate end, Member member){
