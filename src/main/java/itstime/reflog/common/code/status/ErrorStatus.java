@@ -42,7 +42,11 @@ public enum ErrorStatus implements BaseErrorCode {
 	//Analysis 관련 에러
 	_ANALYSIS_NOT_FOUND(HttpStatus.NOT_FOUND, "ANALYSIS404", "분석보고서를 찾을 수 없습니다."),
 	_ANALYSIS_NOT_ALREADY(HttpStatus.NOT_FOUND, "ANALYSIS400", "아직 분석보고서가 생성되지 않았습니다."),
-	;
+
+	//S3 관련 에러
+	_S3_FILE_OPERATION_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "S3_FILE_500", "S3 파일 작업 중 오류가 발생했습니다."),
+	_S3_INVALID_URL(HttpStatus.BAD_REQUEST, "S3_FILE_400", "S3 파일 URL이 잘못되었거나 존재하지 않습니다.");
+
 
 	private final HttpStatus httpStatus;
 	private final String code;
