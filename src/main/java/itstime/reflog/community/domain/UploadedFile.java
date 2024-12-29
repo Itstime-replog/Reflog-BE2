@@ -23,7 +23,6 @@ public class UploadedFile {
 	private Long id;
 
 	private String fileName; // 원본 파일 이름
-	private String fileType; // 파일 유형 (예: PDF, IMAGE)
 	private String fileUrl;  // S3 URL
 
 	@ManyToOne
