@@ -46,6 +46,8 @@ public class Member {
 
 	private String profileImageUrl;
 
+	private String email;
+
 	@OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
 	private List<Todolist> todolists;
 
