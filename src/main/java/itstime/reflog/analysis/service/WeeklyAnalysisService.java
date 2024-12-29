@@ -37,6 +37,7 @@ public class WeeklyAnalysisService {
     private final AnalysisUnderstandingAchievementRepository analysisUnderstandingAchievementRepository;
     private final OpenAiService openAiService;
     private final ImprovementRepository improvementRepository;
+    private final PeriodFilter periodFilter;
 
     @Transactional
     public void createWeeklyAnalysis(Long memberId) {
@@ -48,8 +49,8 @@ public class WeeklyAnalysisService {
         LocalDate thisMonday = today.with(DayOfWeek.MONDAY);
 
         // 투두, 회고, 기타 계산 수행
-        List<Todolist> weeklyTodos = calculateTodo(lastMonday, thisMonday, member);
-        List<Retrospect> weeklyRetrospect = calculateRetrospect(lastMonday, thisMonday, member);
+        List<Todolist> weeklyTodos = periodFilter.calculateTodo(lastMonday, thisMonday, member);
+        List<Retrospect> weeklyRetrospect = periodFilter.calculateRetrospect(lastMonday, thisMonday, member);
 
         // 총 수행도와 완료 수 계산
         int totalTodos = weeklyTodos.size();
@@ -235,23 +236,6 @@ public class WeeklyAnalysisService {
         return AnalysisDto.AnalysisDtoResponse.fromEntity(analysis);
     }
 
-    private List<Todolist> calculateTodo(LocalDate start, LocalDate end, Member member){
-        return todolistRepository.findByMember(member).stream()
-                .filter(todo ->
-                        !todo.getCreatedDate().isBefore(start) &&
-                                todo.getCreatedDate().isBefore(end)
-                )
-                .toList();
-    }
-
-    private List<Retrospect> calculateRetrospect(LocalDate start, LocalDate end, Member member){
-        return retrospectRepository.findByMember(member).stream()
-                .filter(retrospect ->
-                        !retrospect.getCreatedDate().isBefore(start) &&
-                                retrospect.getCreatedDate().isBefore(end)
-                )
-                .toList();
-    }
 
     private Map<String, Long> calculateFrequencyGoodBadAndType(List<Retrospect> retrospects, int badOrGoodOrType) {
         return switch (badOrGoodOrType) {
