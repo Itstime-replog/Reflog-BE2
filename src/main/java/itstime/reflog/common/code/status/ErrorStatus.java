@@ -26,6 +26,11 @@ public enum ErrorStatus implements BaseErrorCode {
 	// MyPage 관련 에러
 	_MYPAGE_NOT_FOUND(HttpStatus.NOT_FOUND, "MYPAGE404", "해당 마이페이지를 찾을 수 없습니다."),
 
+	// mission 관련 에러
+	_MISSION_NOT_FOUND(HttpStatus.NOT_FOUND, "MISSION404", "해당 미션을 찾을 수 없습니다."),
+
+	// badge 관련 에러
+	_BADGE_NOT_FOUND(HttpStatus.NOT_FOUND, "BADGE404", "해당 배지를 찾을 수 없습니다."),
 
 	// TodoList 관련 에러
 	_TODO_NOT_FOUND(HttpStatus.NOT_FOUND, "TODO404", "해당 투두리스트를 찾을 수 없습니다."),
