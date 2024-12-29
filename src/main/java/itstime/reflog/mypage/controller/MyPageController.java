@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.*;
 @Tag(name = "MYPAGE API", description = "마이페이지에 대한 API입니다.")
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/v1/plan/mypage")
+@RequestMapping("/api/v1/mypage")
 public class MyPageController {
 
     private final MyPageService myPageService;
