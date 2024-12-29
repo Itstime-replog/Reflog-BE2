@@ -56,4 +56,12 @@ public class Community {
 
 	private LocalDateTime createdAt; // 생성일
 	private LocalDateTime updatedAt; // 수정일
+
+	public void update(String title, String content, List<String> postTypes, List<String> learningTypes) {
+		this.title = title;
+		this.content = content;
+		this.postTypes = postTypes;
+		this.learningTypes = learningTypes;
+		this.updatedAt = LocalDateTime.now();
+	}
 }

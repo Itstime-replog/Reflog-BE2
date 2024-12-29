@@ -4,6 +4,8 @@ import java.util.List;
 import java.util.UUID;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -42,4 +44,14 @@ public class CommunityController {
 		communityService.createCommunity(memberId, dto);
 		return ResponseEntity.ok(CommonApiResponse.onSuccess(null));
 	}
+
+	@PatchMapping
+	public ResponseEntity<CommonApiResponse<Void>> updateCommunity(
+		@RequestParam Long communityId,
+		@RequestBody CommunityDto.CommunitySaveOrUpdateRequest dto) {
+		communityService.updateCommunity(communityId, dto);
+		return ResponseEntity.ok(CommonApiResponse.onSuccess(null));
+	}
+
+
 }

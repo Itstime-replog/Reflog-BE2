@@ -1,6 +1,7 @@
 package itstime.reflog.community.service;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -63,6 +64,45 @@ public class CommunityService {
 			}
 		});
 
+		communityRepository.save(community);
+	}
+
+	@Transactional
+	public void updateCommunity(Long communityId, CommunityDto.CommunitySaveOrUpdateRequest dto) {
+		// 1. Community 조회
+		Community community = communityRepository.findById(communityId)
+			.orElseThrow(() -> new GeneralException(ErrorStatus._COMMUNITY_NOT_FOUND));
+
+		// 2. 기존 파일 제거 및 새 파일 처리
+		List<UploadedFile> existingFiles = uploadedFileRepository.findByCommunityId(communityId);
+		existingFiles.forEach(file -> uploadedFileRepository.delete(file));
+
+		// 새 파일 처리
+		dto.getFileUrls().forEach(tempUrl -> {
+			try {
+				// S3 파일 이동
+				String fileKey = amazonS3Manager.extractFileKeyFromUrl(tempUrl);
+				String newKey = fileKey.replace("temporary/", "community/");
+				amazonS3Manager.moveFile(fileKey, newKey);
+
+				// 새 파일 정보 저장
+				UploadedFile uploadedFile = UploadedFile.builder()
+					.fileName(newKey.substring(newKey.lastIndexOf("/") + 1))
+					.fileUrl(amazonS3Manager.getFileUrl(newKey))
+					.community(community)
+					.build();
+				uploadedFileRepository.save(uploadedFile);
+			} catch (AmazonS3Exception e) {
+				throw new GeneralException(ErrorStatus._S3_INVALID_URL);
+			} catch (Exception e) {
+				throw new GeneralException(ErrorStatus._S3_FILE_OPERATION_FAILED);
+			}
+		});
+
+		// 3. Community 업데이트
+		community.update(dto.getTitle(), dto.getContent(), dto.getPostTypes(), dto.getLearningTypes());
+
+		// 4. 저장
 		communityRepository.save(community);
 	}
 }
