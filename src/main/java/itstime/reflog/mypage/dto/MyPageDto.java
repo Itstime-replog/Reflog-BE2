@@ -31,11 +31,4 @@ public class MyPageDto {
         private String nickname;
         private String email;
     }
-
-
-    @Getter
-    @AllArgsConstructor
-    public static class MyPageMissionResponse {
-
-    }
 }
