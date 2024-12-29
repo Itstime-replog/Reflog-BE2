@@ -37,6 +37,8 @@ public class AnalysisDto {
                     .retrospects(analysis.getRetrospects())
                     .totalStudyTypes(analysis.getTotalStudyType())
                     .startDate(analysis.getStartDate())
+                    .improvements(analysis.getImprovements().stream().map(content ->
+                            content.getContent()).toList())
                     .goods(
                             analysis.getAnalysisGoodsBads().stream()
                                     .filter(goodBad -> "good".equals(goodBad.getType()))

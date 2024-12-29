@@ -9,9 +9,7 @@ import itstime.reflog.common.exception.GeneralException;
 import itstime.reflog.member.domain.Member;
 import itstime.reflog.member.repository.MemberRepository;
 import itstime.reflog.retrospect.domain.Retrospect;
-import itstime.reflog.retrospect.repository.RetrospectRepository;
 import itstime.reflog.todolist.domain.Todolist;
-import itstime.reflog.todolist.repository.TodolistRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -28,9 +26,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class WeeklyAnalysisService {
 
-    private final TodolistRepository todolistRepository;
     private final MemberRepository memberRepository;
-    private final RetrospectRepository retrospectRepository;
     private final AnalysisRepository analysisRepository;
     private final AnalysisGoodBadRepository analysisGoodBadRepository;
     private final AnalysisStudyTypeRepository analysisStudyTypeRepository;
@@ -210,7 +206,6 @@ public class WeeklyAnalysisService {
     @Transactional
     public AnalysisDto.AnalysisDtoResponse getWeeklyAnalysisReport(Long memberId, LocalDate date) {
 
-
         //현재 날짜보다 이후 날짜 조회시 예외 발생
         LocalDate today = LocalDate.now();
         if (date.isAfter(today)) {
@@ -224,7 +219,6 @@ public class WeeklyAnalysisService {
 
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new GeneralException(ErrorStatus._MEMBER_NOT_FOUND));
-
 
         WeeklyAnalysis analysis = analysisRepository.findByMemberAndStartDate(member, date);
 
