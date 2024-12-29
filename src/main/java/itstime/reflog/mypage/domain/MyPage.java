@@ -1,9 +1,13 @@
 package itstime.reflog.mypage.domain;
 
 import itstime.reflog.member.domain.Member;
+import itstime.reflog.mission.domain.UserBadge;
+import itstime.reflog.mission.domain.UserMission;
 import itstime.reflog.mypage.dto.MyPageDto;
 import jakarta.persistence.*;
 import lombok.*;
+
+import java.util.List;
 
 @Entity
 @Getter
@@ -22,6 +26,12 @@ public class MyPage {
 
     @Column(nullable = false)
     private String email;
+
+    @OneToMany(mappedBy = "myPage", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<UserBadge> userBadges;
+
+    @OneToMany(mappedBy = "myPage", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<UserMission> userMissions;
 
     @OneToOne
     @JoinColumn(name = "member_id", nullable = false)
