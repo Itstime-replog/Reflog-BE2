@@ -4,6 +4,7 @@ import itstime.reflog.common.code.status.ErrorStatus;
 import itstime.reflog.common.exception.GeneralException;
 import itstime.reflog.member.domain.Member;
 import itstime.reflog.member.repository.MemberRepository;
+import itstime.reflog.mission.service.MissionService;
 import itstime.reflog.mypage.domain.MyPage;
 import itstime.reflog.mypage.dto.MyPageDto;
 import itstime.reflog.mypage.repository.MyPageRepository;
@@ -11,12 +12,16 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import static itstime.reflog.mission.domain.Badge.FIRST_MEETING;
+
 @Service
 @RequiredArgsConstructor
 public class MyPageService {
 
     private final MyPageRepository myPageRepository;
     private final MemberRepository memberRepository;
+    private final InitializationService initializationService;
+    private final MissionService missionService;
 
     @Transactional
     public MyPageDto.MyPageInfoResponse getMyInformation(Long memberId) {
@@ -43,6 +48,11 @@ public class MyPageService {
                 .build();
 
         myPageRepository.save(myPage);
+        myPageRepository.flush();
+
+        initializationService.initializeForNewMember(myPage);
+
+        missionService.incrementMissionProgress(memberId, FIRST_MEETING);
     }
 
     @Transactional
