@@ -2,6 +2,7 @@ package itstime.reflog.member.domain;
 
 import java.util.List;
 
+import itstime.reflog.community.domain.Community;
 import itstime.reflog.goal.domain.DailyGoal;
 import itstime.reflog.mypage.domain.MyPage;
 import itstime.reflog.schedule.domain.Schedule;
@@ -52,6 +53,9 @@ public class Member {
 
 	@OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
 	private List<Schedule> schedules;
+
+	@OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
+	private List<Community> communities;
 
 	@OneToOne(mappedBy = "member", cascade = CascadeType.ALL)
 	private MyPage myPage;
