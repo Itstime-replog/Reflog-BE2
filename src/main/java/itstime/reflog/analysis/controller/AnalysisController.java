@@ -6,7 +6,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import itstime.reflog.analysis.dto.AnalysisDto;
-import itstime.reflog.analysis.service.AnalysisService;
+import itstime.reflog.analysis.service.WeeklyAnalysisService;
 import itstime.reflog.common.CommonApiResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -23,11 +23,11 @@ import java.time.LocalDate;
 @RequiredArgsConstructor
 @RequestMapping("/api/v1")
 public class AnalysisController {
-    private final AnalysisService analysisService;
+    private final WeeklyAnalysisService analysisService;
 
     @Operation(
             summary = "주간 분석 보고서 조회 API",
-            description = "매주 월요일 날짜에 해당하는 주간 분석 보고서를 조회합니다. 개선점 키워드 부분은 아직 없습니다. 12/16 요청시 16~22에 해당하는 데이터 반환",
+            description = "매주 월요일 날짜에 해당하는 주간 분석 보고서를 조회합니다. 개선점 키워드는 비율 높은순으로 정렬되어있습니다. 12/16 요청시 16~22에 해당하는 데이터 반환",
             responses = {
                     @ApiResponse(
                             responseCode = "200",
