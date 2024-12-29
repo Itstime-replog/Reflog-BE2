@@ -105,4 +105,28 @@ public class CommunityService {
 		// 4. 저장
 		communityRepository.save(community);
 	}
+
+	@Transactional
+	public void deleteCommunity(Long communityId) {
+		// 1. Community 조회
+		Community community = communityRepository.findById(communityId)
+			.orElseThrow(() -> new GeneralException(ErrorStatus._COMMUNITY_NOT_FOUND));
+
+		// 2. 관련된 파일 삭제
+		List<UploadedFile> files = uploadedFileRepository.findByCommunityId(communityId);
+		files.forEach(file -> {
+			try {
+				// S3에서 파일 삭제 (fileUrl 바로 사용)
+				amazonS3Manager.deleteImage(file.getFileUrl());
+			} catch (AmazonS3Exception e) {
+				throw new GeneralException(ErrorStatus._S3_FILE_OPERATION_FAILED);
+			}
+		});
+
+		// 3. DB에서 파일 정보 삭제
+		uploadedFileRepository.deleteAll(files);
+
+		// 4. Community 삭제
+		communityRepository.delete(community);
+	}
 }

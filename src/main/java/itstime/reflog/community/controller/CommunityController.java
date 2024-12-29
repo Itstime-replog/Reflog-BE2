@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.UUID;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -50,6 +51,13 @@ public class CommunityController {
 		@RequestParam Long communityId,
 		@RequestBody CommunityDto.CommunitySaveOrUpdateRequest dto) {
 		communityService.updateCommunity(communityId, dto);
+		return ResponseEntity.ok(CommonApiResponse.onSuccess(null));
+	}
+
+	@DeleteMapping
+	public ResponseEntity<CommonApiResponse<Void>> deleteCommunity(
+		@RequestParam Long communityId) {
+		communityService.deleteCommunity(communityId);
 		return ResponseEntity.ok(CommonApiResponse.onSuccess(null));
 	}
 
