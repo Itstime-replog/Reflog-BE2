@@ -8,7 +8,6 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import itstime.reflog.common.CommonApiResponse;
 import itstime.reflog.mypage.dto.MyPageDto;
 import itstime.reflog.mypage.service.MyPageService;
-import itstime.reflog.schedule.dto.ScheduleDto;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -53,11 +52,11 @@ public class MyPageController {
 
     @Operation(
             summary = "마이페이지 프로필 생성 API",
-            description = "특정 회원에 해당하는 마이페이지 프로필을 조회합니다.",
+            description = "특정 회원에 해당하는 마이페이지 프로필을 생성합니다.",
             responses = {
                     @ApiResponse(
                             responseCode = "200",
-                            description = "마이페이지 프로필 조회 성공",
+                            description = "마이페이지 프로필 생성 성공",
                             content = @Content(schema = @Schema(implementation = CommonApiResponse.class))
                     ),
                     @ApiResponse(
@@ -108,6 +107,36 @@ public class MyPageController {
     ) {
         MyPageDto.MyPageProfileResponse profile = myPageService.getProfile(memberId);
         return ResponseEntity.ok(CommonApiResponse.onSuccess(profile));
+    }
+
+    @Operation(
+            summary = "마이페이지 프로필 수정 API",
+            description = "특정 회원에 해당하는 마이페이지 프로필을 수정합니다.",
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "마이페이지 프로필 수정 성공",
+                            content = @Content(schema = @Schema(implementation = CommonApiResponse.class))
+                    ),
+                    @ApiResponse(
+                            responseCode = "404",
+                            description = "해당 회원 또는 마이페이지 프로필을 찾을 수 없음",
+                            content = @Content(schema = @Schema(implementation = CommonApiResponse.class))
+                    ),
+                    @ApiResponse(
+                            responseCode = "500",
+                            description = "서버 에러",
+                            content = @Content(schema = @Schema(implementation = CommonApiResponse.class))
+                    )
+            }
+    )
+    @PatchMapping("/myinfo/profile")
+    public ResponseEntity<CommonApiResponse<Void>> updateProfile(
+            @RequestParam Long memberId,
+            @Valid @RequestBody MyPageDto.MyPageProfileRequest dto
+    ) {
+        myPageService.updateProfile(memberId, dto);
+        return ResponseEntity.ok(CommonApiResponse.onSuccess(null));
     }
 
 //    @Operation(

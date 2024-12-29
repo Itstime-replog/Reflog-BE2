@@ -1,6 +1,7 @@
 package itstime.reflog.mypage.domain;
 
 import itstime.reflog.member.domain.Member;
+import itstime.reflog.mypage.dto.MyPageDto;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -25,4 +26,10 @@ public class MyPage {
     @OneToOne
     @JoinColumn(name = "member_id", nullable = false)
     private Member member;
+
+    public void update(MyPageDto.MyPageProfileRequest dto, Member member) {
+        this.nickname = dto.getNickname();
+        this.email = dto.getEmail();
+        this.member = member;
+    }
 }

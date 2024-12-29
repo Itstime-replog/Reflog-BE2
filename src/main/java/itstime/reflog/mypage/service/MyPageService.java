@@ -7,7 +7,6 @@ import itstime.reflog.member.repository.MemberRepository;
 import itstime.reflog.mypage.domain.MyPage;
 import itstime.reflog.mypage.dto.MyPageDto;
 import itstime.reflog.mypage.repository.MyPageRepository;
-import itstime.reflog.schedule.domain.Schedule;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -48,12 +47,25 @@ public class MyPageService {
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new GeneralException(ErrorStatus._MEMBER_NOT_FOUND));
 
-        MyPage myPage = myPageRepository.findById(memberId)
+        MyPage myPage = myPageRepository.findByMember(member)
                 .orElseThrow(() -> new GeneralException(ErrorStatus._MYPAGE_NOT_FOUND));
 
         return new MyPageDto.MyPageProfileResponse(
                 myPage.getNickname(),
                 myPage.getEmail()
         );
+    }
+
+    @Transactional
+    public void updateProfile(Long memberId, MyPageDto.MyPageProfileRequest dto) {
+        Member member = memberRepository.findById(memberId)
+                .orElseThrow(() -> new GeneralException(ErrorStatus._MEMBER_NOT_FOUND));
+
+        MyPage myPage = myPageRepository.findByMember(member)
+                .orElseThrow(() -> new GeneralException(ErrorStatus._MYPAGE_NOT_FOUND));
+
+        myPage.update(dto, member);
+
+        myPageRepository.save(myPage);
     }
 }
