@@ -20,7 +20,6 @@ import lombok.extern.slf4j.Slf4j;
 @RequiredArgsConstructor
 public class AmazonS3Manager {
 	private final AmazonS3 amazonS3;
-
 	private final AmazonConfig amazonConfig;
 
 	public String uploadFile(String keyName, MultipartFile file){
@@ -44,5 +43,23 @@ public class AmazonS3Manager {
 		catch(SdkClientException e){
 			log.error("Error deleting file from s3");
 		}
+	}
+
+	public void moveFile(String oldKey, String newKey) {
+		String bucketName = amazonConfig.getBucket();
+
+		amazonS3.copyObject(bucketName, oldKey, bucketName, newKey);
+		amazonS3.deleteObject(bucketName, oldKey);
+		log.debug("Moving file: oldKey={}, newKey={}", oldKey, newKey);
+	}
+
+	public String getFileUrl(String key) {
+		return amazonS3.getUrl(amazonConfig.getBucket(), key).toString();
+	}
+
+	public String extractFileKeyFromUrl(String url) {
+		String bucketName = amazonConfig.getBucket();
+		String splitStr = ".com/";
+		return url.substring(url.lastIndexOf(splitStr) + splitStr.length());
 	}
 }

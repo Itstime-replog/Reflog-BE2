@@ -5,6 +5,7 @@ import java.util.UUID;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
@@ -14,6 +15,7 @@ import org.springframework.web.multipart.MultipartFile;
 import itstime.reflog.common.CommonApiResponse;
 import itstime.reflog.community.service.CommunityService;
 import itstime.reflog.s3.AmazonS3Manager;
+import itstime.reflog.community.dto.CommunityDto;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -31,5 +33,13 @@ public class CommunityController {
 
 		// URL 반환
 		return ResponseEntity.ok(CommonApiResponse.onSuccess(fileUrl));
+	}
+
+	@PostMapping
+	public ResponseEntity<CommonApiResponse<Void>> createCommunity(
+		@RequestParam Long memberId,
+		@RequestBody CommunityDto.CommunitySaveOrUpdateRequest dto) {
+		communityService.createCommunity(memberId, dto);
+		return ResponseEntity.ok(CommonApiResponse.onSuccess(null));
 	}
 }
