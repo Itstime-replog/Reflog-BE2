@@ -11,7 +11,7 @@ public class MyPageDto {
     @Getter
     @AllArgsConstructor
     public static class MyPageInfoResponse {
-        private final String nickname;
+        private String nickname;
     }
 
     @Getter

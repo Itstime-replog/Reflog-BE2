@@ -23,8 +23,11 @@ public class MyPageService {
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new GeneralException(ErrorStatus._MEMBER_NOT_FOUND));
 
+        MyPage myPage = myPageRepository.findByMember(member)
+                .orElseThrow(() -> new GeneralException(ErrorStatus._MYPAGE_NOT_FOUND));
+
         return new MyPageDto.MyPageInfoResponse(
-                member.getName()
+                myPage.getNickname()
         );
     }
 
