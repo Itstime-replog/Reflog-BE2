@@ -20,4 +20,10 @@ public class AnalysisService {
         List<Member> members = memberRepository.findAll();
         members.forEach(member -> weeklyAnalysisService.createWeeklyAnalysis(member.getId()));
     }
+
+    @Transactional
+    public void runMonthlyAnalysis() {
+        List<Member> members = memberRepository.findAll();
+        members.forEach(member -> weeklyAnalysisService.createWeeklyAnalysis(member.getId()));
+    }
 }

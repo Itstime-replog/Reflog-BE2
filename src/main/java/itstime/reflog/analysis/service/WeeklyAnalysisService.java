@@ -19,7 +19,6 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Service
@@ -34,12 +33,14 @@ public class WeeklyAnalysisService {
     private final OpenAiService openAiService;
     private final ImprovementRepository improvementRepository;
     private final PeriodFilter periodFilter;
+    private final AnalysisCalculator analysisCalculator;
 
     @Transactional
     public void createWeeklyAnalysis(Long memberId) {
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new GeneralException(ErrorStatus._MEMBER_NOT_FOUND));
 
+        //매주 지난 월요일, 이번 월요일 계산
         LocalDate today = LocalDate.now();
         LocalDate lastMonday = today.with(DayOfWeek.MONDAY).minusWeeks(1);
         LocalDate thisMonday = today.with(DayOfWeek.MONDAY);
@@ -56,9 +57,9 @@ public class WeeklyAnalysisService {
         int totalRetrospect = weeklyRetrospect.size();
 
         //<잘한점/부족한점/학습유형,빈도수>
-        Map<String, Long> frequencyGood = calculateFrequencyGoodBadAndType(weeklyRetrospect, 1);
-        Map<String, Long> frequencyBad = calculateFrequencyGoodBadAndType(weeklyRetrospect, 2);
-        Map<String, Long> frequencyType = calculateFrequencyGoodBadAndType(weeklyRetrospect, 3);
+        Map<String, Long> frequencyGood = analysisCalculator.calculateFrequencyGoodBadAndType(weeklyRetrospect, 1);
+        Map<String, Long> frequencyBad = analysisCalculator.calculateFrequencyGoodBadAndType(weeklyRetrospect, 2);
+        Map<String, Long> frequencyType = analysisCalculator.calculateFrequencyGoodBadAndType(weeklyRetrospect, 3);
 
         //전체 개수
         long totalGoodCount = frequencyGood.values().stream()
@@ -69,17 +70,17 @@ public class WeeklyAnalysisService {
                 .mapToLong(l->l).sum();
 
         //잘한점
-        List<AnalysisDto.GoodResponse> topGoods = calculateSortedGoodBadAndType(frequencyGood,
+        List<AnalysisDto.GoodResponse> topGoods = analysisCalculator.calculateSortedGoodBadAndType(frequencyGood,
                 entry -> new AnalysisDto.GoodResponse(entry.getKey(),
                         (int) Math.round((double) entry.getValue() / totalGoodCount * 100)),false);
 
         //부족한점
-        List<AnalysisDto.BadResponse> topBads = calculateSortedGoodBadAndType(frequencyBad,
+        List<AnalysisDto.BadResponse> topBads = analysisCalculator.calculateSortedGoodBadAndType(frequencyBad,
                 entry -> new AnalysisDto.BadResponse(entry.getKey(),
                         (int) Math.round((double) entry.getValue() / totalBadCount * 100)), false);
 
         //학습유형 가변리스트
-        List<AnalysisDto.StudyTypeResponse> topType = new ArrayList<>(calculateSortedGoodBadAndType(frequencyType,
+        List<AnalysisDto.StudyTypeResponse> topType = new ArrayList<>(analysisCalculator.calculateSortedGoodBadAndType(frequencyType,
                 entry -> new AnalysisDto.StudyTypeResponse(entry.getKey(),
                         (int) Math.round((double) entry.getValue() / totalTypeCount * 100)),true));
 
@@ -108,11 +109,11 @@ public class WeeklyAnalysisService {
             DayOfWeek dayOfWeek = currentDate.getDayOfWeek();
 
             // 해당 요일에 대한 수행도 평균 계산
-            double avgProgress = calculateProgressAvg(weeklyRetrospect, dayOfWeek);
+            double avgProgress = analysisCalculator.calculateProgressAvg(weeklyRetrospect, dayOfWeek);
             achievements.add(new AnalysisDto.Achievement(dayOfWeek.toString(), (int) avgProgress));
 
             // 해당 요일에 대한 이해도 평균 계산
-            double avgUnderstanding = calculateUnderstandingAvg(weeklyRetrospect, dayOfWeek);
+            double avgUnderstanding = analysisCalculator.calculateUnderstandingAvg(weeklyRetrospect, dayOfWeek);
             understandingLevels.add(new AnalysisDto.UnderstandingLevel(dayOfWeek.toString(), (int) avgUnderstanding));
         }
 
@@ -228,59 +229,6 @@ public class WeeklyAnalysisService {
         }
 
         return AnalysisDto.AnalysisDtoResponse.fromEntity(analysis);
-    }
-
-
-    private Map<String, Long> calculateFrequencyGoodBadAndType(List<Retrospect> retrospects, int badOrGoodOrType) {
-        return switch (badOrGoodOrType) {
-            case 1 -> retrospects.stream()
-                    .flatMap(retrospect -> retrospect.getGoods().stream()
-                            .map(good -> good.getContent()))
-                    .collect(Collectors.groupingBy(good -> good, Collectors.counting()));
-            case 2 -> retrospects.stream()
-                    .flatMap(retrospect -> retrospect.getBads().stream()
-                            .map(bad -> bad.getContent()))
-                    .collect(Collectors.groupingBy(bad -> bad, Collectors.counting()));
-            case 3 -> retrospects.stream()
-                    .flatMap(retrospect -> retrospect.getStudyTypes().stream()
-                            .map(type -> type.getType()))
-                    .collect(Collectors.groupingBy(type -> type, Collectors.counting()));
-            default -> throw new IllegalArgumentException("Invalid type: " + badOrGoodOrType);
-        };
-    }
-
-    private <T> List<T> calculateSortedGoodBadAndType(Map<String,Long> frequency, Function<Map.Entry<String, Long>, T> mapper, boolean typeOrOther) {
-        if(typeOrOther) {
-            return frequency.entrySet().stream()
-                    .sorted(Map.Entry.<String, Long>comparingByValue().reversed())
-                    .limit(4) //상위 4개
-                    .map(mapper) // 제네릭 변환
-                    .toList();
-        }
-        else {
-            return frequency.entrySet().stream()
-                    .sorted(Map.Entry.<String, Long>comparingByValue().reversed())
-                    .limit(3)
-                    .map(mapper)
-                    .toList();
-        }
-    }
-
-    private double calculateProgressAvg(List<Retrospect> retrospects, DayOfWeek day) {
-        return retrospects.stream()
-                .filter(retrospect -> retrospect.getCreatedDate().getDayOfWeek() == day)
-                .mapToInt(Retrospect::getProgressLevel) // 수행도 추출
-                .average()
-                .orElse(0); // 없으면 0
-    }
-
-    // 이해도 평균 계산 (Understanding Level)
-    private double calculateUnderstandingAvg(List<Retrospect> retrospects, DayOfWeek day) {
-        return retrospects.stream()
-                .filter(retrospect -> retrospect.getCreatedDate().getDayOfWeek() == day)
-                .mapToInt(Retrospect::getUnderstandingLevel) // 이해도 추출
-                .average()
-                .orElse(0); // 없으면 0
     }
 
 }

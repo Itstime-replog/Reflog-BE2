@@ -1,5 +1,6 @@
 package itstime.reflog.analysis.domain;
 
+import itstime.reflog.analysis.domain.enums.Period;
 import itstime.reflog.member.domain.Member;
 import jakarta.persistence.*;
 import lombok.*;
@@ -48,5 +49,8 @@ public class WeeklyAnalysis {
 
     @OneToMany(mappedBy = "weeklyAnalysis", cascade = CascadeType.ALL)
     List<AnalysisStudyType> studyTypes;
+
+    @Enumerated(EnumType.STRING)
+    private Period period;
 
 }

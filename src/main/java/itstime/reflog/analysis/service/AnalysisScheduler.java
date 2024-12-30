@@ -11,8 +11,14 @@ public class AnalysisScheduler {
     private final AnalysisService analysisService;
 
     // 매주 월요일 자정 실행
-    @Scheduled(cron = "0 14 16 * * SUN")
+    @Scheduled(cron = "0 0 0 * * Mon")
     public void scheduleWeeklyAnalysis() {
         analysisService.runWeeklyAnalysis();
+    }
+
+    //매월 1일마다 실행
+    @Scheduled(cron = "0 0 0 * * Mon")
+    public void scheduleMonthlyAnalysis() {
+        analysisService.runMonthlyAnalysis();
     }
 }
