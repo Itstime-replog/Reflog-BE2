@@ -17,7 +17,7 @@ public class AnalysisScheduler {
     }
 
     //매월 1일마다 실행
-    @Scheduled(cron = "0 36 22 30 * *")
+    @Scheduled(cron = "0 0 0 1 * *")
     public void scheduleMonthlyAnalysis() {
         analysisService.runMonthlyAnalysis();
     }
