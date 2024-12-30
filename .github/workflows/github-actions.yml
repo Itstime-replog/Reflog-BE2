@@ -83,6 +83,8 @@ jobs:
             echo "AWS_ACCESSKEY=${{ secrets.AWS_ACCESSKEY }}" >> ~/deploy/.env
             echo "AWS_BUCKET=${{ secrets.AWS_BUCKET }}" >> ~/deploy/.env
             echo "AWS_SECRETKEY=${{ secrets.AWS_SECRETKEY }}" >> ~/deploy/.env
+            echo "MAIL_USERNAME=${{ secrets.MAIL_USERNAME }}" >> ~/deploy/.env
+            echo "MAIL_PASSWORD=${{ secrets.MAIL_PASSWORD }}" >> ~/deploy/.env
             
             
             sudo docker-compose -f ~/deploy/docker-compose.yml pull
