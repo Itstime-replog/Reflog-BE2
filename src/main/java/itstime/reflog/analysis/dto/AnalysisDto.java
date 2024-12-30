@@ -1,6 +1,9 @@
 package itstime.reflog.analysis.dto;
 
 import itstime.reflog.analysis.domain.WeeklyAnalysis;
+import itstime.reflog.analysis.domain.enums.GoodBad;
+import itstime.reflog.analysis.domain.enums.Period;
+import itstime.reflog.analysis.domain.enums.UnderstandingAchievement;
 import itstime.reflog.retrospect.domain.Retrospect;
 import itstime.reflog.retrospect.domain.StudyType;
 import itstime.reflog.retrospect.dto.RetrospectDto;
@@ -29,6 +32,7 @@ public class AnalysisDto {
         private List<StudyTypeResponse> studyTypes;
         private LocalDate startDate;
         private List<String>improvements;
+        private Period period;
 
         public static AnalysisDto.AnalysisDtoResponse fromEntity(WeeklyAnalysis analysis) {
             return AnalysisDtoResponse.builder()
@@ -41,31 +45,33 @@ public class AnalysisDto {
                             content.getContent()).toList())
                     .goods(
                             analysis.getAnalysisGoodsBads().stream()
-                                    .filter(goodBad -> "good".equals(goodBad.getType()))
+                                    .filter(goodBad -> goodBad.getGoodBad() == GoodBad.GOOD)
                                     .map(goodBad -> new GoodResponse(goodBad.getContent(), goodBad.getPercentage())) // 매핑 로직 추가
                                     .collect(Collectors.toList())
                     )
                     .bads(
                             analysis.getAnalysisGoodsBads().stream()
-                                    .filter(goodBad -> "bad".equals(goodBad.getType()))
+                                    .filter(goodBad -> goodBad.getGoodBad() == GoodBad.BAD)
                                     .map(goodBad -> new BadResponse(goodBad.getContent(), goodBad.getPercentage())) // 매핑 로직 추가
                                     .collect(Collectors.toList())
                     )
                     .achievements(
                             analysis.getAnalysisUnderstandingAchievements().stream()
-                                    .filter(understandingAchievement -> "achievement".equals(understandingAchievement.getType()))
+                                    .filter(understandingAchievement -> understandingAchievement.getUnderstandingAchievement() == UnderstandingAchievement.ACHIEVEMENT)
                                     .map(understandingAchievement -> new Achievement(understandingAchievement.getDay(), understandingAchievement.getPercentage())) // 매핑 로직 추가
                                     .collect(Collectors.toList())
                     )
                     .understandingLevels(
                             analysis.getAnalysisUnderstandingAchievements().stream()
-                                    .filter(understandingAchievement -> "understanding".equals(understandingAchievement.getType()))
+                                    .filter(understandingAchievement -> understandingAchievement.getUnderstandingAchievement() == UnderstandingAchievement.UNDERSTANDING)
                                     .map(understandingAchievement -> new UnderstandingLevel(understandingAchievement.getDay(), understandingAchievement.getPercentage())) // 매핑 로직 추가
                                     .collect(Collectors.toList())
                     )
                     .studyTypes(analysis.getStudyTypes().stream()
                             .map(study -> new StudyTypeResponse(study.getType(), study.getPercentage()))
                             .collect(Collectors.toList()))
+                    .period(analysis.getPeriod()
+                    )
                     .build();
         }
 

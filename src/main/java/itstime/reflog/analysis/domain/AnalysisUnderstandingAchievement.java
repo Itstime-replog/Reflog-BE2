@@ -1,5 +1,7 @@
 package itstime.reflog.analysis.domain;
 
+import itstime.reflog.analysis.domain.enums.Period;
+import itstime.reflog.analysis.domain.enums.UnderstandingAchievement;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -21,8 +23,8 @@ public class AnalysisUnderstandingAchievement {
     @Column(nullable = false)
     private int percentage;
 
-    @Column(nullable = false)
-    private String type; //understanding or achievement
+    @Enumerated(EnumType.STRING)
+    private UnderstandingAchievement understandingAchievement;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "weekly_analysis_id", nullable = false)

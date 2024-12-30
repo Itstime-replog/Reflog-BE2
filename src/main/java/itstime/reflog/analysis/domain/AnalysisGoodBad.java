@@ -1,5 +1,7 @@
 package itstime.reflog.analysis.domain;
 
+import itstime.reflog.analysis.domain.enums.GoodBad;
+import itstime.reflog.analysis.domain.enums.Period;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -20,8 +22,8 @@ public class AnalysisGoodBad {
     @Column(nullable = false)
     private int percentage;
 
-    @Column(nullable = false)
-    private String type; //good or bad
+    @Enumerated(EnumType.STRING)
+    private GoodBad goodBad;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "weekly_analysis_id", nullable = false)

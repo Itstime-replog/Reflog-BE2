@@ -14,6 +14,7 @@ public class AnalysisService {
 
     private final MemberRepository memberRepository;
     private final WeeklyAnalysisService weeklyAnalysisService;
+    private final MonthlyAnalysisService monthlyAnalysisService;
 
     @Transactional
     public void runWeeklyAnalysis() {
@@ -24,6 +25,6 @@ public class AnalysisService {
     @Transactional
     public void runMonthlyAnalysis() {
         List<Member> members = memberRepository.findAll();
-        members.forEach(member -> weeklyAnalysisService.createWeeklyAnalysis(member.getId()));
+        members.forEach(member -> monthlyAnalysisService.createMonthlyAnalysis(member.getId()));
     }
 }

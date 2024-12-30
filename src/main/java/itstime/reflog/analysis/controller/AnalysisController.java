@@ -6,6 +6,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import itstime.reflog.analysis.dto.AnalysisDto;
+import itstime.reflog.analysis.service.MonthlyAnalysisService;
 import itstime.reflog.analysis.service.WeeklyAnalysisService;
 import itstime.reflog.common.CommonApiResponse;
 import lombok.RequiredArgsConstructor;
@@ -23,7 +24,8 @@ import java.time.LocalDate;
 @RequiredArgsConstructor
 @RequestMapping("/api/v1")
 public class AnalysisController {
-    private final WeeklyAnalysisService analysisService;
+    private final WeeklyAnalysisService weeklyAnalysisService;
+    private final MonthlyAnalysisService monthlyAnalysisService;
 
     @Operation(
             summary = "주간 분석 보고서 조회 API",
@@ -52,12 +54,12 @@ public class AnalysisController {
             @RequestParam Long memberId,
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date
     ){
-        AnalysisDto.AnalysisDtoResponse analysis = analysisService.getWeeklyAnalysisReport(memberId, date);
+        AnalysisDto.AnalysisDtoResponse analysis = weeklyAnalysisService.getWeeklyAnalysisReport(memberId, date);
         return ResponseEntity.ok(CommonApiResponse.onSuccess(analysis));
     }
-    /*@Operation(
+    @Operation(
             summary = "월간 분석 보고서 조회 API",
-            description = "특정 날짜에 해당하는 월간 분석 보고서를 조회합니다. 개선점 키워드 부분은 아직 없습니다.",
+            description = "매달 1일 날짜에 해당하는 월간 분석 보고서를 조회합니다. 개선점 키워드는 비율 높은순으로 정렬되어있습니다. 12/1 요청시 1~31에 해당하는 데이터 반환",
             responses = {
                     @ApiResponse(
                             responseCode = "200",
@@ -80,9 +82,9 @@ public class AnalysisController {
     @GetMapping("/monthly-analysis")
     public ResponseEntity<CommonApiResponse<AnalysisDto.AnalysisDtoResponse>> getMonthlyAnalysis(
             @RequestParam Long memberId,
-            @RequestParam Integer month
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date
     ){
-        AnalysisDto.AnalysisDtoResponse analysis = analysisService.getMonthlyAnalysisReport(memberId, month);
+        AnalysisDto.AnalysisDtoResponse analysis = monthlyAnalysisService.getMonthlyAnalysisReport(memberId, date);
         return ResponseEntity.ok(CommonApiResponse.onSuccess(analysis));
-    }*/
+    }
 }

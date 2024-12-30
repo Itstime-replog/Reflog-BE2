@@ -2,6 +2,9 @@ package itstime.reflog.analysis.service;
 
 import itstime.reflog.ai.service.OpenAiService;
 import itstime.reflog.analysis.domain.*;
+import itstime.reflog.analysis.domain.enums.GoodBad;
+import itstime.reflog.analysis.domain.enums.Period;
+import itstime.reflog.analysis.domain.enums.UnderstandingAchievement;
 import itstime.reflog.analysis.dto.AnalysisDto;
 import itstime.reflog.analysis.repository.*;
 import itstime.reflog.common.code.status.ErrorStatus;
@@ -117,6 +120,7 @@ public class WeeklyAnalysisService {
             understandingLevels.add(new AnalysisDto.UnderstandingLevel(dayOfWeek.toString(), (int) avgUnderstanding));
         }
 
+        //AI 개선점 키워드 분석
         List<String> feedbacks = weeklyRetrospect.stream()
                 .map(Retrospect::getActionPlan)
                 .toList();
@@ -141,6 +145,7 @@ public class WeeklyAnalysisService {
                 .retrospects(totalRetrospect)
                 .totalStudyType(totalTypeCount)
                 .startDate(lastMonday)
+                .period(Period.WEEKLY)
                 .build();
 
         analysisRepository.save(weeklyAnalysis);
@@ -149,7 +154,7 @@ public class WeeklyAnalysisService {
                 .map(good -> AnalysisGoodBad.builder()
                         .content(good.getContent())
                         .percentage(good.getPercentage())
-                        .type("good")
+                        .goodBad(GoodBad.GOOD)
                         .weeklyAnalysis(weeklyAnalysis) // 연관관계 설정
                         .build())
                 .collect(Collectors.toList());
@@ -159,7 +164,7 @@ public class WeeklyAnalysisService {
                 .map(bad -> AnalysisGoodBad.builder()
                         .content(bad.getContent())
                         .percentage(bad.getPercentage())
-                        .type("bad")
+                        .goodBad(GoodBad.BAD)
                         .weeklyAnalysis(weeklyAnalysis) // 연관관계 설정
                         .build())
                 .collect(Collectors.toList());
@@ -179,7 +184,7 @@ public class WeeklyAnalysisService {
                 .map(achievement -> AnalysisUnderstandingAchievement.builder()
                         .day(achievement.getDay())
                         .percentage(achievement.getPercentage())
-                        .type("achievement")
+                        .understandingAchievement(UnderstandingAchievement.ACHIEVEMENT)
                         .weeklyAnalysis(weeklyAnalysis) // 연관관계 설정
                         .build())
                 .collect(Collectors.toList());
@@ -189,7 +194,7 @@ public class WeeklyAnalysisService {
                 .map(understandingLevel -> AnalysisUnderstandingAchievement.builder()
                         .day(understandingLevel.getDay())
                         .percentage(understandingLevel.getPercentage())
-                        .type("understanding")
+                        .understandingAchievement(UnderstandingAchievement.UNDERSTANDING)
                         .weeklyAnalysis(weeklyAnalysis) // 연관관계 설정
                         .build())
                 .collect(Collectors.toList());
