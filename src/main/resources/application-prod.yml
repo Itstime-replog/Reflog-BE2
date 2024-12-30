@@ -67,5 +67,21 @@ jwt:
   refresh-token:
     expiration-time: 604800000
 
+cloud:
+  aws:
+    s3:
+      bucket: ${AWS_BUCKET}
+    region:
+      static: ap-northeast-2
+    stack:
+      auto: false
+    credentials:
+      accessKey: ${AWS_ACCESSKEY}
+      secretKey: ${AWS_SECRETKEY}
+
+openai:
+  api:
+    key: ${OPENAI_API_KEY}
+
 server:
   port: 8080
