@@ -20,5 +20,12 @@ public interface RetrospectRepository extends JpaRepository<Retrospect, Long> {
 
     List<Retrospect> findByMember(Member member);
 
+	//회고일지에 studytype을 조인해 파라미터로 주어진 type과 동일한 회고일지 반환
 	@Query("SELECT r FROM Retrospect r JOIN r.studyTypes st WHERE st.type = :type AND r.member = :member")
-	List<Retrospect> findRetrospectsByTypeAndMember(@Param("type") String type, @Param("member") Member member);}
+	List<Retrospect> findRetrospectsByTypeAndMember(@Param("type") String type, @Param("member") Member member);
+
+	//기타는 기타:%s에 해당하는 모든 회고일지 반환
+	@Query("SELECT r FROM Retrospect r JOIN r.studyTypes st WHERE st.type LIKE :typePrefix AND r.member = :member")
+	List<Retrospect> findRetrospectsByTypePrefixAndMember(@Param("typePrefix") String typePrefix, @Param("member") Member member);
+
+}

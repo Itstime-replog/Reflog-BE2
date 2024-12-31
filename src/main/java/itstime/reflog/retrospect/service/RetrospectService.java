@@ -124,8 +124,17 @@ public class RetrospectService {
 		Member member = memberRepository.findById(memberId)
 				.orElseThrow(() -> new GeneralException(ErrorStatus._MEMBER_NOT_FOUND));
 
+		// Retrospect 조회
+		List<Retrospect> retrospects;
 
-		List<Retrospect> retrospects = retrospectRepository.findRetrospectsByTypeAndMember(category, member);
+		if ("기타".equals(category)) {
+			// "기타"인 경우 type이 "기타:"로 시작하는 데이터 조회
+			String typePrefix = "기타:%";
+			retrospects = retrospectRepository.findRetrospectsByTypePrefixAndMember(typePrefix, member);
+		} else {
+			// 일반적인 category 조회
+			retrospects = retrospectRepository.findRetrospectsByTypeAndMember(category, member);
+		}
 
 		return RetrospectDto.RetrospectCategoryResponse.fromEntity(retrospects);
 	}
