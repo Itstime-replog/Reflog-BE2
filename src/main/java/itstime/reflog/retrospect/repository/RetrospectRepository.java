@@ -3,6 +3,7 @@ package itstime.reflog.retrospect.repository;
 import java.time.LocalDate;
 import java.util.Optional;
 import itstime.reflog.member.domain.Member;
+import itstime.reflog.retrospect.domain.StudyType;
 import itstime.reflog.todolist.domain.Todolist;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -19,5 +20,5 @@ public interface RetrospectRepository extends JpaRepository<Retrospect, Long> {
 
     List<Retrospect> findByMember(Member member);
 
-	List<Retrospect> findRetrospectsByStudyTypesAndMember(String studyTypes, Member member);
+	List<Retrospect> findRetrospectsByStudyTypesAndMember(List<StudyType> studyType, Member member);
 }

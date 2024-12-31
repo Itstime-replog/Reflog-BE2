@@ -124,7 +124,9 @@ public class RetrospectService {
 		Member member = memberRepository.findById(memberId)
 				.orElseThrow(() -> new GeneralException(ErrorStatus._MEMBER_NOT_FOUND));
 
-		List<Retrospect> retrospects = retrospectRepository.findRetrospectsByStudyTypesAndMember(category, member);
+		List<StudyType> studyType = studyTypeRepository.findStudyTypeByType(category);
+
+		List<Retrospect> retrospects = retrospectRepository.findRetrospectsByStudyTypesAndMember(studyType, member);
 
 		return RetrospectDto.RetrospectCategoryResponse.fromEntity(retrospects);
 	}
