@@ -19,4 +19,5 @@ public interface RetrospectRepository extends JpaRepository<Retrospect, Long> {
 
     List<Retrospect> findByMember(Member member);
 
+	List<Retrospect> findRetrospectsByStudyTypesAndMember(String studyTypes, Member member);
 }

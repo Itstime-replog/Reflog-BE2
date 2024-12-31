@@ -2,6 +2,7 @@ package itstime.reflog.retrospect.service;
 
 import java.util.List;
 
+import itstime.reflog.todolist.dto.TodolistDto;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -115,5 +116,16 @@ public class RetrospectService {
 			.toList();
 		retrospect.updateBads(newBads);
 
+	}
+
+	@Transactional(readOnly = true)
+	public List<RetrospectDto.RetrospectCategoryResponse> getRetrospect(String category, Long memberId) {
+
+		Member member = memberRepository.findById(memberId)
+				.orElseThrow(() -> new GeneralException(ErrorStatus._MEMBER_NOT_FOUND));
+
+		List<Retrospect> retrospects = retrospectRepository.findRetrospectsByStudyTypesAndMember(category, member);
+
+		return RetrospectDto.RetrospectCategoryResponse.fromEntity(retrospects);
 	}
 }
