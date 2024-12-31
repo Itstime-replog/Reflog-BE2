@@ -20,5 +20,5 @@ public interface RetrospectRepository extends JpaRepository<Retrospect, Long> {
 
     List<Retrospect> findByMember(Member member);
 
-	List<Retrospect> findRetrospectsByStudyTypesAndMember(List<StudyType> studyType, Member member);
-}
+	@Query("SELECT r FROM Retrospect r JOIN r.studyTypes st WHERE st.type = :type AND r.member = :member")
+	List<Retrospect> findRetrospectsByTypeAndMember(@Param("type") String type, @Param("member") Member member);}

@@ -8,5 +8,4 @@ import java.util.List;
 
 public interface StudyTypeRepository extends JpaRepository<StudyType, Long> {
 
-    List<StudyType> findStudyTypeByType(String type);
 }
