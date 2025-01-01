@@ -1,10 +1,13 @@
 package itstime.reflog.community.dto;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import itstime.reflog.community.domain.Community;
+import itstime.reflog.member.domain.Member;
+import lombok.*;
 
 public class CommunityDto {
 
@@ -16,5 +19,33 @@ public class CommunityDto {
 		private List<String> postTypes;
 		private List<String> learningTypes;
 		private List<String> fileUrls;
+	}
+
+	//카테고리 별 필터링 api dto
+	@Getter
+	@Builder
+	@AllArgsConstructor
+	@NoArgsConstructor(access = AccessLevel.PRIVATE)
+	public static class CommunityCategoryResponse {
+
+		private String title;
+		private String content;
+		private LocalDateTime createdDate;
+		private List<String> postTypes;
+		private List<String> learningTypes;
+		private String writer;
+
+		public static List<CommunityCategoryResponse> fromEntity(List<Community> communities, String writer) {
+			return communities.stream()
+					.map(community -> CommunityCategoryResponse.builder()
+							.title(community.getTitle())
+							.createdDate(community.getCreatedAt())
+							.postTypes(community.getPostTypes())
+							.learningTypes(community.getLearningTypes())
+							.writer(writer)
+							.build()
+					)
+					.collect(Collectors.toList());
+		}
 	}
 }

@@ -129,4 +129,13 @@ public class CommunityService {
 		// 4. Community 삭제
 		communityRepository.delete(community);
 	}
+
+	//커뮤니티 게시글 필터링
+	@Transactional(readOnly = true)
+	public List<CommunityDto.CommunityCategoryResponse> getFilteredCommunity(List<String> learningTypes, List<String> postTypes) {
+		List<Community> communities = communityRepository.findByLearningTypesAndPostTypes(learningTypes, postTypes);
+
+		return CommunityDto.CommunityCategoryResponse.fromEntity(communities, );
+	}
+
 }

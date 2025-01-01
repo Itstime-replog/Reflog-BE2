@@ -10,4 +10,5 @@ import java.util.Optional;
 @Repository
 public interface MyPageRepository extends JpaRepository<MyPage, Long> {
     Optional<MyPage> findByMember(Member member);
+
 }
