@@ -25,7 +25,8 @@ public class TokenServiceImpl implements TokenService {
     public TokenDto.TokenResponse reissueAccessToken(String authorizationHeader) {
         String refreshToken = jwtUtil.getTokenFromHeader(authorizationHeader);
         String memberId = jwtUtil.getUserIdFromToken(refreshToken);
-        RefreshToken existRefreshToken = refreshTokenRepository.findByMemberId(UUID.fromString(memberId));
+        RefreshToken existRefreshToken = refreshTokenRepository.findByMemberId(UUID.fromString(memberId))
+                .orElseThrow(() -> new TokenException(TokenErrorResult.REFRESH_TOKEN_NOT_FOUND));
         String accessToken = null;
 
         if (!existRefreshToken.getRefreshToken().equals(refreshToken) || jwtUtil.isTokenExpired(refreshToken)) {

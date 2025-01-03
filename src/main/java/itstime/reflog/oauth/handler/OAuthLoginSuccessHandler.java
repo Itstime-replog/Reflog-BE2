@@ -83,7 +83,7 @@ public class OAuthLoginSuccessHandler extends SimpleUrlAuthenticationSuccessHand
         } else {
             // 기존 유저인 경우
             log.info("기존 유저입니다.");
-            refreshTokenRepository.deleteByMemberId(existUser.getMemberId());
+//            refreshTokenRepository.deleteByMemberId(existUser.getMemberId());
             user = existUser;
         }
 
