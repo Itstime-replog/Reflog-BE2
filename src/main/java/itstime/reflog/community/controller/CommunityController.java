@@ -153,11 +153,11 @@ public class CommunityController {
 			}
 	)
 	@GetMapping("/filter")
-	public ResponseEntity<CommonApiResponse<List<CommunityDto.CommunityCategoryResponse>>> getFilteredCommunity(
+	public ResponseEntity<CommonApiResponse<List<CommunityDto.CombinedCategoryResponse>>> getFilteredCommunity(
 			@RequestParam(required = false) List<String> postTypes,
 			@RequestParam(required = false) List<String> learningTypes
 			){
-		List<CommunityDto.CommunityCategoryResponse> responses = communityService.getFilteredCommunity(postTypes, learningTypes);
+		List<CommunityDto.CombinedCategoryResponse> responses = communityService.getFilteredCommunity(postTypes, learningTypes);
 		return ResponseEntity.ok(CommonApiResponse.onSuccess(responses));
 	}
 

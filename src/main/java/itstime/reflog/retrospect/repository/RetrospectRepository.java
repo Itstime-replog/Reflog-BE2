@@ -19,4 +19,6 @@ public interface RetrospectRepository extends JpaRepository<Retrospect, Long> {
 
     List<Retrospect> findByMember(Member member);
 
+	List<Retrospect> findByVisibilityIsTrue();
+
 }

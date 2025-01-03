@@ -6,6 +6,8 @@ import java.util.stream.Collectors;
 
 import itstime.reflog.mypage.domain.MyPage;
 import itstime.reflog.mypage.repository.MyPageRepository;
+import itstime.reflog.retrospect.domain.Retrospect;
+import itstime.reflog.retrospect.repository.RetrospectRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -31,6 +33,7 @@ public class CommunityService {
 	private final AmazonS3Manager amazonS3Manager;
 	private final MemberRepository memberRepository;
 	private final MyPageRepository myPageRepository;
+	private final RetrospectRepository retrospectRepository;
 
 	@Transactional
 	public void createCommunity(Long memberId, CommunityDto.CommunitySaveOrUpdateRequest dto) {
@@ -135,37 +138,48 @@ public class CommunityService {
 	}
 	//커뮤니티 게시글 필터링
 	@Transactional
-	public List<CommunityDto.CommunityCategoryResponse> getFilteredCommunity(List<String> postTypes, List<String> learningTypes) {
+	public List<CommunityDto.CombinedCategoryResponse> getFilteredCommunity(List<String> postTypes, List<String> learningTypes) {
 
 		List<Community> communities;
 
-		if (learningTypes != null && learningTypes.contains("기타")){ //학습유형에 기타가 포함된 경우
+		//학습유형에 기타가 있는 경우
+		if (learningTypes != null && learningTypes.contains("기타")) {
 			String typePrefix = "기타:%";
-
-			//기타가 아닌 나머지 학습 유형,, 만약 학습유형이 기타 하나라면 나머지는 null
 			String remainingLearningType = learningTypes.stream()
 					.filter(type -> !"기타".equals(type))
 					.findFirst()
-					.orElse(null); // 기타만 있을 경우 null
+					.orElse(null); //나머지 유형이 없는 경우 null
 
-			communities = communityRepository.findCommunitiesByLearningTypePrefix(postTypes, typePrefix,remainingLearningType);
-		}else {
+			communities = communityRepository.findCommunitiesByLearningTypePrefix(postTypes, typePrefix, remainingLearningType);
+		} else {
 			communities = communityRepository.findByLearningTypesAndPostTypes(postTypes, learningTypes);
 		}
 
-
-		List<CommunityDto.CommunityCategoryResponse> filteredCommunities= communities.stream()
+		//커뮤니티 response형태로 반환
+		List<CommunityDto.CombinedCategoryResponse> responses = communities.stream()
 				.map(community -> {
-
 					String nickname = myPageRepository.findByMember(community.getMember())
 							.map(MyPage::getNickname)
 							.orElse("닉네임 없음");
-
-					return CommunityDto.CommunityCategoryResponse.fromEntity(community, nickname);
+					return CommunityDto.CombinedCategoryResponse.fromCommunity(community, nickname);
 				})
 				.collect(Collectors.toList());
 
-		return filteredCommunities;
+		//글 유형에 회고일지가 있는 경우
+		if (postTypes != null && postTypes.contains("회고일지")) {
+			List<Retrospect> retrospects = retrospectRepository.findByVisibilityIsTrue();
+			List<CommunityDto.CombinedCategoryResponse> retrospectResponses = retrospects.stream()
+					.map(retrospect -> {
+						String nickname = myPageRepository.findByMember(retrospect.getMember())
+								.map(MyPage::getNickname)
+								.orElse("닉네임 없음");
+						return CommunityDto.CombinedCategoryResponse.fromRetrospect(retrospect, nickname);
+					})
+					.collect(Collectors.toList());
+			responses.addAll(retrospectResponses); // 두 리스트 합치기(회고일지, 커뮤니티)
+		}
+
+		return responses;
 	}
 
 
