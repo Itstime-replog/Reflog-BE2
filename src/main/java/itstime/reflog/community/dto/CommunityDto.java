@@ -31,6 +31,7 @@ public class CommunityDto {
 	public static class CombinedCategoryResponse {
 
 		private String title;
+		private String content;
 		private LocalDateTime createdDate; // Retrospect는 LocalDate로 변경 가능
 		private List<String> postTypes;
 		private List<String> learningTypes;
@@ -41,6 +42,7 @@ public class CommunityDto {
 		public static CombinedCategoryResponse fromCommunity(Community community, String writer) {
 			return CombinedCategoryResponse.builder()
 					.title(community.getTitle())
+					.content(community.getContent())
 					.createdDate(community.getCreatedAt())
 					.postTypes(community.getPostTypes())
 					.learningTypes(community.getLearningTypes())
