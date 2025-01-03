@@ -136,7 +136,8 @@ public class CommunityController {
 	//학습 유형 별 필터링 api
 	@Operation(
 			summary = "커뮤니티 게시글 카테고리별 조회 필터링 API",
-			description = "카테고리별 커뮤니티 게시글을 조회합니다. 카테고리를 파라미터에 입력하면 해당하는 게시글들 반환. 기타는 파라미터에 기타를 입력하면 됩니다. postTypes에는 글 유형, learningTypes에는 학습 유형을 각각 최대 두개까지 입력할 수 있습니다.",
+			description = "카테고리별 커뮤니티 게시글을 조회합니다. 카테고리를 파라미터에 입력하면 해당하는 게시글들 반환. 기타는 파라미터에 기타를 입력하면 됩니다. postTypes에는 글 유형, learningTypes에는 학습 유형을 각각 최대 두개까지 입력할 수 있습니다." +
+					"postTypes이 회고일지일 경우 회고일지를 반환합니다 understandinglevel,progresslevel도 반환 회고일지 아닌 경우 null",
 			responses = {
 					@ApiResponse(
 							responseCode = "200",
