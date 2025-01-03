@@ -157,7 +157,7 @@ public class CommunityController {
 			@RequestParam(required = false) List<String> postTypes,
 			@RequestParam(required = false) List<String> learningTypes
 			){
-		List<CommunityDto.CommunityCategoryResponse> responses = .getRetrospect(categories, memberId);
+		List<CommunityDto.CommunityCategoryResponse> responses = communityService.getFilteredCommunity(postTypes, learningTypes);
 		return ResponseEntity.ok(CommonApiResponse.onSuccess(responses));
 	}
 

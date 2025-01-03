@@ -2,7 +2,10 @@ package itstime.reflog.community.service;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
+import itstime.reflog.mypage.domain.MyPage;
+import itstime.reflog.mypage.repository.MyPageRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -27,6 +30,8 @@ public class CommunityService {
 	private final UploadedFileRepository uploadedFileRepository;
 	private final AmazonS3Manager amazonS3Manager;
 	private final MemberRepository memberRepository;
+	private final MyPageRepository myPageRepository;
+
 
 	@Transactional
 	public void createCommunity(Long memberId, CommunityDto.CommunitySaveOrUpdateRequest dto) {
@@ -132,10 +137,17 @@ public class CommunityService {
 
 	//커뮤니티 게시글 필터링
 	@Transactional(readOnly = true)
-	public List<CommunityDto.CommunityCategoryResponse> getFilteredCommunity(List<String> learningTypes, List<String> postTypes) {
-		List<Community> communities = communityRepository.findByLearningTypesAndPostTypes(learningTypes, postTypes);
+	public List<CommunityDto.CommunityCategoryResponse> getFilteredCommunity(List<String> postTypes,List<String> learningTypes) {
+		List<Community> communities = communityRepository.findByLearningTypesAndPostTypes(postTypes, learningTypes);
 
-		return CommunityDto.CommunityCategoryResponse.fromEntity(communities, );
+		return communities.stream()
+				.map(community -> {
+					String nickname = myPageRepository.findByMember(community.getMember())
+							.map(MyPage::getNickname)
+							.orElse("닉네임 없음"); // 닉네임이 없을 경우
+					return CommunityDto.CommunityCategoryResponse.fromEntity(community, nickname);
+				})
+				.collect(Collectors.toList());
 	}
 
 }

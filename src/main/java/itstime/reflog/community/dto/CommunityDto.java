@@ -35,17 +35,14 @@ public class CommunityDto {
 		private List<String> learningTypes;
 		private String writer;
 
-		public static List<CommunityCategoryResponse> fromEntity(List<Community> communities, String writer) {
-			return communities.stream()
-					.map(community -> CommunityCategoryResponse.builder()
-							.title(community.getTitle())
-							.createdDate(community.getCreatedAt())
-							.postTypes(community.getPostTypes())
-							.learningTypes(community.getLearningTypes())
-							.writer(writer)
-							.build()
-					)
-					.collect(Collectors.toList());
+		public static CommunityCategoryResponse fromEntity(Community community, String writer) {
+			return CommunityCategoryResponse.builder()
+					.title(community.getTitle())
+					.createdDate(community.getCreatedAt())
+					.postTypes(community.getPostTypes())
+					.learningTypes(community.getLearningTypes())
+					.writer(writer)
+					.build();
 		}
 	}
 }

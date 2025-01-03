@@ -10,8 +10,8 @@ import java.util.List;
 
 public interface CommunityRepository extends JpaRepository<Community, Long> {
 
-    @Query("SELECT c FROM Community c WHERE (COALESCE(:learningTypes, NULL) IS NULL OR c.learningTypes IN :learningTypes) " +
-            "AND (COALESCE(:postTypes, NULL) IS NULL OR c.postTypes IN :postTypes)")
+    @Query("SELECT DISTINCT c FROM Community c JOIN c.learningTypes lt JOIN c.postTypes pt " +
+            "WHERE (:learningTypes IS NULL OR lt IN :learningTypes) AND (:postTypes IS NULL OR pt IN :postTypes)")
     List<Community> findByLearningTypesAndPostTypes(
-            @Param("learningTypes") List<String> learningTypes, @Param("postTypes") List<String> postTypes);
+            @Param("postTypes") List<String> postTypes, @Param("learningTypes") List<String> learningTypes);
 }
