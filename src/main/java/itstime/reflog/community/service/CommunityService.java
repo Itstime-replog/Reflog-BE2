@@ -136,7 +136,22 @@ public class CommunityService {
 	//커뮤니티 게시글 필터링
 	@Transactional
 	public List<CommunityDto.CommunityCategoryResponse> getFilteredCommunity(List<String> postTypes, List<String> learningTypes) {
-		List<Community> communities = communityRepository.findByLearningTypesAndPostTypes(postTypes, learningTypes);
+
+		List<Community> communities;
+
+		if (learningTypes != null && learningTypes.contains("기타")){ //학습유형에 기타가 포함된 경우
+			String typePrefix = "기타:%";
+
+			//기타가 아닌 나머지 학습 유형,, 만약 학습유형이 기타 하나라면 나머지는 null
+			String remainingLearningType = learningTypes.stream()
+					.filter(type -> !"기타".equals(type))
+					.findFirst()
+					.orElse(null); // 기타만 있을 경우 null
+
+			communities = communityRepository.findCommunitiesByLearningTypePrefix(postTypes, typePrefix,remainingLearningType);
+		}else {
+			communities = communityRepository.findByLearningTypesAndPostTypes(postTypes, learningTypes);
+		}
 
 
 		List<CommunityDto.CommunityCategoryResponse> filteredCommunities= communities.stream()
