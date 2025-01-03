@@ -32,7 +32,6 @@ public class CommunityService {
 	private final MemberRepository memberRepository;
 	private final MyPageRepository myPageRepository;
 
-
 	@Transactional
 	public void createCommunity(Long memberId, CommunityDto.CommunitySaveOrUpdateRequest dto) {
 		Member member = memberRepository.findById(memberId)
@@ -134,20 +133,25 @@ public class CommunityService {
 		// 4. Community 삭제
 		communityRepository.delete(community);
 	}
-
 	//커뮤니티 게시글 필터링
-	@Transactional(readOnly = true)
-	public List<CommunityDto.CommunityCategoryResponse> getFilteredCommunity(List<String> postTypes,List<String> learningTypes) {
+	@Transactional
+	public List<CommunityDto.CommunityCategoryResponse> getFilteredCommunity(List<String> postTypes, List<String> learningTypes) {
 		List<Community> communities = communityRepository.findByLearningTypesAndPostTypes(postTypes, learningTypes);
 
-		return communities.stream()
+
+		List<CommunityDto.CommunityCategoryResponse> filteredCommunities= communities.stream()
 				.map(community -> {
+
 					String nickname = myPageRepository.findByMember(community.getMember())
 							.map(MyPage::getNickname)
-							.orElse("닉네임 없음"); // 닉네임이 없을 경우
+							.orElse("닉네임 없음");
+
 					return CommunityDto.CommunityCategoryResponse.fromEntity(community, nickname);
 				})
 				.collect(Collectors.toList());
+
+		return filteredCommunities;
 	}
+
 
 }

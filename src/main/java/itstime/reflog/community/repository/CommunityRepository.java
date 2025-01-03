@@ -1,6 +1,7 @@
 package itstime.reflog.community.repository;
 
 import io.lettuce.core.dynamic.annotation.Param;
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import itstime.reflog.community.domain.Community;
