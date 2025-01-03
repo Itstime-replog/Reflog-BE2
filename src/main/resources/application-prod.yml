@@ -76,7 +76,7 @@ jwt:
   secret: ${JWT_SECRET_KEY}
   redirect: http://localhost:8080/login?name=%s&access_token=%s&refresh_token=%s
   access-token:
-    expiration-time: 3600000    # 1시간
+    expiration-time: 7200000    # 2시간
   refresh-token:
     expiration-time: 604800000
 
