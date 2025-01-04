@@ -24,13 +24,15 @@ spring:
 
   redis:
     data:
-      port: 6379
-      host: redis
       pool:
         min-idle: 0
         max-idle: 8
         max-active: 8
 
+  data:
+    redis:
+      port: 6379
+      host: redis
 
 
   security:
@@ -74,7 +76,7 @@ jwt:
   secret: ${JWT_SECRET_KEY}
   redirect: http://localhost:8080/login?name=%s&access_token=%s&refresh_token=%s
   access-token:
-    expiration-time: 3600000    # 1시간
+    expiration-time: 7200000    # 2시간
   refresh-token:
     expiration-time: 604800000
 

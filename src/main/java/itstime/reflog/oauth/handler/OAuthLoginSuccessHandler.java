@@ -73,7 +73,7 @@ public class OAuthLoginSuccessHandler extends SimpleUrlAuthenticationSuccessHand
             log.info("신규 유저입니다. 등록을 진행합니다.");
 
             user = Member.builder()
-                    .memberId(UUID.randomUUID())
+                    .uuid(UUID.randomUUID())
                     .name(name)
                     .provider(provider)
                     .providerId(providerId)
@@ -83,7 +83,7 @@ public class OAuthLoginSuccessHandler extends SimpleUrlAuthenticationSuccessHand
         } else {
             // 기존 유저인 경우
             log.info("기존 유저입니다.");
-            refreshTokenRepository.deleteByMemberId(existUser.getMemberId());
+//            refreshTokenRepository.deleteByMemberId(existUser.getMemberId());
             user = existUser;
         }
 
@@ -92,16 +92,16 @@ public class OAuthLoginSuccessHandler extends SimpleUrlAuthenticationSuccessHand
         log.info("PROVIDER_ID : {}", providerId);
 
         // 리프레쉬 토큰 발급 후 저장
-        String refreshToken = jwtUtil.generateRefreshToken(user.getMemberId(), REFRESH_TOKEN_EXPIRATION_TIME);
+        String refreshToken = jwtUtil.generateRefreshToken(user.getUuid(), REFRESH_TOKEN_EXPIRATION_TIME);
 
         RefreshToken newRefreshToken = RefreshToken.builder()
-                .memberId(user.getMemberId())
+                .memberId(user.getUuid())
                 .refreshToken(refreshToken)
                 .build();
         refreshTokenRepository.save(newRefreshToken);
 
         // 액세스 토큰 발급
-        String accessToken = jwtUtil.generateAccessToken(user.getMemberId(), ACCESS_TOKEN_EXPIRATION_TIME);
+        String accessToken = jwtUtil.generateAccessToken(user.getUuid(), ACCESS_TOKEN_EXPIRATION_TIME);
 
         // 이름, 액세스 토큰, 리프레쉬 토큰을 담아 리다이렉트
         String encodedName = URLEncoder.encode(name, "UTF-8");

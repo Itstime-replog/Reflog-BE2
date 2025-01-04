@@ -30,7 +30,7 @@ public class Member {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
-	private UUID memberId;
+	private UUID uuid;
 
 	private String providerId;
 
