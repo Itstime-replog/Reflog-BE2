@@ -4,14 +4,18 @@ import itstime.reflog.common.code.status.ErrorStatus;
 import itstime.reflog.common.exception.GeneralException;
 import itstime.reflog.member.domain.Member;
 import itstime.reflog.member.repository.MemberRepository;
+import itstime.reflog.oauth.token.exception.TokenErrorResult;
+import itstime.reflog.oauth.token.exception.TokenException;
 import itstime.reflog.schedule.domain.Schedule;
 import itstime.reflog.schedule.dto.ScheduleDto;
 import itstime.reflog.schedule.repository.ScheduleRepository;
+import itstime.reflog.util.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -19,10 +23,23 @@ public class ScheduleService {
 
     private final ScheduleRepository scheduleRepository;
     private final MemberRepository memberRepository;
+    private final JwtUtil jwtUtil;
 
     @Transactional
-    public void createSchedule(Long memberId, ScheduleDto.ScheduleSaveOrUpdateRequest dto) {
-        Member member = memberRepository.findById(memberId)
+    public void createSchedule(String authorizationHeader, ScheduleDto.ScheduleSaveOrUpdateRequest dto) {
+//        Member member = memberRepository.findById(memberId)
+//                .orElseThrow(() -> new GeneralException(ErrorStatus._MEMBER_NOT_FOUND));
+        if (authorizationHeader == null || !authorizationHeader.startsWith("Bearer ")) {
+            throw new TokenException(TokenErrorResult.INVALID_TOKEN);
+        }
+
+        String accessToken = jwtUtil.getTokenFromHeader(authorizationHeader);
+        if (jwtUtil.isTokenExpired(accessToken)) {
+            throw new TokenException(TokenErrorResult.INVALID_TOKEN);
+        }
+
+        String memberId = jwtUtil.getUserIdFromToken(accessToken);
+        Member member = memberRepository.findByUuid(UUID.fromString(memberId))
                 .orElseThrow(() -> new GeneralException(ErrorStatus._MEMBER_NOT_FOUND));
 
         Schedule schedule = Schedule.builder()

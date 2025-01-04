@@ -2,18 +2,17 @@ package itstime.reflog.oauth.token.domain;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.springframework.data.redis.core.RedisHash;
 
 import java.util.UUID;
 
-@Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
 @Builder
 @Getter
+@RedisHash("token")
 public class RefreshToken {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "refresh_tokens_id")
     private Long id;
 
     private UUID memberId;

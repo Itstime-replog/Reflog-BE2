@@ -44,10 +44,11 @@ public class ScheduleController {
     )
     @PostMapping("/schedule")
     public ResponseEntity<CommonApiResponse<Void>> createSchedule(
-            @RequestParam Long memberId,
+//            @RequestParam Long memberId,
+            @RequestHeader("Authorization") String authorizationHeader,
             @RequestBody ScheduleDto.ScheduleSaveOrUpdateRequest dto
     ) {
-        scheduleService.createSchedule(memberId, dto);
+        scheduleService.createSchedule(authorizationHeader, dto);
         return ResponseEntity.ok(CommonApiResponse.onSuccess(null));
     }
 
