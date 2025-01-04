@@ -8,4 +8,5 @@ import java.util.Optional;
 
 public interface MyPageRepository extends JpaRepository<MyPage, Long> {
     Optional<MyPage> findByMember(Member member);
+
 }
