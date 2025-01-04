@@ -7,10 +7,8 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.stereotype.Repository;
 
-import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
-import java.util.concurrent.TimeUnit;
 
 @Repository
 @RequiredArgsConstructor
@@ -20,29 +18,29 @@ public class RefreshTokenRepository{
     private long REFRESH_TOKEN_EXPIRATION_TIME;
 
     private final RedisTemplate redisTemplate;
+    private static final String REFRESH_TOKEN_PREFIX = "refresh:";
 
+    // Refresh Token 저장
     public void save(final RefreshToken refreshToken) {
         ValueOperations<String, String> valueOperations = redisTemplate.opsForValue();
-        valueOperations.set(
-                refreshToken.getMemberId().toString(),
-                refreshToken.getRefreshToken()
-        );
-        redisTemplate.expire(
-                refreshToken.getMemberId().toString(),
-                REFRESH_TOKEN_EXPIRATION_TIME,
-                TimeUnit.MILLISECONDS
-        );
+        String key = generateKey(refreshToken.getMemberId());
+        valueOperations.set(key, refreshToken.getRefreshToken());
+
+        // TTL 설정
+        redisTemplate.expire(key, REFRESH_TOKEN_EXPIRATION_TIME, java.util.concurrent.TimeUnit.MILLISECONDS);
     }
 
-
+    // Refresh Token 조회
     public Optional<RefreshToken> findByMemberId(final UUID memberId) {
         ValueOperations<String, String> valueOperations = redisTemplate.opsForValue();
-        String refreshToken = valueOperations.get(memberId.toString());
+        String key = generateKey(memberId);
+        String refreshToken = valueOperations.get(key);
 
-        if (Objects.isNull(refreshToken)) {
-            return Optional.empty();
-        }
+        return Optional.ofNullable(refreshToken)
+                .map(token -> new RefreshToken(memberId, token));
+    }
 
-        return Optional.of(new RefreshToken(memberId, refreshToken));
+    private String generateKey(UUID memberId) {
+        return REFRESH_TOKEN_PREFIX + memberId.toString();
     }
 }
