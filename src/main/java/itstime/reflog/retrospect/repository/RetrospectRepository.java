@@ -32,7 +32,7 @@ public interface RetrospectRepository extends JpaRepository<Retrospect, Long> {
 	@Query("SELECT r FROM Retrospect r JOIN r.studyTypes st WHERE st.type LIKE :typePrefix AND r.member = :member")
 	List<Retrospect> findRetrospectsByTypePrefixAndMember(@Param("typePrefix") String typePrefix, @Param("member") Member member);
 
-	//검색 API
+	//제목에 키워드를 포함하고 공개로 설정된 회고일지 찾기
 	@Query("SELECT r FROM Retrospect r WHERE r.visibility = true AND r.title LIKE %:title%")
 	List<Retrospect> findByTitleContainingAndVisibilityIsTrue(@Param("title") String title);
 }
