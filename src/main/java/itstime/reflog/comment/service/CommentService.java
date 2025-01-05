@@ -56,20 +56,12 @@ public class CommentService {
     }
 
     @Transactional
-    public void updateComment(Long communityId, Long commentId, String memberId, CommentDto.CommentSaveOrUpdateRequest dto) {
-        // 1. 멤버 조회
-        Member member = memberRepository.findByUuid(UUID.fromString(memberId))
-                .orElseThrow(() -> new GeneralException(ErrorStatus._MEMBER_NOT_FOUND));
-
-        // 2. 커뮤니티 조회
-        Community community = communityRepository.findById(communityId)
-                .orElseThrow(() -> new GeneralException(ErrorStatus._COMMUNITY_NOT_FOUND));
-
-        // 3. 댓글 조회
+    public void updateComment(Long commentId, CommentDto.CommentSaveOrUpdateRequest dto) {
+        // 1. 댓글 조회
         Comment comment = commentRepository.findById(commentId)
                 .orElseThrow(() -> new GeneralException(ErrorStatus._COMMENT_NOT_FOUND));
 
-        // 4. 댓글 업데이트
+        // 2. 댓글 업데이트
         comment.update(dto);
     }
 }

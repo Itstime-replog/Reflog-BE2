@@ -65,14 +65,12 @@ public class CommentController {
                     )
             }
     )
-    @PatchMapping("/{communityId}/{commentId}")
+    @PatchMapping("/{commentId}")
     public ResponseEntity<CommonApiResponse<Void>> updateComment(
-            @PathVariable Long communityId,
             @PathVariable Long commentId,
-            @UserId String memberId,
             @RequestBody CommentDto.CommentSaveOrUpdateRequest dto
     ) {
-        commentService.updateComment(communityId, commentId, memberId, dto);
+        commentService.updateComment(commentId, dto);
         return ResponseEntity.ok(CommonApiResponse.onSuccess(null));
     }
 }
