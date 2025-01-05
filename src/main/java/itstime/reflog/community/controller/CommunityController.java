@@ -4,15 +4,7 @@ import java.util.List;
 import java.util.UUID;
 
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PatchMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RequestPart;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -81,6 +73,33 @@ public class CommunityController {
 		communityService.createCommunity(memberId, dto);
 		return ResponseEntity.ok(CommonApiResponse.onSuccess(null));
 	}
+
+	@Operation(
+			summary = "커뮤니티 상세조회 API",
+			description = "커뮤니티 게시글 상세조회 API입니다. AccessToken 필요.",
+			responses = {
+					@ApiResponse(
+							responseCode = "200",
+							description = "커뮤니티 게시글 상세조회 성공"
+					),
+					@ApiResponse(
+							responseCode = "404",
+							description = "해당 회원을 찾을 수 없음"
+					),
+					@ApiResponse(
+							responseCode = "500",
+							description = "서버 에러"
+					)
+			}
+	)
+	@GetMapping("/{communityId}")
+	public ResponseEntity<CommonApiResponse<CommunityDto.CommunityResponse>> getCommunity(
+			@PathVariable Long communityId) {
+		CommunityDto.CommunityResponse communityResponse = communityService.getCommunity(communityId);
+		return ResponseEntity.ok(CommonApiResponse.onSuccess(communityResponse));
+	}
+
+
 
 	@Operation(
 		summary = "커뮤니티 수정 API",
@@ -161,6 +180,4 @@ public class CommunityController {
 		List<CommunityDto.CombinedCategoryResponse> responses = communityService.getFilteredCommunity(postTypes, learningTypes);
 		return ResponseEntity.ok(CommonApiResponse.onSuccess(responses));
 	}
-
-
 }
