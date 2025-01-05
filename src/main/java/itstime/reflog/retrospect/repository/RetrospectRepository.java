@@ -2,6 +2,8 @@ package itstime.reflog.retrospect.repository;
 
 import java.time.LocalDate;
 import java.util.Optional;
+
+import itstime.reflog.community.domain.Community;
 import itstime.reflog.member.domain.Member;
 import itstime.reflog.retrospect.domain.StudyType;
 import itstime.reflog.todolist.domain.Todolist;
@@ -29,4 +31,8 @@ public interface RetrospectRepository extends JpaRepository<Retrospect, Long> {
 	//기타는 기타:%s에 해당하는 모든 회고일지 반환
 	@Query("SELECT r FROM Retrospect r JOIN r.studyTypes st WHERE st.type LIKE :typePrefix AND r.member = :member")
 	List<Retrospect> findRetrospectsByTypePrefixAndMember(@Param("typePrefix") String typePrefix, @Param("member") Member member);
+
+	//검색 API
+	@Query("SELECT r FROM Retrospect r WHERE r.visibility = true AND r.title LIKE %:title%")
+	List<Retrospect> findByTitleContainingAndVisibilityIsTrue(@Param("title") String title);
 }
