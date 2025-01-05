@@ -73,4 +73,30 @@ public class CommentController {
         commentService.updateComment(commentId, dto);
         return ResponseEntity.ok(CommonApiResponse.onSuccess(null));
     }
+
+    @Operation(
+            summary = "댓글 삭제 API",
+            description = "댓글을 삭제합니다. AccessToken 필요.",
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "댓글 삭제 성공"
+                    ),
+                    @ApiResponse(
+                            responseCode = "404",
+                            description = "해당 회원을 찾을 수 없음"
+                    ),
+                    @ApiResponse(
+                            responseCode = "500",
+                            description = "서버 에러"
+                    )
+            }
+    )
+    @DeleteMapping("/{commentId}")
+    public ResponseEntity<CommonApiResponse<Void>> deleteComment(
+            @PathVariable Long commentId
+    ) {
+        commentService.deleteComment(commentId);
+        return ResponseEntity.ok(CommonApiResponse.onSuccess(null));
+    }
 }

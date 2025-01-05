@@ -64,4 +64,14 @@ public class CommentService {
         // 2. 댓글 업데이트
         comment.update(dto);
     }
+
+    @Transactional
+    public void deleteComment(Long commentId) {
+        // 1. 댓글 조회
+        Comment comment = commentRepository.findById(commentId)
+                .orElseThrow(() -> new GeneralException(ErrorStatus._COMMENT_NOT_FOUND));
+
+        // 2. 댓글 삭제
+        commentRepository.delete(comment);
+    }
 }
