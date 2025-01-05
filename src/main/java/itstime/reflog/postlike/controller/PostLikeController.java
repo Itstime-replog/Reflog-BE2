@@ -5,6 +5,8 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import itstime.reflog.common.CommonApiResponse;
 import itstime.reflog.community.dto.CommunityDto;
+import itstime.reflog.postlike.domain.PostLike;
+import itstime.reflog.postlike.dto.PostLikeDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -35,9 +37,10 @@ public class PostLikeController {
     @PostMapping
     public ResponseEntity<CommonApiResponse<Void>> postLike(
             @RequestParam Long memberId,
-            @RequestBody Boolean isLike
-    ){
-        communityService.createCommunity(memberId, isLike);
+            @RequestParam Long communityId,
+            @RequestBody PostLikeDto.PostLikeSaveOrUpdateRequest dto
+            ){
+        communityService.createCommunity(memberId, communityId, dto);
         return ResponseEntity.ok(CommonApiResponse.onSuccess(null));
     }
 }

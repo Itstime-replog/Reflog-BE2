@@ -5,8 +5,6 @@ import itstime.reflog.member.domain.Member;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.time.LocalDate;
-
 @Entity
 @Getter
 @Builder

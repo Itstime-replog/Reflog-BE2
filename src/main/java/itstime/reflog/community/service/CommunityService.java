@@ -3,6 +3,8 @@ package itstime.reflog.community.service;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import itstime.reflog.postlike.domain.PostLike;
+import itstime.reflog.postlike.service.PostLikeService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -27,6 +29,7 @@ public class CommunityService {
 	private final UploadedFileRepository uploadedFileRepository;
 	private final AmazonS3Manager amazonS3Manager;
 	private final MemberRepository memberRepository;
+	private final PostLikeService postLikeService;
 
 	@Transactional
 	public void createCommunity(Long memberId, CommunityDto.CommunitySaveOrUpdateRequest dto) {
@@ -65,6 +68,9 @@ public class CommunityService {
 		});
 
 		communityRepository.save(community);
+
+		//게시물 생성할때 좋아요도 생성
+		postLikeService.createPostLike(member, community);
 	}
 
 	@Transactional
