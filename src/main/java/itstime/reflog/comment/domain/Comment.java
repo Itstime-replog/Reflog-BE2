@@ -5,6 +5,7 @@ import itstime.reflog.member.domain.Member;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -37,4 +38,8 @@ public class Comment {
 
     @OneToMany(mappedBy = "parent", orphanRemoval = true)
     private List<Comment> children = new ArrayList<>();
+
+    private LocalDateTime createdAt; // 생성일
+
+    private LocalDateTime updatedAt; // 수정일
 }
