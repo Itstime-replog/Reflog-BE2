@@ -39,8 +39,9 @@ public class CommunityDto {
 		private Integer progressLevel;    // Retrospect 전용
 		private Integer understandingLevel;// Retrospect 전용
 		private Boolean isLike;
+		private Integer totalLike;
 
-		public static CombinedCategoryResponse fromCommunity(Community community, String writer, Boolean isLike) {
+		public static CombinedCategoryResponse fromCommunity(Community community, String writer, Boolean isLike, Integer totalLike) {
 			return CombinedCategoryResponse.builder()
 					.title(community.getTitle())
 					.content(community.getContent())
@@ -48,6 +49,7 @@ public class CommunityDto {
 					.postTypes(community.getPostTypes())
 					.learningTypes(community.getLearningTypes())
 					.isLike(isLike)
+					.totalLike(totalLike)
 					.writer(writer)
 					.build();
 		}

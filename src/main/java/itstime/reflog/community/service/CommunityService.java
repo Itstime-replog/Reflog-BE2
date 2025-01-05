@@ -175,7 +175,9 @@ public class CommunityService {
 							.orElse("닉네임 없음");
 					//멤버와 커뮤니티로 멤버의 좋아요 상태 반환
 					PostLike postLike = postLikeRepository.findByMemberAndCommunity(member, community);
-					return CommunityDto.CombinedCategoryResponse.fromCommunity(community, nickname, postLike.getIsLike());
+					//게시물마다 좋아요 총 갯수 반환
+					Integer totalLike = postLikeService.getSumPostLike(community);
+					return CommunityDto.CombinedCategoryResponse.fromCommunity(community, nickname, postLike.getIsLike(), totalLike);
 				})
 				.collect(Collectors.toList());
 

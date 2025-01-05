@@ -16,6 +16,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -48,5 +49,13 @@ public class PostLikeService {
         postLike.update(dto.getIsLike());
 
         postLikeRepository.save(postLike);
+    }
+
+    @Transactional
+    public Integer getSumPostLike(Community community){
+        List<PostLike> postLikes = postLikeRepository.findByCommunity(community);
+        return postLikeRepository.findByCommunity(community).stream()
+                .mapToInt(postLike -> postLike.getIsLike() ? 1 : 0)
+                .sum();
     }
 }
