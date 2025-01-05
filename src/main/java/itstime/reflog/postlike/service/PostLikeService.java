@@ -51,6 +51,7 @@ public class PostLikeService {
         postLikeRepository.save(postLike);
     }
 
+    //게시물마다 좋아요 갯수
     @Transactional
     public Integer getSumPostLike(Community community){
         List<PostLike> postLikes = postLikeRepository.findByCommunity(community);
