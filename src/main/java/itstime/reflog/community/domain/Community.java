@@ -4,7 +4,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-import itstime.reflog.Comment.domain.Comment;
+import itstime.reflog.comment.domain.Comment;
 import itstime.reflog.member.domain.Member;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.CollectionTable;

@@ -2,7 +2,7 @@ package itstime.reflog.member.domain;
 
 import java.util.List;
 
-import itstime.reflog.Comment.domain.Comment;
+import itstime.reflog.comment.domain.Comment;
 import itstime.reflog.community.domain.Community;
 import itstime.reflog.goal.domain.DailyGoal;
 import itstime.reflog.mypage.domain.MyPage;
