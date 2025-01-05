@@ -22,10 +22,26 @@ public class TokenServiceImpl implements TokenService {
     private final JwtUtil jwtUtil;
 
     @Override
+    public String validateAccessToken(String authorizationHeader) {
+        if (authorizationHeader == null || !authorizationHeader.startsWith("Bearer ")) {
+            throw new TokenException(TokenErrorResult.INVALID_TOKEN);
+        }
+
+        String accessToken = jwtUtil.getTokenFromHeader(authorizationHeader);
+        if (jwtUtil.isTokenExpired(accessToken)) {
+            throw new TokenException(TokenErrorResult.INVALID_TOKEN);
+        }
+
+        String memberId = jwtUtil.getUserIdFromToken(accessToken);
+        return "Access Token이 유효합니다. Member ID: " + memberId;
+    }
+
+    @Override
     public TokenDto.TokenResponse reissueAccessToken(String authorizationHeader) {
         String refreshToken = jwtUtil.getTokenFromHeader(authorizationHeader);
         String memberId = jwtUtil.getUserIdFromToken(refreshToken);
-        RefreshToken existRefreshToken = refreshTokenRepository.findByMemberId(UUID.fromString(memberId));
+        RefreshToken existRefreshToken = refreshTokenRepository.findByMemberId(UUID.fromString(memberId))
+                .orElseThrow(() -> new TokenException(TokenErrorResult.REFRESH_TOKEN_NOT_FOUND));
         String accessToken = null;
 
         if (!existRefreshToken.getRefreshToken().equals(refreshToken) || jwtUtil.isTokenExpired(refreshToken)) {
