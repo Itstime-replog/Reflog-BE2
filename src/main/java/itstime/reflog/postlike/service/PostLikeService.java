@@ -42,6 +42,7 @@ public class PostLikeService {
         Community community = communityRepository.findById(communityId)
                 .orElseThrow(()-> new GeneralException(ErrorStatus._COMMUNITY_NOT_FOUND));
 
+        //커뮤니티, 멤버 id와 일치하는 좋아요 가져오기
         PostLike postLike = postLikeRepository.findByMemberAndCommunity(member, community);
 
         postLike.update(dto.getIsLike());

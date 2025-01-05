@@ -45,4 +45,6 @@ public class PostLikeController {
         postLikeService.updatePostLike(memberId, communityId, dto);
         return ResponseEntity.ok(CommonApiResponse.onSuccess(null));
     }
+
+
 }
