@@ -46,4 +46,33 @@ public class CommentController {
         commentService.createComment(communityId, memberId, dto);
         return ResponseEntity.ok(CommonApiResponse.onSuccess(null));
     }
+
+    @Operation(
+            summary = "댓글 수정 API",
+            description = "댓글을 수정합니다. AccessToken 필요.",
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "댓글 수정 성공"
+                    ),
+                    @ApiResponse(
+                            responseCode = "404",
+                            description = "해당 회원을 찾을 수 없음"
+                    ),
+                    @ApiResponse(
+                            responseCode = "500",
+                            description = "서버 에러"
+                    )
+            }
+    )
+    @PatchMapping("/{communityId}/{commentId}")
+    public ResponseEntity<CommonApiResponse<Void>> updateComment(
+            @PathVariable Long communityId,
+            @PathVariable Long commentId,
+            @UserId String memberId,
+            @RequestBody CommentDto.CommentSaveOrUpdateRequest dto
+    ) {
+        commentService.updateComment(communityId, commentId, memberId, dto);
+        return ResponseEntity.ok(CommonApiResponse.onSuccess(null));
+    }
 }

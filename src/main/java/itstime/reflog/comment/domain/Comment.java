@@ -1,5 +1,6 @@
 package itstime.reflog.comment.domain;
 
+import itstime.reflog.comment.dto.CommentDto;
 import itstime.reflog.community.domain.Community;
 import itstime.reflog.member.domain.Member;
 import jakarta.persistence.*;
@@ -42,4 +43,9 @@ public class Comment {
     private LocalDateTime createdAt; // 생성일
 
     private LocalDateTime updatedAt; // 수정일
+
+    public void update(CommentDto.CommentSaveOrUpdateRequest dto) {
+        this.content = dto.getContent();
+        this.updatedAt = LocalDateTime.now();
+    }
 }
