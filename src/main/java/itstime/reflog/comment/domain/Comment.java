@@ -1,6 +1,7 @@
 package itstime.reflog.comment.domain;
 
 import itstime.reflog.comment.dto.CommentDto;
+import itstime.reflog.commentLike.domain.CommentLike;
 import itstime.reflog.community.domain.Community;
 import itstime.reflog.member.domain.Member;
 import jakarta.persistence.*;
@@ -32,6 +33,9 @@ public class Comment {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id", nullable = false)
     private Member member;
+
+    @OneToMany(mappedBy = "comment", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<CommentLike> likes = new ArrayList<>();
 
     @ManyToOne
     @JoinColumn(name = "parent_id")
