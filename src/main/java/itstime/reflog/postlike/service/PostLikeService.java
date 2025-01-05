@@ -36,7 +36,7 @@ public class PostLikeService {
     }
 
     @Transactional
-    public void updatePostLike(Long memberId, Long communityId, PostLikeDto.PostLikeSaveOrUpdateRequest dto){
+    public void updatePostLike(Long memberId,Long communityId, PostLikeDto.PostLikeSaveOrUpdateRequest dto){
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(()-> new GeneralException(ErrorStatus._MEMBER_NOT_FOUND));
         Community community = communityRepository.findById(communityId)

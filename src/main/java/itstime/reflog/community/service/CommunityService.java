@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import itstime.reflog.postlike.domain.PostLike;
+import itstime.reflog.postlike.repository.PostLikeRepository;
 import itstime.reflog.postlike.service.PostLikeService;
 import itstime.reflog.mypage.domain.MyPage;
 import itstime.reflog.mypage.repository.MyPageRepository;
@@ -37,6 +38,7 @@ public class CommunityService {
 	private final MyPageRepository myPageRepository;
 	private final RetrospectRepository retrospectRepository;
 	private final PostLikeService postLikeService;
+	private final PostLikeRepository postLikeRepository;
 
 	@Transactional
 	public void createCommunity(Long memberId, CommunityDto.CommunitySaveOrUpdateRequest dto) {
@@ -144,7 +146,10 @@ public class CommunityService {
 	}
 	//커뮤니티 게시글 필터링
 	@Transactional
-	public List<CommunityDto.CombinedCategoryResponse> getFilteredCommunity(List<String> postTypes, List<String> learningTypes) {
+	public List<CommunityDto.CombinedCategoryResponse> getFilteredCommunity(Long memberId, List<String> postTypes, List<String> learningTypes) {
+
+		Member member = memberRepository.findById(memberId)
+				.orElseThrow(() -> new GeneralException(ErrorStatus._MEMBER_NOT_FOUND));
 
 		List<Community> communities;
 
@@ -161,13 +166,16 @@ public class CommunityService {
 			communities = communityRepository.findByLearningTypesAndPostTypes(postTypes, learningTypes);
 		}
 
-		//커뮤니티 response형태로 반환
+		//커뮤니티 response형태로 반환 닉네임 추가
 		List<CommunityDto.CombinedCategoryResponse> responses = communities.stream()
 				.map(community -> {
+					//마이페이지 레포지토리에서 닉네임 반환
 					String nickname = myPageRepository.findByMember(community.getMember())
 							.map(MyPage::getNickname)
 							.orElse("닉네임 없음");
-					return CommunityDto.CombinedCategoryResponse.fromCommunity(community, nickname);
+					//멤버와 커뮤니티로 멤버의 좋아요 상태 반환
+					PostLike postLike = postLikeRepository.findByMemberAndCommunity(member, community);
+					return CommunityDto.CombinedCategoryResponse.fromCommunity(community, nickname, postLike.getIsLike());
 				})
 				.collect(Collectors.toList());
 

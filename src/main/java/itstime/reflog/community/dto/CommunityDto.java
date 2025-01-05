@@ -37,15 +37,17 @@ public class CommunityDto {
 		private List<String> learningTypes;
 		private String writer;
 		private Integer progressLevel;    // Retrospect 전용
-		private Integer understandingLevel; // Retrospect 전용
+		private Integer understandingLevel;// Retrospect 전용
+		private Boolean isLike;
 
-		public static CombinedCategoryResponse fromCommunity(Community community, String writer) {
+		public static CombinedCategoryResponse fromCommunity(Community community, String writer, Boolean isLike) {
 			return CombinedCategoryResponse.builder()
 					.title(community.getTitle())
 					.content(community.getContent())
 					.createdDate(community.getCreatedAt())
 					.postTypes(community.getPostTypes())
 					.learningTypes(community.getLearningTypes())
+					.isLike(isLike)
 					.writer(writer)
 					.build();
 		}
