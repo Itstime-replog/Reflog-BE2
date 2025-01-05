@@ -27,4 +27,7 @@ public class PostLike {
     @JoinColumn(name = "community_id", nullable = false)
     private Community community;
 
+    public void update(Boolean isLike){
+        this.isLike = isLike;
+    }
 }

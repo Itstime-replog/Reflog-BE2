@@ -42,20 +42,10 @@ public class PostLikeService {
         Community community = communityRepository.findById(communityId)
                 .orElseThrow(()-> new GeneralException(ErrorStatus._COMMUNITY_NOT_FOUND));
 
-        PostLike postLike = postLikeRepository.findByMemberAndCommunity(member, community)
-                .orElse(null);
+        PostLike postLike = postLikeRepository.findByMemberAndCommunity(member, community);
 
-        if (postLike != null) {
-            // 이미 존재하는 경우 상태 반전
-            postLike.toggleLike();
-        } else {
-            // 존재하지 않으면 새로 생성
-            postLike = PostLike.builder()
-                    .isLike(false)  // 처음 생성할 때는 false 설정
-                    .member(member)
-                    .community(community)
-                    .build();
-        }
+        postLike.update(dto.getIsLike());
+
         postLikeRepository.save(postLike);
     }
 }

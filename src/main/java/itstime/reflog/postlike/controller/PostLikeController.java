@@ -7,6 +7,7 @@ import itstime.reflog.common.CommonApiResponse;
 import itstime.reflog.community.dto.CommunityDto;
 import itstime.reflog.postlike.domain.PostLike;
 import itstime.reflog.postlike.dto.PostLikeDto;
+import itstime.reflog.postlike.service.PostLikeService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -16,9 +17,10 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/communities/like")
 public class PostLikeController {
+    private final PostLikeService postLikeService;
     @Operation(
             summary = "커뮤니티 게시물 좋아요 API",
-            description = "커뮤니티 게시글 좋아요 누를때 사용하는 API입니다.",
+            description = "커뮤니티 게시글 좋아요 버튼 누를때 사용하는 API입니다. 현재 버튼이 좋아요가 아닌 상태=false, 좋아요 버튼을 누르면 true를 보내주면 됩니다.",
             responses = {
                     @ApiResponse(
                             responseCode = "200",
@@ -34,13 +36,13 @@ public class PostLikeController {
                     )
             }
     )
-    @PostMapping
-    public ResponseEntity<CommonApiResponse<Void>> postLike(
+    @PatchMapping
+    public ResponseEntity<CommonApiResponse<Void>> updatePostLike(
             @RequestParam Long memberId,
             @RequestParam Long communityId,
             @RequestBody PostLikeDto.PostLikeSaveOrUpdateRequest dto
             ){
-        communityService.createCommunity(memberId, communityId, dto);
+        postLikeService.updatePostLike(memberId, communityId, dto);
         return ResponseEntity.ok(CommonApiResponse.onSuccess(null));
     }
 }
