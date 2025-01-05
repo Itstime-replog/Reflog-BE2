@@ -27,4 +27,8 @@ public class CommentLike {
 
     @Column(nullable = false)
     private boolean isLiked;
+
+    public void update(boolean isLiked) {
+        this.isLiked = isLiked;
+    }
 }

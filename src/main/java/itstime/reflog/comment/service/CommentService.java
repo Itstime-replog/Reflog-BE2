@@ -3,6 +3,8 @@ package itstime.reflog.comment.service;
 import itstime.reflog.comment.domain.Comment;
 import itstime.reflog.comment.dto.CommentDto;
 import itstime.reflog.comment.repository.CommentRepository;
+import itstime.reflog.commentLike.domain.CommentLike;
+import itstime.reflog.commentLike.repository.CommentLikeRepository;
 import itstime.reflog.common.code.status.ErrorStatus;
 import itstime.reflog.common.exception.GeneralException;
 import itstime.reflog.community.domain.Community;
@@ -14,6 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -23,6 +26,7 @@ public class CommentService {
     private final MemberRepository memberRepository;
     private final CommunityRepository communityRepository;
     private final CommentRepository commentRepository;
+    private final CommentLikeRepository commentLikeRepository;
 
     @Transactional
     public void createComment(Long communityId, String memberId, CommentDto.CommentSaveOrUpdateRequest dto) {
@@ -73,5 +77,35 @@ public class CommentService {
 
         // 2. 댓글 삭제
         commentRepository.delete(comment);
+    }
+
+    @Transactional
+    public void toggleCommentLike(Long commentId,  String memberId) {
+        // 1. 댓글 조회
+        Comment comment = commentRepository.findById(commentId)
+                .orElseThrow(() -> new GeneralException(ErrorStatus._COMMENT_NOT_FOUND));
+
+        // 2. 멤버 조회
+        Member member = memberRepository.findByUuid(UUID.fromString(memberId))
+                .orElseThrow(() -> new GeneralException(ErrorStatus._MEMBER_NOT_FOUND));
+
+        // 3. 좋아요 상태 확인
+        Optional<CommentLike> optionalCommentLike = commentLikeRepository.findByCommentAndMember(comment, member);
+
+        if (optionalCommentLike.isPresent()) {
+            // 좋아요가 이미 존재하면 상태 토글
+            CommentLike commentLike = optionalCommentLike.get();
+            commentLike.update(!commentLike.isLiked());
+        } else {
+            // 좋아요가 없으면 새로 생성
+            CommentLike newLike = CommentLike.builder()
+                    .comment(comment)
+                    .member(member)
+                    .isLiked(true)
+                    .build();
+
+            commentLikeRepository.save(newLike);
+        }
+
     }
 }

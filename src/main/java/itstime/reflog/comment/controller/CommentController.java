@@ -99,4 +99,31 @@ public class CommentController {
         commentService.deleteComment(commentId);
         return ResponseEntity.ok(CommonApiResponse.onSuccess(null));
     }
+
+    @Operation(
+            summary = "댓글 좋아요 API",
+            description = "댓글에 좋아요를 합니다. AccessToken 필요.",
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "댓글 좋아요 성공"
+                    ),
+                    @ApiResponse(
+                            responseCode = "404",
+                            description = "해당 회원을 찾을 수 없음"
+                    ),
+                    @ApiResponse(
+                            responseCode = "500",
+                            description = "서버 에러"
+                    )
+            }
+    )
+    @PostMapping("/like/{commentId}")
+    public ResponseEntity<CommonApiResponse<Void>> toggleCommentLike(
+            @PathVariable Long commentId,
+            @UserId String memberId
+            ) {
+        commentService.toggleCommentLike(commentId, memberId);
+        return ResponseEntity.ok(CommonApiResponse.onSuccess(null));
+    }
 }
