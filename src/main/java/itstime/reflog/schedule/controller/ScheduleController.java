@@ -7,6 +7,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import itstime.reflog.common.CommonApiResponse;
+import itstime.reflog.common.annotation.UserId;
 import itstime.reflog.schedule.dto.ScheduleDto;
 import itstime.reflog.schedule.service.ScheduleService;
 import jakarta.validation.Valid;
@@ -44,11 +45,10 @@ public class ScheduleController {
     )
     @PostMapping("/schedule")
     public ResponseEntity<CommonApiResponse<Void>> createSchedule(
-//            @RequestParam Long memberId,
-            @RequestHeader("Authorization") String authorizationHeader,
+            @UserId String memberId,
             @RequestBody ScheduleDto.ScheduleSaveOrUpdateRequest dto
     ) {
-        scheduleService.createSchedule(authorizationHeader, dto);
+        scheduleService.createSchedule(memberId, dto);
         return ResponseEntity.ok(CommonApiResponse.onSuccess(null));
     }
 
