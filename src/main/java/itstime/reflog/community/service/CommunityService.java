@@ -78,8 +78,6 @@ public class CommunityService {
 
 		communityRepository.save(community);
 
-		//게시물 생성할때 좋아요도 생성
-		postLikeService.createPostLike(member, community);
 	}
 
 	@Transactional
