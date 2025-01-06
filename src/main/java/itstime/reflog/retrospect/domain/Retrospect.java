@@ -3,7 +3,9 @@ package itstime.reflog.retrospect.domain;
 import java.time.LocalDate;
 import java.util.List;
 
+import itstime.reflog.goal.domain.DailyGoal;
 import itstime.reflog.member.domain.Member;
+import itstime.reflog.postlike.domain.PostLike;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -63,6 +65,9 @@ public class Retrospect {
 
 	@OneToMany(mappedBy = "retrospect", cascade = CascadeType.ALL)
 	private List<Bad> bads;
+
+	@OneToMany(mappedBy = "retrospect", cascade = CascadeType.ALL)
+	private List<PostLike> postLikes;
 
 	public void updateStudyTypes(List<StudyType> newStudyTypes) {
 		this.studyTypes.clear();
