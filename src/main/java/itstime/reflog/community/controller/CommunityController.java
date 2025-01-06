@@ -186,7 +186,7 @@ public class CommunityController {
 
 	@Operation(
 			summary = "커뮤니티 게시물 좋아요 API",
-			description = "커뮤니티 게시글 좋아요 버튼 누를때 사용하는 API입니다. 현재 버튼이 좋아요가 아닌 상태=false, 좋아요 버튼을 누르면 true를 보내주면 됩니다.",
+			description = "커뮤니티 게시글 좋아요 버튼 누를때 사용하는 API입니다. postType에는 회고일지일 경우에는 RETROSPECT, 커뮤니티 게시물일 경우에는 COMMUNITY를 보내주면 됩니다.",
 			responses = {
 					@ApiResponse(
 							responseCode = "200",
