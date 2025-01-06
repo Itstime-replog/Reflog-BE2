@@ -1,10 +1,87 @@
 <!DOCTYPE html>
-<html lang="en">
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>작은 회고가 큰 변화를 만듭니다. 오늘도 한 걸음 나아가세요!</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reflog Reminder</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f8f9fa;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .container {
+            background-color: white;
+            width: 600px;
+            height: 711px;
+            padding: 20px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            text-align: center;
+            position: relative;
+        }
+
+        .header img {
+            width: 100%;
+            height: auto;
+            border-radius: 8px 8px 0 0;
+        }
+
+        .content {
+            padding: 20px;
+        }
+
+        .content h2 {
+            font-size: 22px;
+            margin: 0 0 10px;
+        }
+
+        .content p {
+            font-size: 16px;
+            color: #555;
+            margin: 5px 0;
+            line-height: 1.5;
+        }
+
+        .button {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 10px 20px;
+            font-size: 16px;
+            color: #4d79ff;
+            background-color: white;
+            border: 2px solid #4d79ff;
+            border-radius: 5px;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .button:hover {
+            background-color: #4d79ff;
+            color: white;
+        }
+    </style>
 </head>
 <body>
-작은 회고가 큰 변화를 만듭니다. 오늘도 한 걸음 나아가세요!
+<div class="container">
+    <!-- Header with Image -->
+    <div class="header">
+        <img th:src="@{/images/img.png}" alt="Reflog 로고">
+        <img src="/img.jpg">
+
+    </div>
+    <div class="content">
+        <h2>윤주님, 안녕하세요!</h2>
+        <p>어제 회고일지 작성을 잊은 윤주님을 위해 찾아왔어요.<br>아직 포기하긴 일러요!</p>
+        <p>10분만 투자해 오늘의 생각과 배움을 기록하며<br>내일의 더 나은 나를 만들어봐요!</p>
+        <a href="#" class="button">회고일지 작성하러 가기</a>
+    </div>
+</div>
 </body>
 </html>
