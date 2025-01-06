@@ -284,5 +284,15 @@ public class CommunityService {
 		return responses;
 	}
 
+    @Transactional
+    public List<CommunityDto.CombinedCategoryResponse> getAllCommunity(Long memberId){
+        Member member = memberRepository.findById(memberId)
+                .orElseThrow(() -> new GeneralException(ErrorStatus._MEMBER_NOT_FOUND));
+
+        List<Community> communities = communityRepository.getCommunitiesInorder();
+        List<Retrospect> retrospects = retrospectRepository.getRetrospectInorder();
+
+
+    }
 
 }

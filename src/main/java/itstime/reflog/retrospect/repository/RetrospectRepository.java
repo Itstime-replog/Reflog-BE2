@@ -35,4 +35,8 @@ public interface RetrospectRepository extends JpaRepository<Retrospect, Long> {
 	//제목에 키워드를 포함하고 공개로 설정된 회고일지 찾기
 	@Query("SELECT r FROM Retrospect r WHERE r.visibility = true AND r.title LIKE %:title%")
 	List<Retrospect> findByTitleContainingAndVisibilityIsTrue(@Param("title") String title);
+
+	//생성날짜 기준 정렬
+	@Query("SELECT r FROM Retrospect r ORDER BY r.createdDate DESC")
+	List<Retrospect> getRetrospectInorder();
 }

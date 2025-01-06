@@ -24,4 +24,9 @@ public interface CommunityRepository extends JpaRepository<Community, Long> {
     //제목에 키워드를 포함하고 있는 게시물 찾기
     @Query("SELECT c FROM Community c WHERE c.title LIKE %:title%")
     List<Community> searchCommunitiesByTitleContaining(@Param("title") String title);
+
+    //만약 업데이트 필드가 널이 아니라면 업데이트 필드 기준 정렬 사용,, 업데이트 필드가 널이라면 생성 날짜 기준 정렬
+    @Query("SELECT c FROM Community c ORDER BY CASE WHEN c.updatedAt IS NOT NULL THEN c.updatedAt ELSE " +
+            "c.createdAt END DESC")
+    List<Community> getCommunitiesInorder();
 }
