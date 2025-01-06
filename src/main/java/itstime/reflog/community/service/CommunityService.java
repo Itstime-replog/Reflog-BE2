@@ -172,12 +172,6 @@ public class CommunityService {
         communityRepository.delete(community);
     }
 
-    //커뮤니티 게시글 필터링
-    @Transactional
-    public List<CommunityDto.CombinedCategoryResponse> getFilteredCommunity(List<String> postTypes, List<String> learningTypes) {
-		// 4. Community 삭제
-		communityRepository.delete(community);
-	}
 	//커뮤니티 게시글 필터링
 	@Transactional
 	public List<CommunityDto.CombinedCategoryResponse> getFilteredCommunity(Long memberId, List<String> postTypes, List<String> learningTypes) {
