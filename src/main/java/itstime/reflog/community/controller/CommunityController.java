@@ -167,6 +167,32 @@ public class CommunityController {
 	}
 
 	@Operation(
+			summary = "커뮤니티 게시글 검색 API",
+			description = "카테고리별 커뮤니티 게시글을 검색합니다. 파라미터에 검색하고자 하는 string을 입력하면 일치하는 게시물을 반환합니다",
+			responses = {
+					@ApiResponse(
+							responseCode = "200",
+							description = "커뮤니티 게시글 검색 성공"
+					),
+					@ApiResponse(
+							responseCode = "404",
+							description = "입력하신 제목과 일치하는 게시물을 찾을 수 없음"
+					),
+					@ApiResponse(
+							responseCode = "500",
+							description = "서버 에러"
+					)
+			}
+	)
+	@GetMapping("/search")
+	public ResponseEntity<CommonApiResponse<List<CommunityDto.CombinedCategoryResponse>>> getSearchedCommunity(
+			@RequestParam(required = false) String title
+	){
+		List<CommunityDto.CombinedCategoryResponse> responses = communityService.getSearchedCommunity(title);
+		return ResponseEntity.ok(CommonApiResponse.onSuccess(responses));
+	}
+
+	@Operation(
 			summary = "커뮤니티 게시물 좋아요 API",
 			description = "커뮤니티 게시글 좋아요 버튼 누를때 사용하는 API입니다. 현재 버튼이 좋아요가 아닌 상태=false, 좋아요 버튼을 누르면 true를 보내주면 됩니다.",
 			responses = {
