@@ -5,12 +5,14 @@ import java.util.concurrent.TimeUnit;
 
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import itstime.reflog.common.CommonApiResponse;
+import itstime.reflog.member.service.MemberService;
 import itstime.reflog.util.JwtUtil;
 import lombok.RequiredArgsConstructor;
 
@@ -21,6 +23,7 @@ public class MemberController {
 
 	private final JwtUtil jwtUtil;
 	private final RedisTemplate<String, String> redisTemplate;
+	private final MemberService memberService;
 
 	@GetMapping("/logout")
 	public ResponseEntity<CommonApiResponse<Void>> logout(@RequestHeader("Authorization") String accessToken) {
@@ -39,4 +42,21 @@ public class MemberController {
 		// 로그아웃 완료 응답
 		return ResponseEntity.ok(CommonApiResponse.onSuccess(null));
 	}
+
+	@DeleteMapping("/delete")
+	public ResponseEntity<CommonApiResponse<Void>> delete(@RequestHeader("Authorization") String accessToken) {
+		// 1. Access Token에서 사용자 UUID 추출
+		String token = jwtUtil.getTokenFromHeader(accessToken);
+		UUID userId = jwtUtil.getUuidFromToken(token);
+
+		// 2. 사용자 데이터 삭제
+		memberService.deleteMember(userId);
+
+		// 3. Redis에서 Refresh Token 삭제
+		String refreshTokenKey = "refresh:" + userId;
+		redisTemplate.delete(refreshTokenKey);
+
+		return ResponseEntity.ok(CommonApiResponse.onSuccess(null));
+	}
+
 }
