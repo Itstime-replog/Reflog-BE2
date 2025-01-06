@@ -18,7 +18,7 @@ public interface CommunityRepository extends JpaRepository<Community, Long> {
 
     //기타는 기타:%s에 해당하는 모든 커뮤니티 반환
     @Query("SELECT DISTINCT c FROM Community c JOIN c.learningTypes lt JOIN c.postTypes pt WHERE (:typePrefix IS NULL AND :postTypes IS NULL AND :learningType IS NULL) " +
-            "OR (lt LIKE CONCAT(:typePrefix, '%') OR pt IN :postTypes OR lt = :learningType)")
+            "OR (CAST(lt AS string) LIKE CONCAT(:typePrefix, '%') OR pt IN :postTypes OR lt = :learningType)")
     List<Community> findCommunitiesByLearningTypePrefix(@Param("postTypes") List<String> postTypes, @Param("typePrefix") String typePrefix, @Param("learningType") String learningType);
 
     //제목에 키워드를 포함하고 있는 게시물 찾기
