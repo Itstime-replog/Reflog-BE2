@@ -171,6 +171,35 @@ public class MyPageController {
         return ResponseEntity.ok(CommonApiResponse.onSuccess(responses));
     }
 
+    @Operation(
+            summary = "마이페이지 커뮤니티 활동 로그 - 내가 좋아요 한 글 API",
+            description = "특정 회원에 해당하는 마이페이지 커뮤니티 활동 로그에서 '내가 좋아요 한 글'을 조회합니다.",
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "마이페이지 커뮤니티 활동 로그 - 내가 좋아요 한 글 조회 성공",
+                            content = @Content(schema = @Schema(implementation = CommonApiResponse.class))
+                    ),
+                    @ApiResponse(
+                            responseCode = "404",
+                            description = "해당 회원 또는 마이페이지 프로필을 찾을 수 없음",
+                            content = @Content(schema = @Schema(implementation = CommonApiResponse.class))
+                    ),
+                    @ApiResponse(
+                            responseCode = "500",
+                            description = "서버 에러",
+                            content = @Content(schema = @Schema(implementation = CommonApiResponse.class))
+                    )
+            }
+    )
+    @GetMapping("/communitylog/like/posts")
+    public ResponseEntity<CommonApiResponse<List<MyPageDto.MyPagePostResponse>>> getMyLikePost(
+            @UserId String memberId
+    ) {
+        List<MyPageDto.MyPagePostResponse> responses = myPageService.getMyLikePost(memberId);
+        return ResponseEntity.ok(CommonApiResponse.onSuccess(responses));
+    }
+
 
 
 //    @Operation(
