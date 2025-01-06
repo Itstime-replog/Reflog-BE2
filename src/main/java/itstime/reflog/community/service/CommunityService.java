@@ -182,5 +182,37 @@ public class CommunityService {
 		return responses;
 	}
 
+	//커뮤니티 게시물 검색
+	@Transactional
+	public List<CommunityDto.CombinedCategoryResponse> getSearchedCommunity(String title){
+
+		//커뮤니티 게시물 중 키워드가 일치하는 게시물 찾기
+		List<Community> communities= communityRepository.searchCommunitiesByTitleContaining(title);
+
+		List<CommunityDto.CombinedCategoryResponse> responses = communities.stream()
+				.map(community -> {
+					String nickname = myPageRepository.findByMember(community.getMember())
+							.map(MyPage::getNickname)
+							.orElse("닉네임 없음");
+					return CommunityDto.CombinedCategoryResponse.fromCommunity(community, nickname);
+				})
+				.collect(Collectors.toList());
+
+		//회고일지 게시물 중 키워드가 일치하는 게시물 찾기
+		List<Retrospect> retrospects = retrospectRepository.findByTitleContainingAndVisibilityIsTrue(title);
+
+		List<CommunityDto.CombinedCategoryResponse> retrospectResponses = retrospects.stream()
+				.map(retrospect -> {
+					String nickname = myPageRepository.findByMember(retrospect.getMember())
+							.map(MyPage::getNickname)
+							.orElse("닉네임 없음");
+					return CommunityDto.CombinedCategoryResponse.fromRetrospect(retrospect, nickname);
+				})
+				.collect(Collectors.toList());
+		responses.addAll(retrospectResponses); // 두 리스트 합치기(회고일지, 커뮤니티)
+
+		return responses;
+	}
+
 
 }

@@ -21,5 +21,7 @@ public interface CommunityRepository extends JpaRepository<Community, Long> {
             "OR (lt LIKE CONCAT(:typePrefix, '%') OR pt IN :postTypes OR lt = :learningType)")
     List<Community> findCommunitiesByLearningTypePrefix(@Param("postTypes") List<String> postTypes, @Param("typePrefix") String typePrefix, @Param("learningType") String learningType);
 
-
+    //제목에 키워드를 포함하고 있는 게시물 찾기
+    @Query("SELECT c FROM Community c WHERE c.title LIKE %:title%")
+    List<Community> searchCommunitiesByTitleContaining(@Param("title") String title);
 }
