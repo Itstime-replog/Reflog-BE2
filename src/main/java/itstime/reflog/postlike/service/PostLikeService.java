@@ -29,6 +29,7 @@ public class PostLikeService {
         //커뮤니티, 멤버 id와 일치하는 좋아요 가져오기
         PostLike postLike = postLikeRepository.findByMemberAndCommunity(member, community)
                 .orElse(null);
+
         if (postLike != null){
             //좋아요가 이미 있다면 테이블 삭제
             postLikeRepository.delete(postLike);
