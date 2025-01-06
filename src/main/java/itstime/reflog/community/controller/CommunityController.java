@@ -75,31 +75,29 @@ public class CommunityController {
 	}
 
 	@Operation(
-			summary = "커뮤니티 상세조회 API",
-			description = "커뮤니티 게시글 상세조회 API입니다. AccessToken 필요.",
-			responses = {
-					@ApiResponse(
-							responseCode = "200",
-							description = "커뮤니티 게시글 상세조회 성공"
-					),
-					@ApiResponse(
-							responseCode = "404",
-							description = "해당 회원을 찾을 수 없음"
-					),
-					@ApiResponse(
-							responseCode = "500",
-							description = "서버 에러"
-					)
-			}
+		summary = "커뮤니티 상세조회 API",
+		description = "커뮤니티 게시글 상세조회 API입니다. AccessToken 필요.",
+		responses = {
+			@ApiResponse(
+				responseCode = "200",
+				description = "커뮤니티 게시글 상세조회 성공"
+			),
+			@ApiResponse(
+				responseCode = "404",
+				description = "해당 회원을 찾을 수 없음"
+			),
+			@ApiResponse(
+				responseCode = "500",
+				description = "서버 에러"
+			)
+		}
 	)
 	@GetMapping("/{communityId}")
 	public ResponseEntity<CommonApiResponse<CommunityDto.CommunityResponse>> getCommunity(
-			@PathVariable Long communityId) {
+		@PathVariable Long communityId) {
 		CommunityDto.CommunityResponse communityResponse = communityService.getCommunity(communityId);
 		return ResponseEntity.ok(CommonApiResponse.onSuccess(communityResponse));
 	}
-
-
 
 	@Operation(
 		summary = "커뮤니티 수정 API",
@@ -154,55 +152,59 @@ public class CommunityController {
 
 	//학습 유형 별 필터링 api
 	@Operation(
-			summary = "커뮤니티 게시글 카테고리별 조회 필터링 API",
-			description = "카테고리별 커뮤니티 게시글을 조회합니다. 카테고리를 파라미터에 입력하면 해당하는 게시글들 반환. 기타는 파라미터에 기타를 입력하면 됩니다. postTypes에는 글 유형, learningTypes에는 학습 유형을 각각 최대 두개까지 입력할 수 있습니다." +
-					"postTypes이 회고일지일 경우 회고일지를 반환합니다 understandinglevel,progresslevel도 반환 회고일지 아닌 경우 null",
-			responses = {
-					@ApiResponse(
-							responseCode = "200",
-							description = "카테고리별 커뮤니티 게시글 조회 성공"
-					),
-					@ApiResponse(
-							responseCode = "404",
-							description = "해당 카테고리를 찾을 수 없음"
-					),
-					@ApiResponse(
-							responseCode = "500",
-							description = "서버 에러"
-					)
-			}
+		summary = "커뮤니티 게시글 카테고리별 조회 필터링 API",
+		description =
+			"카테고리별 커뮤니티 게시글을 조회합니다. 카테고리를 파라미터에 입력하면 해당하는 게시글들 반환. 기타는 파라미터에 기타를 입력하면 됩니다. postTypes에는 글 유형, learningTypes에는 학습 유형을 각각 최대 두개까지 입력할 수 있습니다."
+				+
+				"postTypes이 회고일지일 경우 회고일지를 반환합니다 understandinglevel,progresslevel도 반환 회고일지 아닌 경우 null",
+		responses = {
+			@ApiResponse(
+				responseCode = "200",
+				description = "카테고리별 커뮤니티 게시글 조회 성공"
+			),
+			@ApiResponse(
+				responseCode = "404",
+				description = "해당 카테고리를 찾을 수 없음"
+			),
+			@ApiResponse(
+				responseCode = "500",
+				description = "서버 에러"
+			)
+		}
 	)
 	@GetMapping("/filter")
 	public ResponseEntity<CommonApiResponse<List<CommunityDto.CombinedCategoryResponse>>> getFilteredCommunity(
-			@RequestParam(required = false) List<String> postTypes,
-			@RequestParam(required = false) List<String> learningTypes
-			){
-		List<CommunityDto.CombinedCategoryResponse> responses = communityService.getFilteredCommunity(postTypes, learningTypes);
+		@RequestParam(required = false) List<String> postTypes,
+		@RequestParam(required = false) List<String> learningTypes
+	) {
+		List<CommunityDto.CombinedCategoryResponse> responses = communityService.getFilteredCommunity(postTypes,
+			learningTypes);
 		return ResponseEntity.ok(CommonApiResponse.onSuccess(responses));
 	}
 
 	@Operation(
-			summary = "커뮤니티 게시글 검색 API",
-			description = "카테고리별 커뮤니티 게시글을 검색합니다. 파라미터에 검색하고자 하는 string을 입력하면 일치하는 게시물을 반환합니다",
-			responses = {
-					@ApiResponse(
-							responseCode = "200",
-							description = "커뮤니티 게시글 검색 성공"
-					),
-					@ApiResponse(
-							responseCode = "404",
-							description = "입력하신 제목과 일치하는 게시물을 찾을 수 없음"
-					),
-					@ApiResponse(
-							responseCode = "500",
-							description = "서버 에러"
-					)
-			}
+		summary = "커뮤니티 게시글 검색 API",
+		description = "카테고리별 커뮤니티 게시글을 검색합니다. 파라미터에 검색하고자 하는 string을 입력하면 일치하는 게시물을 반환합니다",
+		responses = {
+			@ApiResponse(
+				responseCode = "200",
+				description = "커뮤니티 게시글 검색 성공"
+			),
+			@ApiResponse(
+				responseCode = "404",
+				description = "입력하신 제목과 일치하는 게시물을 찾을 수 없음"
+			),
+			@ApiResponse(
+				responseCode = "500",
+				description = "서버 에러"
+			)
+		}
 	)
 	@GetMapping("/search")
 	public ResponseEntity<CommonApiResponse<List<CommunityDto.CombinedCategoryResponse>>> getSearchedCommunity(
-			@RequestParam(required = false) String title
-	){
+		@RequestParam(required = false) String title
+	) {
 		List<CommunityDto.CombinedCategoryResponse> responses = communityService.getSearchedCommunity(title);
 		return ResponseEntity.ok(CommonApiResponse.onSuccess(responses));
 	}
+}
