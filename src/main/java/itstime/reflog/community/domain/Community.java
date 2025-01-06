@@ -6,6 +6,9 @@ import java.util.List;
 
 import itstime.reflog.comment.domain.Comment;
 import itstime.reflog.member.domain.Member;
+import itstime.reflog.mypage.domain.MyPage;
+import itstime.reflog.postlike.domain.PostLike;
+import jakarta.persistence.*;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.CollectionTable;
 import jakarta.persistence.Column;
@@ -30,6 +33,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 public class Community {
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
@@ -54,6 +58,9 @@ public class Community {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "member_id", nullable = false)
 	private Member member;
+
+	@OneToMany(mappedBy = "community", cascade = CascadeType.ALL)
+	private List<PostLike> postLikes;
 
 	@OneToMany(mappedBy = "community", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
 	private List<Comment> comments = new ArrayList<>();
