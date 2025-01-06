@@ -1,10 +1,13 @@
 package itstime.reflog.mypage.dto;
 
+import itstime.reflog.community.dto.CommunityDto;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+
+import java.util.List;
 
 public class MyPageDto {
 
@@ -30,5 +33,11 @@ public class MyPageDto {
     public static class MyPageProfileResponse {
         private String nickname;
         private String email;
+    }
+
+    @Getter
+    @AllArgsConstructor
+    public static class MyPagePostResponse {
+        private List<CommunityDto.MyPageCommunityResponse> myPageCommunityResponseList;
     }
 }
