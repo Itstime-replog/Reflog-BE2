@@ -3,7 +3,6 @@ package itstime.reflog.community.controller;
 import java.util.List;
 import java.util.UUID;
 
-import itstime.reflog.postlike.dto.PostLikeDto;
 import itstime.reflog.postlike.service.PostLikeService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;

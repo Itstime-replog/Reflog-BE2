@@ -4,19 +4,13 @@ import itstime.reflog.common.code.status.ErrorStatus;
 import itstime.reflog.common.exception.GeneralException;
 import itstime.reflog.community.domain.Community;
 import itstime.reflog.community.repository.CommunityRepository;
-import itstime.reflog.goal.domain.DailyGoal;
-import itstime.reflog.goal.dto.DailyGoalDto;
 import itstime.reflog.member.domain.Member;
 import itstime.reflog.member.repository.MemberRepository;
 import itstime.reflog.postlike.domain.PostLike;
-import itstime.reflog.postlike.dto.PostLikeDto;
 import itstime.reflog.postlike.repository.PostLikeRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-
-import java.time.LocalDate;
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor
