@@ -24,11 +24,11 @@ public class PostLike {
     private Member member;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "community_id") //널 가능
+    @JoinColumn(name = "community_id", nullable = true) //널 가능
     private Community community;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "retrospect_id") //널 가능
+    @JoinColumn(name = "retrospect_id", nullable = true) //널 가능
     private Retrospect retrospect;
 
     @Enumerated(EnumType.STRING)
