@@ -57,8 +57,11 @@ public enum ErrorStatus implements BaseErrorCode {
 	_S3_INVALID_URL(HttpStatus.BAD_REQUEST, "S3_FILE_400", "S3 파일 URL이 잘못되었거나 존재하지 않습니다."),
 
 	// Community 관련 에러
-	_COMMUNITY_NOT_FOUND(HttpStatus.NOT_FOUND, "COMMUNITY404", "해당 커뮤니티 게시글을 찾을 수 없습니다.");
+	_COMMUNITY_NOT_FOUND(HttpStatus.NOT_FOUND, "COMMUNITY404", "해당 커뮤니티 게시글을 찾을 수 없습니다."),
 
+	// comment 관련 에러
+	_COMMENT_NOT_FOUND(HttpStatus.NOT_FOUND, "COMMENT404", "해당 댓글을 찾을 수 없습니다."),
+	_PARENT_COMMENT_NOT_FOUND(HttpStatus.NOT_FOUND, "COMMENT404", "해당 부모 댓글을 찾을 수 없습니다.");
 
 	private final HttpStatus httpStatus;
 	private final String code;

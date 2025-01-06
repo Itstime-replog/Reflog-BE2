@@ -1,14 +1,12 @@
 package itstime.reflog.community.dto;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import itstime.reflog.comment.dto.CommentDto;
 import itstime.reflog.community.domain.Community;
-import itstime.reflog.member.domain.Member;
 import itstime.reflog.retrospect.domain.Retrospect;
-import itstime.reflog.retrospect.domain.StudyType;
 import lombok.*;
 
 public class CommunityDto {
@@ -21,6 +19,12 @@ public class CommunityDto {
 		private List<String> postTypes;
 		private List<String> learningTypes;
 		private List<String> fileUrls;
+	}
+
+	@Getter
+	@AllArgsConstructor
+	public static class CommunityResponse {
+		private List<CommentDto.CommentResponse> commentList;
 	}
 
 	//카테고리 별 필터링 api dto

@@ -1,8 +1,10 @@
 package itstime.reflog.community.domain;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
+import itstime.reflog.comment.domain.Comment;
 import itstime.reflog.member.domain.Member;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.CollectionTable;
@@ -14,7 +16,6 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
-import jakarta.persistence.Lob;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import lombok.AccessLevel;
@@ -53,6 +54,9 @@ public class Community {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "member_id", nullable = false)
 	private Member member;
+
+	@OneToMany(mappedBy = "community", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
+	private List<Comment> comments = new ArrayList<>();
 
 	private LocalDateTime createdAt; // 생성일
 	private LocalDateTime updatedAt; // 수정일
