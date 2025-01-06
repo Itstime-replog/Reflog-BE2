@@ -20,14 +20,7 @@ public class PostLike {
     @JoinColumn(name = "member_id", nullable = false)
     private Member member;
 
-    @Column(nullable = false)
-    private Boolean isLike;
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "community_id", nullable = false)
     private Community community;
-
-    public void update(Boolean isLike){
-        this.isLike = isLike;
-    }
 }

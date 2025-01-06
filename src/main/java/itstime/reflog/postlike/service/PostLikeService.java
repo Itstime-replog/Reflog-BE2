@@ -26,37 +26,33 @@ public class PostLikeService {
     private final CommunityRepository communityRepository;
 
     @Transactional
-    public void createPostLike(Member member, Community community){
-
-        PostLike postLike = PostLike.builder()
-                .isLike(false)  // 처음 생성할 때는 false 설정
-                .member(member)
-                .community(community)
-                .build();
-        postLikeRepository.save(postLike);
-    }
-
-    @Transactional
-    public void updatePostLike(Long memberId,Long communityId, PostLikeDto.PostLikeSaveOrUpdateRequest dto){
+    public void togglePostLike(Long memberId,Long communityId){
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(()-> new GeneralException(ErrorStatus._MEMBER_NOT_FOUND));
         Community community = communityRepository.findById(communityId)
                 .orElseThrow(()-> new GeneralException(ErrorStatus._COMMUNITY_NOT_FOUND));
 
         //커뮤니티, 멤버 id와 일치하는 좋아요 가져오기
-        PostLike postLike = postLikeRepository.findByMemberAndCommunity(member, community);
+        PostLike postLike = postLikeRepository.findByMemberAndCommunity(member, community)
+                .orElse(null);
+        if (postLike != null){
+            //좋아요가 이미 있다면 테이블 삭제
+            postLikeRepository.delete(postLike);
+        } else {
+            //좋아요가 없다면 테이블 생성
+            PostLike newPostLike = PostLike.builder()
+                    .member(member)
+                    .community(community)
+                    .build();
 
-        postLike.update(dto.getIsLike());
+            postLikeRepository.save(newPostLike);
+        }
 
-        postLikeRepository.save(postLike);
     }
 
-    //게시물마다 좋아요 갯수
+    //게시물마다 좋아요 갯수 항상 0이상이므로 int로
     @Transactional
-    public Integer getSumPostLike(Community community){
-        List<PostLike> postLikes = postLikeRepository.findByCommunity(community);
-        return postLikeRepository.findByCommunity(community).stream()
-                .mapToInt(postLike -> postLike.getIsLike() ? 1 : 0)
-                .sum();
+    public int getSumPostLike(Community community){
+        return postLikeRepository.countByCommunity(community);
     }
 }

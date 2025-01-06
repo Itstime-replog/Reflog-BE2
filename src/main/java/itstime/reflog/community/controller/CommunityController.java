@@ -210,13 +210,12 @@ public class CommunityController {
 					)
 			}
 	)
-	@PatchMapping("/like")
-	public ResponseEntity<CommonApiResponse<Void>> updatePostLike(
+	@PostMapping("/like/{communityId}")
+	public ResponseEntity<CommonApiResponse<Void>> togglePostLike(
 			@RequestParam Long memberId,
-			@RequestParam Long communityId,
-			@RequestBody PostLikeDto.PostLikeSaveOrUpdateRequest dto
+			@RequestParam Long communityId
 	){
-		postLikeService.updatePostLike(memberId, communityId, dto);
+		postLikeService.togglePostLike(memberId, communityId);
 		return ResponseEntity.ok(CommonApiResponse.onSuccess(null));
 	}
 
