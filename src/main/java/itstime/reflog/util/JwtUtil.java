@@ -98,4 +98,39 @@ public class JwtUtil {
             throw new TokenException(TokenErrorResult.INVALID_TOKEN);
         }
     }
+
+    public UUID getUuidFromToken(String token) {
+        try {
+            String userId = Jwts.parserBuilder()
+                .setSigningKey(this.getSigningKey())
+                .build()
+                .parseClaimsJws(token)
+                .getBody()
+                .get("userId", String.class);
+
+            log.info("토큰에서 추출된 UUID: {}", userId);
+            return UUID.fromString(userId);
+        } catch (JwtException | IllegalArgumentException e) {
+            log.error("유효하지 않은 토큰입니다. 에러 메시지: {}", e.getMessage());
+            throw new TokenException(TokenErrorResult.INVALID_TOKEN);
+        }
+    }
+
+    public long getRemainingTime(String token) {
+        try {
+            Date expirationDate = Jwts.parserBuilder()
+                .setSigningKey(this.getSigningKey())
+                .build()
+                .parseClaimsJws(token)
+                .getBody()
+                .getExpiration();
+
+            long remainingTime = expirationDate.getTime() - System.currentTimeMillis();
+            log.info("토큰의 남은 유효 시간(ms): {}", remainingTime);
+            return remainingTime > 0 ? remainingTime : 0;
+        } catch (JwtException e) {
+            log.error("토큰 만료 시간 확인 중 에러 발생: {}", e.getMessage());
+            throw new TokenException(TokenErrorResult.INVALID_TOKEN);
+        }
+    }
 }
