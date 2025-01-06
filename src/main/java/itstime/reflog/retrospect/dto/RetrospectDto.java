@@ -89,5 +89,33 @@ public class RetrospectDto {
 				.visibility(retrospect.isVisibility())
 				.build();
 		}
+
+	}
+
+	//학습 유형 별 필터링 api dto
+	@Getter
+	@Builder
+	@AllArgsConstructor
+	@NoArgsConstructor(access = AccessLevel.PRIVATE)
+	public static class RetrospectCategoryResponse {
+
+		private String title;
+		private LocalDate createdDate;
+		private List<String> studyTypes;
+		private boolean visibility;
+
+		public static List<RetrospectCategoryResponse> fromEntity(List<Retrospect> retrospects) {
+			return retrospects.stream()
+					.map(retrospect -> RetrospectCategoryResponse.builder()
+							.title(retrospect.getTitle())
+							.createdDate(retrospect.getCreatedDate())
+							.studyTypes(retrospect.getStudyTypes().stream()
+									.map(StudyType::getType)
+									.collect(Collectors.toList()))
+							.visibility(retrospect.isVisibility())
+							.build()
+					)
+					.collect(Collectors.toList());
+		}
 	}
 }

@@ -19,6 +19,8 @@ import itstime.reflog.retrospect.service.RetrospectService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
+import java.util.List;
+
 @Tag(name = "RETROSPECT API", description = "회고일지에 대한 API입니다.")
 @RestController
 @RequiredArgsConstructor
@@ -103,5 +105,33 @@ public class RetrospectController {
 		@Valid @RequestBody RetrospectDto.RetrospectSaveOrUpdateRequest dto) {
 		retrospectService.updateRetrospect(retrospectId, dto);
 		return ResponseEntity.ok(CommonApiResponse.onSuccess(null));
+	}
+
+	//학습 유형 별 필터링 api
+	@Operation(
+			summary = "회고일지 학습유형별 조회 필터링 API",
+			description = "학습유형별 회고일지를 조회합니다. 학습 유형을 파라미터에 입력하면 해당하는 회고일지들 반환. 기타는 파라미터에 기타를 입력하면 됩니다.",
+			responses = {
+					@ApiResponse(
+							responseCode = "200",
+							description = "학습유형별 회고일지 조회 성공"
+					),
+					@ApiResponse(
+							responseCode = "404",
+							description = "해당 카테고리를 찾을 수 없음"
+					),
+					@ApiResponse(
+							responseCode = "500",
+							description = "서버 에러"
+					)
+			}
+	)
+	@GetMapping("/filter")
+	public ResponseEntity<CommonApiResponse<List<RetrospectDto.RetrospectCategoryResponse>>> getFilteredRetrospect(
+			@RequestParam Long memberId,
+			@RequestParam String category
+	){
+		List<RetrospectDto.RetrospectCategoryResponse> responses = retrospectService.getRetrospect(category, memberId);
+		return ResponseEntity.ok(CommonApiResponse.onSuccess(responses));
 	}
 }
