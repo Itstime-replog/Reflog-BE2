@@ -171,11 +171,14 @@ public class CommunityService {
 					String nickname = myPageRepository.findByMember(community.getMember())
 							.map(MyPage::getNickname)
 							.orElse("닉네임 없음");
-					//멤버와 커뮤니티로 멤버의 좋아요 상태 반환
-					PostLike postLike = postLikeRepository.findByMemberAndCommunity(member, community);
+
+					//좋아요 있는지 없는지 플래그
+					Boolean isLike = postLikeRepository.findByMemberAndCommunity(member, community).isPresent();
+
 					//게시물마다 좋아요 총 갯수 반환
-					Integer totalLike = postLikeService.getSumPostLike(community);
-					return CommunityDto.CombinedCategoryResponse.fromCommunity(community, nickname, postLike.getIsLike(), totalLike);
+					int totalLike = postLikeService.getSumCommunityPostLike(community);
+
+					return CommunityDto.CombinedCategoryResponse.fromCommunity(community, nickname, isLike, totalLike);
 				})
 				.collect(Collectors.toList());
 
@@ -187,7 +190,14 @@ public class CommunityService {
 						String nickname = myPageRepository.findByMember(retrospect.getMember())
 								.map(MyPage::getNickname)
 								.orElse("닉네임 없음");
-						return CommunityDto.CombinedCategoryResponse.fromRetrospect(retrospect, nickname);
+
+						//좋아요 있는지 없는지 플래그
+						Boolean isLike = postLikeRepository.findByMemberAndRetrospect(member, retrospect).isPresent();
+
+						//게시물마다 좋아요 총 갯수 반환
+						int totalLike = postLikeService.getSumRetrospectPostLike(retrospect);
+
+						return CommunityDto.CombinedCategoryResponse.fromRetrospect(retrospect, nickname, isLike, totalLike);
 					})
 					.collect(Collectors.toList());
 			responses.addAll(retrospectResponses); // 두 리스트 합치기(회고일지, 커뮤니티)
@@ -198,7 +208,10 @@ public class CommunityService {
 
 	//커뮤니티 게시물 검색
 	@Transactional
-	public List<CommunityDto.CombinedCategoryResponse> getSearchedCommunity(String title){
+	public List<CommunityDto.CombinedCategoryResponse> getSearchedCommunity(Long memberId, String title){
+
+		Member member = memberRepository.findById(memberId)
+				.orElseThrow(() -> new GeneralException(ErrorStatus._MEMBER_NOT_FOUND));
 
 		//커뮤니티 게시물 중 키워드가 일치하는 게시물 찾기
 		List<Community> communities= communityRepository.searchCommunitiesByTitleContaining(title);
@@ -208,7 +221,14 @@ public class CommunityService {
 					String nickname = myPageRepository.findByMember(community.getMember())
 							.map(MyPage::getNickname)
 							.orElse("닉네임 없음");
-					return CommunityDto.CombinedCategoryResponse.fromCommunity(community, nickname);
+
+					//좋아요 있는지 없는지 플래그
+					Boolean isLike = postLikeRepository.findByMemberAndCommunity(member, community).isPresent();
+
+					//게시물마다 좋아요 총 갯수 반환
+					int totalLike = postLikeService.getSumCommunityPostLike(community);
+
+					return CommunityDto.CombinedCategoryResponse.fromCommunity(community, nickname, isLike, totalLike);
 				})
 				.collect(Collectors.toList());
 
@@ -220,7 +240,13 @@ public class CommunityService {
 					String nickname = myPageRepository.findByMember(retrospect.getMember())
 							.map(MyPage::getNickname)
 							.orElse("닉네임 없음");
-					return CommunityDto.CombinedCategoryResponse.fromRetrospect(retrospect, nickname);
+					//좋아요 있는지 없는지 플래그
+					Boolean isLike = postLikeRepository.findByMemberAndRetrospect(member, retrospect).isPresent();
+
+					//게시물마다 좋아요 총 갯수 반환
+					int totalLike = postLikeService.getSumRetrospectPostLike(retrospect);
+
+					return CommunityDto.CombinedCategoryResponse.fromRetrospect(retrospect, nickname, isLike, totalLike);
 				})
 				.collect(Collectors.toList());
 		responses.addAll(retrospectResponses); // 두 리스트 합치기(회고일지, 커뮤니티)

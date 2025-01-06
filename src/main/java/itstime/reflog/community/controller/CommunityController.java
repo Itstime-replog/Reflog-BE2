@@ -177,9 +177,10 @@ public class CommunityController {
 	)
 	@GetMapping("/search")
 	public ResponseEntity<CommonApiResponse<List<CommunityDto.CombinedCategoryResponse>>> getSearchedCommunity(
-			@RequestParam(required = false) String title
+			@RequestParam Long memberId,
+			@RequestParam String title
 	){
-		List<CommunityDto.CombinedCategoryResponse> responses = communityService.getSearchedCommunity(title);
+		List<CommunityDto.CombinedCategoryResponse> responses = communityService.getSearchedCommunity(memberId,title);
 		return ResponseEntity.ok(CommonApiResponse.onSuccess(responses));
 	}
 
