@@ -74,15 +74,4 @@ public class CommunityDto {
 					.build();
 		}
 	}
-
-	@Getter
-	@AllArgsConstructor
-	public static class MyPageCommunityResponse {
-		private Long id;
-		private String title;
-		private String content;
-		private LocalDateTime createdAt;
-
-		private long commentCount;
-	}
 }
