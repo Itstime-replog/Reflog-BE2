@@ -14,6 +14,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @Tag(name = "MYPAGE API", description = "마이페이지에 대한 API입니다.")
 @RestController
 @RequiredArgsConstructor
@@ -162,11 +164,11 @@ public class MyPageController {
             }
     )
     @GetMapping("/communitylog/posts")
-    public ResponseEntity<CommonApiResponse<MyPageDto.MyPagePostResponse>> getMyPost(
+    public ResponseEntity<CommonApiResponse<List<MyPageDto.MyPagePostResponse>>> getMyPost(
             @UserId String memberId
     ) {
-        MyPageDto.MyPagePostResponse myPagePostResponse = myPageService.getMyPost(memberId);
-        return ResponseEntity.ok(CommonApiResponse.onSuccess(myPagePostResponse));
+        List<MyPageDto.MyPagePostResponse> responses = myPageService.getMyPost(memberId);
+        return ResponseEntity.ok(CommonApiResponse.onSuccess(responses));
     }
 
 

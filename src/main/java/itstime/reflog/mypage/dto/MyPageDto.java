@@ -1,13 +1,17 @@
 package itstime.reflog.mypage.dto;
 
-import itstime.reflog.community.dto.CommunityDto;
+import itstime.reflog.community.domain.Community;
+import itstime.reflog.retrospect.domain.Retrospect;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class MyPageDto {
 
@@ -36,8 +40,47 @@ public class MyPageDto {
     }
 
     @Getter
+    @Builder
     @AllArgsConstructor
     public static class MyPagePostResponse {
-        private List<CommunityDto.MyPageCommunityResponse> myPageCommunityResponseList;
+        private Long id;
+        private String title;
+        private String content;
+        private LocalDateTime createdAt;
+        private List<String> postTypes;
+        private List<String> learningTypes;
+        private Integer progressLevel;    // Retrospect 전용
+        private Integer understandingLevel;// Retrospect 전용
+
+        private int totalLike;
+        private long commentCount;
+
+        public static MyPagePostResponse fromCommunity(Community community, int totalLike, long commentCount){
+            return MyPagePostResponse.builder()
+                    .id(community.getId())
+                    .title(community.getTitle())
+                    .content(community.getContent())
+                    .createdAt(community.getCreatedAt())
+                    .postTypes(community.getPostTypes())
+                    .learningTypes(community.getLearningTypes())
+                    .totalLike(totalLike)
+                    .commentCount(commentCount)
+                    .build();
+        }
+        public static MyPagePostResponse fromRetrospect(Retrospect retrospect, int totalLike, long commentCount){
+            return MyPagePostResponse.builder()
+                    .id(retrospect.getId())
+                    .title(retrospect.getTitle())
+                    .createdAt(retrospect.getCreatedDate().atStartOfDay())
+                    .postTypes(List.of("회고일지"))
+                    .learningTypes(retrospect.getStudyTypes().stream()
+                            .map(studyType -> studyType.getType())
+                            .collect(Collectors.toList()))
+                    .progressLevel(retrospect.getProgressLevel())
+                    .understandingLevel(retrospect.getUnderstandingLevel())
+                    .totalLike(totalLike)
+                    .commentCount(commentCount)
+                    .build();
+        }
     }
 }
