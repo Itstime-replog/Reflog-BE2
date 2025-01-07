@@ -12,6 +12,8 @@ public class CommentDto {
     @AllArgsConstructor
     public static class CommentSaveOrUpdateRequest {
 
+        private String postType;
+
         @NotBlank(message = "댓글은 비어 있을 수 없습니다.")
         private String content;
 
