@@ -76,8 +76,8 @@ public class ScheduleController {
     @GetMapping("/schedule/{scheduleId}")
     public ResponseEntity<CommonApiResponse<ScheduleDto.ScheduleResponse>> getSchedule(
             @PathVariable Long scheduleId,
-            @RequestParam Long memberId
-    ) {
+            @UserId String memberId
+            ) {
         ScheduleDto.ScheduleResponse schedule = scheduleService.getSchedule(scheduleId, memberId);
         return ResponseEntity.ok(CommonApiResponse.onSuccess(schedule));
     }
@@ -105,7 +105,7 @@ public class ScheduleController {
     )
     @GetMapping("/schedule")
     public ResponseEntity<CommonApiResponse<List<ScheduleDto.ScheduleAllResponse>>> getAllSchedule(
-            @RequestParam Long memberId,
+            @UserId String memberId,
             @RequestParam int month
     ) {
         List<ScheduleDto.ScheduleAllResponse> schedules = scheduleService.getAllSchedule(memberId, month);
@@ -145,7 +145,7 @@ public class ScheduleController {
     @PatchMapping("/schedule/{scheduleId}")
     public ResponseEntity<CommonApiResponse<Void>> updateSchedule(
             @PathVariable Long scheduleId,
-            @RequestParam Long memberId,
+            @UserId String memberId,
             @RequestBody @Valid ScheduleDto.ScheduleSaveOrUpdateRequest request
     ) {
         scheduleService.updateSchedule(scheduleId, memberId, request);

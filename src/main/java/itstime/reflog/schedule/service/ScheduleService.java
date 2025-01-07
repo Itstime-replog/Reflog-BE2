@@ -3,7 +3,7 @@ package itstime.reflog.schedule.service;
 import itstime.reflog.common.code.status.ErrorStatus;
 import itstime.reflog.common.exception.GeneralException;
 import itstime.reflog.member.domain.Member;
-import itstime.reflog.member.repository.MemberRepository;
+import itstime.reflog.member.service.MemberServiceHelper;
 import itstime.reflog.schedule.domain.Schedule;
 import itstime.reflog.schedule.dto.ScheduleDto;
 import itstime.reflog.schedule.repository.ScheduleRepository;
@@ -12,20 +12,20 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
 public class ScheduleService {
 
     private final ScheduleRepository scheduleRepository;
-    private final MemberRepository memberRepository;
+    private final MemberServiceHelper memberServiceHelper;
+
 
     @Transactional
     public void createSchedule(String memberId, ScheduleDto.ScheduleSaveOrUpdateRequest dto) {
 
-        Member member = memberRepository.findByUuid(UUID.fromString(memberId))
-                .orElseThrow(() -> new GeneralException(ErrorStatus._MEMBER_NOT_FOUND));
+        Member member = memberServiceHelper.findMemberByUuid(memberId);
+
 
         Schedule schedule = Schedule.builder()
                 .title(dto.getTitle())
@@ -40,12 +40,11 @@ public class ScheduleService {
     }
 
     @Transactional
-    public ScheduleDto.ScheduleResponse getSchedule(Long scheduleId, Long memberId){
+    public ScheduleDto.ScheduleResponse getSchedule(Long scheduleId, String memberId){
         Schedule schedule = scheduleRepository.findById(scheduleId)
                 .orElseThrow(() -> new GeneralException(ErrorStatus._SCHEDULE_NOT_FOUND));
 
-        Member member = memberRepository.findById(memberId)
-                .orElseThrow(() -> new GeneralException(ErrorStatus._MEMBER_NOT_FOUND));
+        Member member = memberServiceHelper.findMemberByUuid(memberId);
 
         return new ScheduleDto.ScheduleResponse(
                 schedule.getId(),
@@ -58,9 +57,9 @@ public class ScheduleService {
     }
 
     @Transactional
-    public List<ScheduleDto.ScheduleAllResponse> getAllSchedule(Long memberId, int month) {
+    public List<ScheduleDto.ScheduleAllResponse> getAllSchedule(String memberId, int month) {
 
-        List<Schedule> schedules = scheduleRepository.findByMemberAndStartDateTimeMonth(memberId, month);
+        List<Schedule> schedules = scheduleRepository.findByMemberAndStartDateTimeMonth(Long.valueOf(memberId), month);
 
         return schedules.stream()
                 .map(schedule -> new ScheduleDto.ScheduleAllResponse(
@@ -73,12 +72,11 @@ public class ScheduleService {
     }
 
     @Transactional
-    public void updateSchedule(Long scheduleId, Long memberId, ScheduleDto.ScheduleSaveOrUpdateRequest request) {
+    public void updateSchedule(Long scheduleId, String memberId, ScheduleDto.ScheduleSaveOrUpdateRequest request) {
         Schedule schedule = scheduleRepository.findById(scheduleId)
                 .orElseThrow(() -> new GeneralException(ErrorStatus._SCHEDULE_NOT_FOUND));
 
-        Member member = memberRepository.findById(memberId)
-                .orElseThrow(() -> new GeneralException(ErrorStatus._MEMBER_NOT_FOUND));
+        Member member = memberServiceHelper.findMemberByUuid(memberId);
 
         schedule.update(request, member);
 
