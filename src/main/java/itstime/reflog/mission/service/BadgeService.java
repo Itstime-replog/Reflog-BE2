@@ -5,6 +5,7 @@ import itstime.reflog.common.exception.GeneralException;
 import itstime.reflog.mission.domain.Badge;
 import itstime.reflog.mission.domain.UserBadge;
 import itstime.reflog.mission.repository.UserBadgeRepository;
+import itstime.reflog.mypage.domain.MyPage;
 import itstime.reflog.notification.domain.NotificationType;
 import itstime.reflog.notification.service.NotificationService;
 import lombok.RequiredArgsConstructor;
@@ -19,17 +20,17 @@ public class BadgeService {
     private final NotificationService notificationService;
 
     @Transactional
-    public void awardBadge(Long memberId, Badge badge) {
-        // 사용자 배지 조회
-        UserBadge userBadge = userBadgeRepository.findByMyPage_MemberIdAndBadge(memberId, badge)
+    public void awardBadge(Long memberId, MyPage myPage, Badge badge) {
+        // 1. 유저 배지 조회
+        UserBadge userBadge = userBadgeRepository.findByMyPageAndBadge(myPage, badge)
                 .orElseThrow(() -> new GeneralException(ErrorStatus._BADGE_NOT_FOUND));
 
-        // 이미 배지를 획득했으면 반환
+        // 2. 이미 배지를 획득했으면 반환
         if (userBadge.isEarned()) {
             return;
         }
 
-        // 배지 획득 처리
+        // 3. 유저 배지 획득 처리
         userBadge.setEarned(true);
         userBadgeRepository.save(userBadge);
 
