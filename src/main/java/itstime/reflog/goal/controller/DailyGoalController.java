@@ -7,6 +7,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import itstime.reflog.common.CommonApiResponse;
+import itstime.reflog.common.annotation.UserId;
 import itstime.reflog.goal.dto.DailyGoalDto;
 import itstime.reflog.goal.service.DailyGoalService;
 import jakarta.validation.Valid;
@@ -48,7 +49,7 @@ public class DailyGoalController {
     )
     @PostMapping("/dailyGoal")
     public ResponseEntity<CommonApiResponse<Void>> createDailyGoal(
-            @RequestParam Long memberId,
+            @UserId String memberId,
             @RequestBody DailyGoalDto.DailyGoalSaveOrUpdateRequest dto){
             dailyGoalService.createDailyGoal(memberId, dto);
             return ResponseEntity.ok(CommonApiResponse.onSuccess(null));
@@ -77,7 +78,7 @@ public class DailyGoalController {
     )
     @GetMapping("/dailyGoal")
     public ResponseEntity<CommonApiResponse<DailyGoalDto.DailyGoalResponse>> getDailyGoalByMemberAndDate(
-            @RequestParam Long memberId,
+            @UserId String memberId,
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)LocalDate date
             ){
         DailyGoalDto.DailyGoalResponse dailyGoal = dailyGoalService.getDailyGoalByMemberIdAndDate(memberId, date);
@@ -114,7 +115,7 @@ public class DailyGoalController {
     )
     @PatchMapping("/dailyGoal/{createdDate}")
     public ResponseEntity<CommonApiResponse<DailyGoalDto.DailyGoalResponse>> getDailyGoalByMemberIdAndDate(
-            @RequestParam Long memberId,
+            @UserId String memberId,
             @PathVariable @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)LocalDate createdDate,
             @RequestBody @Valid DailyGoalDto.DailyGoalSaveOrUpdateRequest request
             ){
