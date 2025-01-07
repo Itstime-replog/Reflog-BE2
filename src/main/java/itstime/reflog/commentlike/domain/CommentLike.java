@@ -1,4 +1,4 @@
-package itstime.reflog.commentLike.domain;
+package itstime.reflog.commentlike.domain;
 
 import itstime.reflog.comment.domain.Comment;
 import itstime.reflog.member.domain.Member;

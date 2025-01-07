@@ -1,7 +1,7 @@
-package itstime.reflog.commentLike.repository;
+package itstime.reflog.commentlike.repository;
 
 import itstime.reflog.comment.domain.Comment;
-import itstime.reflog.commentLike.domain.CommentLike;
+import itstime.reflog.commentlike.domain.CommentLike;
 import itstime.reflog.member.domain.Member;
 import org.springframework.data.jpa.repository.JpaRepository;
 
