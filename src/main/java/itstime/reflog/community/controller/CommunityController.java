@@ -3,6 +3,7 @@ package itstime.reflog.community.controller;
 import java.util.List;
 import java.util.UUID;
 
+import itstime.reflog.common.annotation.UserId;
 import itstime.reflog.postlike.service.PostLikeService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -70,8 +71,8 @@ public class CommunityController {
 	)
 	@PostMapping
 	public ResponseEntity<CommonApiResponse<Void>> createCommunity(
-		@RequestParam Long memberId,
-		@RequestBody CommunityDto.CommunitySaveOrUpdateRequest dto) {
+			@UserId String memberId,
+			@RequestBody CommunityDto.CommunitySaveOrUpdateRequest dto) {
 		communityService.createCommunity(memberId, dto);
 		return ResponseEntity.ok(CommonApiResponse.onSuccess(null));
 	}
@@ -176,11 +177,11 @@ public class CommunityController {
 	)
 	@GetMapping("/filter")
 	public ResponseEntity<CommonApiResponse<List<CommunityDto.CombinedCategoryResponse>>> getFilteredCommunity(
-			@RequestParam Long memberId,
+			@UserId String memberId,
 			@RequestParam(required = false) List<String> postTypes,
 			@RequestParam(required = false) List<String> learningTypes
 			){
-		List<CommunityDto.CombinedCategoryResponse> responses = communityService.getFilteredCommunity(memberId,postTypes, learningTypes);
+		List<CommunityDto.CombinedCategoryResponse> responses = communityService.getFilteredCommunity(memberId, postTypes, learningTypes);
 		return ResponseEntity.ok(CommonApiResponse.onSuccess(responses));
 	}
 
@@ -204,7 +205,7 @@ public class CommunityController {
 	)
 	@GetMapping("/search")
 	public ResponseEntity<CommonApiResponse<List<CommunityDto.CombinedCategoryResponse>>> getSearchedCommunity(
-			@RequestParam Long memberId,
+			@UserId String memberId,
 			@RequestParam String title
 	){
 		List<CommunityDto.CombinedCategoryResponse> responses = communityService.getSearchedCommunity(memberId,title);
@@ -231,7 +232,7 @@ public class CommunityController {
 	)
 	@PostMapping("/like/{postId}")
 	public ResponseEntity<CommonApiResponse<Void>> togglePostLike(
-			@RequestParam Long memberId,
+			@UserId String memberId,
 			@PathVariable Long postId,
 			@RequestParam String postType
 	){
@@ -259,8 +260,8 @@ public class CommunityController {
 	)
 	@GetMapping
 	public ResponseEntity<CommonApiResponse<List<CommunityDto.CombinedCategoryResponse>>> getAllCommunity(
-			@RequestParam Long memberId
-	){
+			@UserId String memberId
+			){
 		List<CommunityDto.CombinedCategoryResponse> responses = communityService.getAllCommunity(memberId);
 		return ResponseEntity.ok(CommonApiResponse.onSuccess(responses));
 	}

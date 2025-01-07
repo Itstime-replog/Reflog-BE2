@@ -6,7 +6,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import itstime.reflog.postlike.domain.PostLike;
+import itstime.reflog.member.service.MemberServiceHelper;
 import itstime.reflog.postlike.repository.PostLikeRepository;
 import itstime.reflog.postlike.service.PostLikeService;
 import itstime.reflog.comment.domain.Comment;
@@ -29,7 +29,6 @@ import itstime.reflog.community.dto.CommunityDto;
 import itstime.reflog.community.repository.CommunityRepository;
 import itstime.reflog.community.repository.UploadedFileRepository;
 import itstime.reflog.member.domain.Member;
-import itstime.reflog.member.repository.MemberRepository;
 import itstime.reflog.s3.AmazonS3Manager;
 import lombok.RequiredArgsConstructor;
 
@@ -39,17 +38,17 @@ public class CommunityService {
     private final CommunityRepository communityRepository;
     private final UploadedFileRepository uploadedFileRepository;
     private final AmazonS3Manager amazonS3Manager;
-    private final MemberRepository memberRepository;
     private final MyPageRepository myPageRepository;
     private final RetrospectRepository retrospectRepository;
     private final CommentRepository commentRepository;
     private final PostLikeService postLikeService;
     private final PostLikeRepository postLikeRepository;
+    private final MemberServiceHelper memberServiceHelper;
+
 
     @Transactional
-    public void createCommunity(Long memberId, CommunityDto.CommunitySaveOrUpdateRequest dto) {
-        Member member = memberRepository.findById(memberId)
-                .orElseThrow(() -> new GeneralException(ErrorStatus._MEMBER_NOT_FOUND));
+    public void createCommunity(String memberId, CommunityDto.CommunitySaveOrUpdateRequest dto) {
+        Member member = memberServiceHelper.findMemberByUuid(memberId);
 
         Community community = Community.builder()
                 .title(dto.getTitle())
@@ -175,10 +174,9 @@ public class CommunityService {
 
 	//커뮤니티 게시글 필터링
 	@Transactional
-	public List<CommunityDto.CombinedCategoryResponse> getFilteredCommunity(Long memberId, List<String> postTypes, List<String> learningTypes) {
+	public List<CommunityDto.CombinedCategoryResponse> getFilteredCommunity(String memberId, List<String> postTypes, List<String> learningTypes) {
 
-		Member member = memberRepository.findById(memberId)
-				.orElseThrow(() -> new GeneralException(ErrorStatus._MEMBER_NOT_FOUND));
+        Member member = memberServiceHelper.findMemberByUuid(memberId);
 
         List<Community> communities;
 
@@ -239,12 +237,11 @@ public class CommunityService {
 
 	//커뮤니티 게시물 검색
 	@Transactional
-	public List<CommunityDto.CombinedCategoryResponse> getSearchedCommunity(Long memberId, String title){
+	public List<CommunityDto.CombinedCategoryResponse> getSearchedCommunity(String memberId, String title){
 
-		Member member = memberRepository.findById(memberId)
-				.orElseThrow(() -> new GeneralException(ErrorStatus._MEMBER_NOT_FOUND));
+        Member member = memberServiceHelper.findMemberByUuid(memberId);
 
-		//커뮤니티 게시물 중 키워드가 일치하는 게시물 찾기
+        //커뮤니티 게시물 중 키워드가 일치하는 게시물 찾기
 		List<Community> communities= communityRepository.searchCommunitiesByTitleContaining(title);
 
 		List<CommunityDto.CombinedCategoryResponse> responses = communities.stream()
@@ -286,9 +283,8 @@ public class CommunityService {
 	}
 
     @Transactional
-    public List<CommunityDto.CombinedCategoryResponse> getAllCommunity(Long memberId) {
-        Member member = memberRepository.findById(memberId)
-                .orElseThrow(() -> new GeneralException(ErrorStatus._MEMBER_NOT_FOUND));
+    public List<CommunityDto.CombinedCategoryResponse> getAllCommunity(String memberId) {
+        Member member = memberServiceHelper.findMemberByUuid(memberId);
 
         List<Community> communities = communityRepository.findAllByOrderByCreatedAtDesc();
         List<Retrospect> retrospects = retrospectRepository.findAllByVisibilityTrueOrderByCreatedDateDesc();
