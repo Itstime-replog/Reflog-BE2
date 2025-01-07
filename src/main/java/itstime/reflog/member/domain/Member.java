@@ -4,7 +4,7 @@ import java.util.List;
 
 import itstime.reflog.analysis.domain.WeeklyAnalysis;
 import itstime.reflog.comment.domain.Comment;
-import itstime.reflog.commentLike.domain.CommentLike;
+import itstime.reflog.commentlike.domain.CommentLike;
 import itstime.reflog.community.domain.Community;
 import itstime.reflog.goal.domain.DailyGoal;
 import itstime.reflog.mypage.domain.MyPage;

@@ -1,7 +1,7 @@
 package itstime.reflog.comment.domain;
 
 import itstime.reflog.comment.dto.CommentDto;
-import itstime.reflog.commentLike.domain.CommentLike;
+import itstime.reflog.commentlike.domain.CommentLike;
 import itstime.reflog.community.domain.Community;
 import itstime.reflog.member.domain.Member;
 import itstime.reflog.postlike.domain.enums.PostType;

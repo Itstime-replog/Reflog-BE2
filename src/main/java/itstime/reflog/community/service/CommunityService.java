@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import itstime.reflog.member.service.MemberServiceHelper;
+import itstime.reflog.mypage.dto.MyPageDto;
 import itstime.reflog.postlike.domain.enums.PostType;
 import itstime.reflog.postlike.repository.PostLikeRepository;
 import itstime.reflog.postlike.service.PostLikeService;
@@ -342,4 +343,46 @@ public class CommunityService {
         return responses;
     }
 
+    @Transactional
+    public List<MyPageDto.MyPagePostResponse> getPostsByProfile(String nickname) {
+        // 1. 멤버 조회
+        MyPage myPage = myPageRepository.findByNickname(nickname)
+                .orElseThrow(() -> new GeneralException(ErrorStatus._MYPAGE_NOT_FOUND));
+
+        Member member = myPage.getMember();
+
+        // 2. 이 프로필이 작성한 커뮤니티 글 전체조회
+        List<Community> communityList = communityRepository.findAllByMemberOrderByIdDesc(member);
+
+        // 3. 이 프로필이 커뮤니티 글 정리
+        List<MyPageDto.MyPagePostResponse> responses = communityList.stream()
+                .map(community -> {
+
+                    // 좋아요 총 개수
+                    int totalLike = postLikeService.getSumCommunityPostLike(community);
+                    // 댓글 총 개수
+                    long commentCount = commentRepository.countByCommunity(community);
+
+                    return MyPageDto.MyPagePostResponse.fromCommunity(community, totalLike, commentCount);
+                })
+                .collect(Collectors.toList());
+
+        // 4. 이 프로필이 회고일지 글 전체조회
+        List<Retrospect> retrospectList = retrospectRepository.findAllByMemberOrderByIdDesc(member);
+
+        // 5. 이 프로필이 회고일지 글 정리
+        List<MyPageDto.MyPagePostResponse> retrospectResponses = retrospectList.stream()
+                .map(retrospect -> {
+
+                    // 좋아요 총 개수
+                    int totalLike = postLikeService.getSumRetrospectPostLike(retrospect);
+                    // 댓글 총 개수
+                    long commentCount = commentRepository.countByRetrospect(retrospect);
+
+                    return MyPageDto.MyPagePostResponse.fromRetrospect(retrospect, totalLike, commentCount);
+                }).toList();
+
+        responses.addAll(retrospectResponses);
+        return responses;
+    }
 }

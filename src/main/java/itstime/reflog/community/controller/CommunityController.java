@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.UUID;
 
 import itstime.reflog.common.annotation.UserId;
+import itstime.reflog.mypage.dto.MyPageDto;
 import itstime.reflog.postlike.service.PostLikeService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -268,4 +269,29 @@ public class CommunityController {
         return ResponseEntity.ok(CommonApiResponse.onSuccess(responses));
     }
 
+    @Operation(
+            summary = "커뮤니티 프로필 클릭 시 게시글 조회 API",
+            description = "커뮤니티에서 프로필 클릭 시 그 프로필에 해당하는 사람이 작성한 게시글들을 확인니다. 최신순으로 정렬되어있습니다.",
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "커뮤니티 프로필 클릭 시 게시글 조회 성공"
+                    ),
+                    @ApiResponse(
+                            responseCode = "404",
+                            description = "해당 회원을 찾을 수 없음"
+                    ),
+                    @ApiResponse(
+                            responseCode = "500",
+                            description = "서버 에러"
+                    )
+            }
+    )
+    @GetMapping("/profile")
+    public ResponseEntity<CommonApiResponse<List<MyPageDto.MyPagePostResponse>>> getPostsByProfile(
+            @RequestParam String nickname
+    ) {
+        List<MyPageDto.MyPagePostResponse> responses = communityService.getPostsByProfile(nickname);
+        return ResponseEntity.ok(CommonApiResponse.onSuccess(responses));
+    }
 }
