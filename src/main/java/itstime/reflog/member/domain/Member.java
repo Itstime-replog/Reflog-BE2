@@ -2,9 +2,13 @@ package itstime.reflog.member.domain;
 
 import java.util.List;
 
+import itstime.reflog.analysis.domain.WeeklyAnalysis;
+import itstime.reflog.comment.domain.Comment;
+import itstime.reflog.commentlike.domain.CommentLike;
 import itstime.reflog.community.domain.Community;
 import itstime.reflog.goal.domain.DailyGoal;
 import itstime.reflog.mypage.domain.MyPage;
+import itstime.reflog.postlike.domain.PostLike;
 import itstime.reflog.schedule.domain.Schedule;
 import itstime.reflog.todolist.domain.Todolist;
 import jakarta.persistence.*;
@@ -56,6 +60,18 @@ public class Member {
 
 	@OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
 	private List<Community> communities;
+
+	@OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
+	private List<PostLike> postLikes;
+
+	@OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
+	private List<WeeklyAnalysis> weeklyAnalyses;
+
+	@OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
+	private List<Comment> comments;
+
+	@OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
+	private List<CommentLike> commentLikes;
 
 	@OneToOne(mappedBy = "member", cascade = CascadeType.ALL)
 	private MyPage myPage;

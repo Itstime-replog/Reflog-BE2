@@ -1,14 +1,12 @@
 package itstime.reflog.community.dto;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import itstime.reflog.comment.dto.CommentDto;
 import itstime.reflog.community.domain.Community;
-import itstime.reflog.member.domain.Member;
 import itstime.reflog.retrospect.domain.Retrospect;
-import itstime.reflog.retrospect.domain.StudyType;
 import lombok.*;
 
 public class CommunityDto {
@@ -21,6 +19,12 @@ public class CommunityDto {
 		private List<String> postTypes;
 		private List<String> learningTypes;
 		private List<String> fileUrls;
+	}
+
+	@Getter
+	@AllArgsConstructor
+	public static class CommunityResponse {
+		private List<CommentDto.CommentResponse> commentList;
 	}
 
 	//카테고리 별 필터링 api dto
@@ -37,20 +41,24 @@ public class CommunityDto {
 		private List<String> learningTypes;
 		private String writer;
 		private Integer progressLevel;    // Retrospect 전용
-		private Integer understandingLevel; // Retrospect 전용
+		private Integer understandingLevel;// Retrospect 전용
+		private Boolean isLike;
+		private int totalLike;
 
-		public static CombinedCategoryResponse fromCommunity(Community community, String writer) {
+		public static CombinedCategoryResponse fromCommunity(Community community, String writer, Boolean isLike, Integer totalLike) {
 			return CombinedCategoryResponse.builder()
 					.title(community.getTitle())
 					.content(community.getContent())
 					.createdDate(community.getCreatedAt())
 					.postTypes(community.getPostTypes())
 					.learningTypes(community.getLearningTypes())
+					.isLike(isLike)
+					.totalLike(totalLike)
 					.writer(writer)
 					.build();
 		}
 
-		public static CombinedCategoryResponse fromRetrospect(Retrospect retrospect, String writer) {
+		public static CombinedCategoryResponse fromRetrospect(Retrospect retrospect, String writer, Boolean isLike, Integer totalLike) {
 			return CombinedCategoryResponse.builder()
 					.title(retrospect.getTitle())
 					.createdDate(retrospect.getCreatedDate().atStartOfDay())
@@ -60,6 +68,8 @@ public class CommunityDto {
 							.collect(Collectors.toList())) //String 리스트로 변환
 					.progressLevel(retrospect.getProgressLevel())
 					.understandingLevel(retrospect.getUnderstandingLevel())
+					.isLike(isLike)
+					.totalLike(totalLike)
 					.writer(writer)
 					.build();
 		}

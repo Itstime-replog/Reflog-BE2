@@ -7,6 +7,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import itstime.reflog.common.CommonApiResponse;
+import itstime.reflog.common.annotation.UserId;
 import itstime.reflog.schedule.dto.ScheduleDto;
 import itstime.reflog.schedule.service.ScheduleService;
 import jakarta.validation.Valid;
@@ -44,11 +45,10 @@ public class ScheduleController {
     )
     @PostMapping("/schedule")
     public ResponseEntity<CommonApiResponse<Void>> createSchedule(
-//            @RequestParam Long memberId,
-            @RequestHeader("Authorization") String authorizationHeader,
+            @UserId String memberId,
             @RequestBody ScheduleDto.ScheduleSaveOrUpdateRequest dto
     ) {
-        scheduleService.createSchedule(authorizationHeader, dto);
+        scheduleService.createSchedule(memberId, dto);
         return ResponseEntity.ok(CommonApiResponse.onSuccess(null));
     }
 
@@ -76,8 +76,8 @@ public class ScheduleController {
     @GetMapping("/schedule/{scheduleId}")
     public ResponseEntity<CommonApiResponse<ScheduleDto.ScheduleResponse>> getSchedule(
             @PathVariable Long scheduleId,
-            @RequestParam Long memberId
-    ) {
+            @UserId String memberId
+            ) {
         ScheduleDto.ScheduleResponse schedule = scheduleService.getSchedule(scheduleId, memberId);
         return ResponseEntity.ok(CommonApiResponse.onSuccess(schedule));
     }
@@ -105,7 +105,7 @@ public class ScheduleController {
     )
     @GetMapping("/schedule")
     public ResponseEntity<CommonApiResponse<List<ScheduleDto.ScheduleAllResponse>>> getAllSchedule(
-            @RequestParam Long memberId,
+            @UserId String memberId,
             @RequestParam int month
     ) {
         List<ScheduleDto.ScheduleAllResponse> schedules = scheduleService.getAllSchedule(memberId, month);
@@ -145,7 +145,7 @@ public class ScheduleController {
     @PatchMapping("/schedule/{scheduleId}")
     public ResponseEntity<CommonApiResponse<Void>> updateSchedule(
             @PathVariable Long scheduleId,
-            @RequestParam Long memberId,
+            @UserId String memberId,
             @RequestBody @Valid ScheduleDto.ScheduleSaveOrUpdateRequest request
     ) {
         scheduleService.updateSchedule(scheduleId, memberId, request);
