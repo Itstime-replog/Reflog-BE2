@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import itstime.reflog.member.service.MemberServiceHelper;
+import itstime.reflog.postlike.domain.enums.PostType;
 import itstime.reflog.postlike.repository.PostLikeRepository;
 import itstime.reflog.postlike.service.PostLikeService;
 import itstime.reflog.comment.domain.Comment;
@@ -81,20 +82,32 @@ public class CommunityService {
             }
         });
 
-		communityRepository.save(community);
+        communityRepository.save(community);
 
-	}
+    }
 
     @Transactional
-    public CommunityDto.CommunityResponse getCommunity(Long communityId) {
-        // 1. 커뮤니티 조회
-        Community community = communityRepository.findById(communityId)
-                .orElseThrow(() -> new GeneralException(ErrorStatus._COMMUNITY_NOT_FOUND));
+    public CommunityDto.CommunityResponse getCommunity(Long postId, String postType) {
+        // 1. 게시글 조회 & 댓글 조회
+        PostType postType1 = PostType.valueOf(postType);
 
-        // 2. 댓글 조회
-        List<Comment> comments = commentRepository.findAllByCommunityOrderByCreatedAtDesc(community);
+        Community community = null;
+        Retrospect retrospect = null;
+        List<Comment> comments = null;
 
-        // 3. 댓글 정리
+        if (postType1 == PostType.COMMUNITY) {
+            community = communityRepository.findById(postId)
+                    .orElseThrow(() -> new GeneralException(ErrorStatus._COMMUNITY_NOT_FOUND));
+            comments = commentRepository.findAllByCommunityOrderByCreatedAtDesc(community);
+        } else if (postType1 == PostType.RETROSPECT) {
+            retrospect = retrospectRepository.findById(postId)
+                    .orElseThrow(() -> new GeneralException(ErrorStatus._RETROSPECT_NOT_FOUND));
+            comments = commentRepository.findAllByRetrospectOrderByCreatedAtDesc(retrospect);
+        } else {
+            throw new GeneralException(ErrorStatus._INVALID_POST_TYPE);
+        }
+
+        // 2. 댓글 정리
         List<CommentDto.CommentResponse> commentResponseList = new ArrayList<>();
         for (Comment comment : comments) {
             commentResponseList.add(0,
@@ -172,9 +185,9 @@ public class CommunityService {
         communityRepository.delete(community);
     }
 
-	//커뮤니티 게시글 필터링
-	@Transactional
-	public List<CommunityDto.CombinedCategoryResponse> getFilteredCommunity(String memberId, List<String> postTypes, List<String> learningTypes) {
+    //커뮤니티 게시글 필터링
+    @Transactional
+    public List<CommunityDto.CombinedCategoryResponse> getFilteredCommunity(String memberId, List<String> postTypes, List<String> learningTypes) {
 
         Member member = memberServiceHelper.findMemberByUuid(memberId);
 
@@ -193,94 +206,94 @@ public class CommunityService {
             communities = communityRepository.findByLearningTypesAndPostTypes(postTypes, learningTypes);
         }
 
-		//커뮤니티 response형태로 반환 닉네임 추가
-		List<CommunityDto.CombinedCategoryResponse> responses = communities.stream()
-				.map(community -> {
-					//마이페이지 레포지토리에서 닉네임 반환
-					String nickname = myPageRepository.findByMember(community.getMember())
-							.map(MyPage::getNickname)
-							.orElse("닉네임 없음");
+        //커뮤니티 response형태로 반환 닉네임 추가
+        List<CommunityDto.CombinedCategoryResponse> responses = communities.stream()
+                .map(community -> {
+                    //마이페이지 레포지토리에서 닉네임 반환
+                    String nickname = myPageRepository.findByMember(community.getMember())
+                            .map(MyPage::getNickname)
+                            .orElse("닉네임 없음");
 
-					//좋아요 있는지 없는지 플래그
-					Boolean isLike = postLikeRepository.findByMemberAndCommunity(member, community).isPresent();
+                    //좋아요 있는지 없는지 플래그
+                    Boolean isLike = postLikeRepository.findByMemberAndCommunity(member, community).isPresent();
 
-					//게시물마다 좋아요 총 갯수 반환
-					int totalLike = postLikeService.getSumCommunityPostLike(community);
+                    //게시물마다 좋아요 총 갯수 반환
+                    int totalLike = postLikeService.getSumCommunityPostLike(community);
 
-					return CommunityDto.CombinedCategoryResponse.fromCommunity(community, nickname, isLike, totalLike);
-				})
-				.collect(Collectors.toList());
+                    return CommunityDto.CombinedCategoryResponse.fromCommunity(community, nickname, isLike, totalLike);
+                })
+                .collect(Collectors.toList());
 
-		//글 유형에 회고일지가 있는 경우
-		if (postTypes != null && postTypes.contains("회고일지")) {
-			List<Retrospect> retrospects = retrospectRepository.findByVisibilityIsTrue();
-			List<CommunityDto.CombinedCategoryResponse> retrospectResponses = retrospects.stream()
-					.map(retrospect -> {
-						String nickname = myPageRepository.findByMember(retrospect.getMember())
-								.map(MyPage::getNickname)
-								.orElse("닉네임 없음");
+        //글 유형에 회고일지가 있는 경우
+        if (postTypes != null && postTypes.contains("회고일지")) {
+            List<Retrospect> retrospects = retrospectRepository.findByVisibilityIsTrue();
+            List<CommunityDto.CombinedCategoryResponse> retrospectResponses = retrospects.stream()
+                    .map(retrospect -> {
+                        String nickname = myPageRepository.findByMember(retrospect.getMember())
+                                .map(MyPage::getNickname)
+                                .orElse("닉네임 없음");
 
-						//좋아요 있는지 없는지 플래그
-						Boolean isLike = postLikeRepository.findByMemberAndRetrospect(member, retrospect).isPresent();
+                        //좋아요 있는지 없는지 플래그
+                        Boolean isLike = postLikeRepository.findByMemberAndRetrospect(member, retrospect).isPresent();
 
-						//게시물마다 좋아요 총 갯수 반환
-						int totalLike = postLikeService.getSumRetrospectPostLike(retrospect);
+                        //게시물마다 좋아요 총 갯수 반환
+                        int totalLike = postLikeService.getSumRetrospectPostLike(retrospect);
 
-						return CommunityDto.CombinedCategoryResponse.fromRetrospect(retrospect, nickname, isLike, totalLike);
-					})
-					.collect(Collectors.toList());
-			responses.addAll(retrospectResponses); // 두 리스트 합치기(회고일지, 커뮤니티)
-		}
+                        return CommunityDto.CombinedCategoryResponse.fromRetrospect(retrospect, nickname, isLike, totalLike);
+                    })
+                    .collect(Collectors.toList());
+            responses.addAll(retrospectResponses); // 두 리스트 합치기(회고일지, 커뮤니티)
+        }
 
         return responses;
     }
 
-	//커뮤니티 게시물 검색
-	@Transactional
-	public List<CommunityDto.CombinedCategoryResponse> getSearchedCommunity(String memberId, String title){
+    //커뮤니티 게시물 검색
+    @Transactional
+    public List<CommunityDto.CombinedCategoryResponse> getSearchedCommunity(String memberId, String title) {
 
         Member member = memberServiceHelper.findMemberByUuid(memberId);
 
         //커뮤니티 게시물 중 키워드가 일치하는 게시물 찾기
-		List<Community> communities= communityRepository.searchCommunitiesByTitleContaining(title);
+        List<Community> communities = communityRepository.searchCommunitiesByTitleContaining(title);
 
-		List<CommunityDto.CombinedCategoryResponse> responses = communities.stream()
-				.map(community -> {
-					String nickname = myPageRepository.findByMember(community.getMember())
-							.map(MyPage::getNickname)
-							.orElse("닉네임 없음");
+        List<CommunityDto.CombinedCategoryResponse> responses = communities.stream()
+                .map(community -> {
+                    String nickname = myPageRepository.findByMember(community.getMember())
+                            .map(MyPage::getNickname)
+                            .orElse("닉네임 없음");
 
-					//좋아요 있는지 없는지 플래그
-					Boolean isLike = postLikeRepository.findByMemberAndCommunity(member, community).isPresent();
+                    //좋아요 있는지 없는지 플래그
+                    Boolean isLike = postLikeRepository.findByMemberAndCommunity(member, community).isPresent();
 
-					//게시물마다 좋아요 총 갯수 반환
-					int totalLike = postLikeService.getSumCommunityPostLike(community);
+                    //게시물마다 좋아요 총 갯수 반환
+                    int totalLike = postLikeService.getSumCommunityPostLike(community);
 
-					return CommunityDto.CombinedCategoryResponse.fromCommunity(community, nickname, isLike, totalLike);
-				})
-				.collect(Collectors.toList());
+                    return CommunityDto.CombinedCategoryResponse.fromCommunity(community, nickname, isLike, totalLike);
+                })
+                .collect(Collectors.toList());
 
-		//회고일지 게시물 중 키워드가 일치하는 게시물 찾기
-		List<Retrospect> retrospects = retrospectRepository.findByTitleContainingAndVisibilityIsTrue(title);
+        //회고일지 게시물 중 키워드가 일치하는 게시물 찾기
+        List<Retrospect> retrospects = retrospectRepository.findByTitleContainingAndVisibilityIsTrue(title);
 
-		List<CommunityDto.CombinedCategoryResponse> retrospectResponses = retrospects.stream()
-				.map(retrospect -> {
-					String nickname = myPageRepository.findByMember(retrospect.getMember())
-							.map(MyPage::getNickname)
-							.orElse("닉네임 없음");
-					//좋아요 있는지 없는지 플래그
-					Boolean isLike = postLikeRepository.findByMemberAndRetrospect(member, retrospect).isPresent();
+        List<CommunityDto.CombinedCategoryResponse> retrospectResponses = retrospects.stream()
+                .map(retrospect -> {
+                    String nickname = myPageRepository.findByMember(retrospect.getMember())
+                            .map(MyPage::getNickname)
+                            .orElse("닉네임 없음");
+                    //좋아요 있는지 없는지 플래그
+                    Boolean isLike = postLikeRepository.findByMemberAndRetrospect(member, retrospect).isPresent();
 
-					//게시물마다 좋아요 총 갯수 반환
-					int totalLike = postLikeService.getSumRetrospectPostLike(retrospect);
+                    //게시물마다 좋아요 총 갯수 반환
+                    int totalLike = postLikeService.getSumRetrospectPostLike(retrospect);
 
-					return CommunityDto.CombinedCategoryResponse.fromRetrospect(retrospect, nickname, isLike, totalLike);
-				})
-				.collect(Collectors.toList());
-		responses.addAll(retrospectResponses); // 두 리스트 합치기(회고일지, 커뮤니티)
+                    return CommunityDto.CombinedCategoryResponse.fromRetrospect(retrospect, nickname, isLike, totalLike);
+                })
+                .collect(Collectors.toList());
+        responses.addAll(retrospectResponses); // 두 리스트 합치기(회고일지, 커뮤니티)
 
-		return responses;
-	}
+        return responses;
+    }
 
     @Transactional
     public List<CommunityDto.CombinedCategoryResponse> getAllCommunity(String memberId) {
