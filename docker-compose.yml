@@ -11,8 +11,8 @@ services:
       DB_PASSWORD: ${DB_PASSWORD}
       KAKAO_CLIENT_ID: ${KAKAO_CLIENT_ID}
       KAKAO_CLIENT_SECRET: ${KAKAO_CLIENT_SECRET}
-      NAVER_CLIENT_ID : ${NAVER_CLIENT_ID}
-      NAVER_CLIENT_SECRET : ${NAVER_CLIENT_SECRET}
+      NAVER_CLIENT_ID: ${NAVER_CLIENT_ID}
+      NAVER_CLIENT_SECRET: ${NAVER_CLIENT_SECRET}
       JWT_SECRET_KEY: ${JWT_SECRET_KEY}
       AWS_ACCESSKEY: ${AWS_ACCESSKEY}
       AWS_SECRETKEY: ${AWS_SECRETKEY}
@@ -22,9 +22,11 @@ services:
       MAIL_PASSWORD: ${MAIL_PASSWORD}
 
       SPRING_PROFILES_ACTIVE: prod # prod 프로파일 활성화
-
       hibernate_ddl_auto: create
-      REDIS_HOST: redis
+
+      # Redis 환경 변수 추가
+      SPRING_REDIS_HOST: redis
+      SPRING_REDIS_PORT: 6379
     depends_on:
       - redis
     networks:
