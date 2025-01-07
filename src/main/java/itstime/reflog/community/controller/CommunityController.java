@@ -3,6 +3,7 @@ package itstime.reflog.community.controller;
 import java.util.List;
 import java.util.UUID;
 
+import itstime.reflog.postlike.service.PostLikeService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -23,6 +24,7 @@ import lombok.RequiredArgsConstructor;
 public class CommunityController {
 	private final CommunityService communityService;
 	private final AmazonS3Manager amazonS3Manager;
+	private final PostLikeService postLikeService;
 
 	@Operation(
 		summary = "커뮤니티 파일 임시 생성 API",
@@ -174,17 +176,17 @@ public class CommunityController {
 	)
 	@GetMapping("/filter")
 	public ResponseEntity<CommonApiResponse<List<CommunityDto.CombinedCategoryResponse>>> getFilteredCommunity(
-		@RequestParam(required = false) List<String> postTypes,
-		@RequestParam(required = false) List<String> learningTypes
-	) {
-		List<CommunityDto.CombinedCategoryResponse> responses = communityService.getFilteredCommunity(postTypes,
-			learningTypes);
+			@RequestParam Long memberId,
+			@RequestParam(required = false) List<String> postTypes,
+			@RequestParam(required = false) List<String> learningTypes
+			){
+		List<CommunityDto.CombinedCategoryResponse> responses = communityService.getFilteredCommunity(memberId,postTypes, learningTypes);
 		return ResponseEntity.ok(CommonApiResponse.onSuccess(responses));
 	}
 
 	@Operation(
 		summary = "커뮤니티 게시글 검색 API",
-		description = "카테고리별 커뮤니티 게시글을 검색합니다. 파라미터에 검색하고자 하는 string을 입력하면 일치하는 게시물을 반환합니다",
+		description = "커뮤니티 게시글을 검색합니다. 파라미터에 검색하고자 하는 string을 입력하면 일치하는 게시물을 반환합니다",
 		responses = {
 			@ApiResponse(
 				responseCode = "200",
@@ -202,9 +204,65 @@ public class CommunityController {
 	)
 	@GetMapping("/search")
 	public ResponseEntity<CommonApiResponse<List<CommunityDto.CombinedCategoryResponse>>> getSearchedCommunity(
-		@RequestParam(required = false) String title
-	) {
-		List<CommunityDto.CombinedCategoryResponse> responses = communityService.getSearchedCommunity(title);
+			@RequestParam Long memberId,
+			@RequestParam String title
+	){
+		List<CommunityDto.CombinedCategoryResponse> responses = communityService.getSearchedCommunity(memberId,title);
 		return ResponseEntity.ok(CommonApiResponse.onSuccess(responses));
 	}
+
+	@Operation(
+			summary = "커뮤니티 게시물 좋아요 API",
+			description = "커뮤니티 게시글 좋아요 버튼 누를때 사용하는 API입니다. postType에는 회고일지일 경우에는 RETROSPECT, 커뮤니티 게시물일 경우에는 COMMUNITY를 보내주면 됩니다.",
+			responses = {
+					@ApiResponse(
+							responseCode = "200",
+							description = "커뮤니티 게시글 좋아요 성공"
+					),
+					@ApiResponse(
+							responseCode = "404",
+							description = "해당 회원을 찾을 수 없음"
+					),
+					@ApiResponse(
+							responseCode = "500",
+							description = "서버 에러"
+					)
+			}
+	)
+	@PostMapping("/like/{postId}")
+	public ResponseEntity<CommonApiResponse<Void>> togglePostLike(
+			@RequestParam Long memberId,
+			@PathVariable Long postId,
+			@RequestParam String postType
+	){
+		postLikeService.togglePostLike(memberId, postId, postType);
+		return ResponseEntity.ok(CommonApiResponse.onSuccess(null));
+	}
+
+	@Operation(
+			summary = "커뮤니티 게시물 전체 조회 API",
+			description = "커뮤니티 게시물들을 조회합니다. 최신순으로 정렬되어있습니다.",
+			responses = {
+					@ApiResponse(
+							responseCode = "200",
+							description = "커뮤니티 게시글 조회 성공"
+					),
+					@ApiResponse(
+							responseCode = "404",
+							description = "해당 회원을 찾을 수 없음"
+					),
+					@ApiResponse(
+							responseCode = "500",
+							description = "서버 에러"
+					)
+			}
+	)
+	@GetMapping
+	public ResponseEntity<CommonApiResponse<List<CommunityDto.CombinedCategoryResponse>>> getAllCommunity(
+			@RequestParam Long memberId
+	){
+		List<CommunityDto.CombinedCategoryResponse> responses = communityService.getAllCommunity(memberId);
+		return ResponseEntity.ok(CommonApiResponse.onSuccess(responses));
+	}
+
 }

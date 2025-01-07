@@ -4,6 +4,8 @@ import itstime.reflog.comment.dto.CommentDto;
 import itstime.reflog.commentLike.domain.CommentLike;
 import itstime.reflog.community.domain.Community;
 import itstime.reflog.member.domain.Member;
+import itstime.reflog.postlike.domain.enums.PostType;
+import itstime.reflog.retrospect.domain.Retrospect;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -13,6 +15,7 @@ import java.util.List;
 
 @Entity
 @Getter
+@Setter
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
@@ -27,8 +30,15 @@ public class Comment {
     private String content;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "commnunity_id", nullable = false)
+    @JoinColumn(name = "commnunity_id", nullable = true)
     private Community community;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "retrospect_id", nullable = true)
+    private Retrospect retrospect;
+
+    @Enumerated(EnumType.STRING)
+    private PostType postType;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id", nullable = false)
