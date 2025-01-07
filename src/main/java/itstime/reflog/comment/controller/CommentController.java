@@ -37,13 +37,13 @@ public class CommentController {
                     )
             }
     )
-    @PostMapping("/{communityId}")
+    @PostMapping("/{postId}")
     public ResponseEntity<CommonApiResponse<Void>> createComment(
-            @PathVariable Long communityId,
+            @PathVariable Long postId,
             @UserId String memberId,
             @RequestBody CommentDto.CommentSaveOrUpdateRequest dto
     ) {
-        commentService.createComment(communityId, memberId, dto);
+        commentService.createComment(postId, memberId, dto);
         return ResponseEntity.ok(CommonApiResponse.onSuccess(null));
     }
 
@@ -122,7 +122,7 @@ public class CommentController {
     public ResponseEntity<CommonApiResponse<Void>> toggleCommentLike(
             @PathVariable Long commentId,
             @UserId String memberId
-            ) {
+    ) {
         commentService.toggleCommentLike(commentId, memberId);
         return ResponseEntity.ok(CommonApiResponse.onSuccess(null));
     }
