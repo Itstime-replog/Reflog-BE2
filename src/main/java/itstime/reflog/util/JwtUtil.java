@@ -60,6 +60,7 @@ public class JwtUtil {
 
     // 응답 헤더에서 액세스 토큰을 반환하는 메서드
     public String getTokenFromHeader(String authorizationHeader) {
+        System.out.println("Authorization Header: " + authorizationHeader);
         return authorizationHeader.substring(7);
     }
 

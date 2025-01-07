@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import itstime.reflog.common.CommonApiResponse;
@@ -26,20 +27,16 @@ public class MemberController {
 	private final MemberService memberService;
 
 	@GetMapping("/logout")
-	public ResponseEntity<CommonApiResponse<Void>> logout(@RequestHeader("Authorization") String accessToken) {
-		// 1. Access Token에서 UUID 추출
-		String token = jwtUtil.getTokenFromHeader(accessToken);
+	public ResponseEntity<CommonApiResponse<Void>> logout(@RequestParam("token") String token) {
+		// 1. 사용자 ID 추출
 		UUID userId = jwtUtil.getUuidFromToken(token);
 
-		// 2. Access Token을 Redis 블랙리스트에 등록
+		// 2. Redis 블랙리스트 및 Refresh Token 삭제
 		long remainingTime = jwtUtil.getRemainingTime(token); // 토큰 만료 시간 계산
 		redisTemplate.opsForValue().set("blacklist:" + token, "true", remainingTime, TimeUnit.MILLISECONDS);
+		redisTemplate.delete("refresh:" + userId);
 
-		// 3. Refresh Token 삭제
-		String refreshTokenKey = "refresh:" + userId;
-		redisTemplate.delete(refreshTokenKey);
-
-		// 로그아웃 완료 응답
+		// 3. 로그아웃 완료 응답
 		return ResponseEntity.ok(CommonApiResponse.onSuccess(null));
 	}
 
