@@ -12,11 +12,15 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import itstime.reflog.common.CommonApiResponse;
 import itstime.reflog.member.service.MemberService;
 import itstime.reflog.util.JwtUtil;
 import lombok.RequiredArgsConstructor;
 
+@Tag(name = "MEMBER API", description = "멤버에 대한 API입니다.")
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/")
@@ -26,6 +30,20 @@ public class MemberController {
 	private final RedisTemplate<String, String> redisTemplate;
 	private final MemberService memberService;
 
+	@Operation(
+		summary = "로그아웃 API",
+		description = "로그아웃 API입니다. request param으로 accesstoken 한번 더 보내주시면 됩니다. 로그아웃 API 호출하시고 스토리지에서 토큰 삭제해주세요. AccessToken 필요.",
+		responses = {
+			@ApiResponse(
+				responseCode = "200",
+				description = "로그아웃 성공"
+			),
+			@ApiResponse(
+				responseCode = "500",
+				description = "서버 에러"
+			)
+		}
+	)
 	@GetMapping("/logout")
 	public ResponseEntity<CommonApiResponse<Void>> logout(@RequestParam("token") String token) {
 		// 1. 사용자 ID 추출
@@ -40,6 +58,20 @@ public class MemberController {
 		return ResponseEntity.ok(CommonApiResponse.onSuccess(null));
 	}
 
+	@Operation(
+		summary = "회원탈퇴 API",
+		description = "회원탈퇴 API입니다. request param으로 accesstoken 한번 더 보내주시면 됩니다. 회원탈퇴 API 호출하시고 스토리지에서 토큰 삭제해주세요. AccessToken 필요.",
+		responses = {
+			@ApiResponse(
+				responseCode = "200",
+				description = "회원탈퇴 성공"
+			),
+			@ApiResponse(
+				responseCode = "500",
+				description = "서버 에러"
+			)
+		}
+	)
 	@DeleteMapping("/delete")
 	public ResponseEntity<CommonApiResponse<Void>> delete(@RequestParam("token") String token) {
 		// 1. Access Token에서 사용자 UUID 추출
