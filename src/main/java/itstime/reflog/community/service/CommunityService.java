@@ -291,7 +291,7 @@ public class CommunityService {
                 .orElseThrow(() -> new GeneralException(ErrorStatus._MEMBER_NOT_FOUND));
 
         List<Community> communities = communityRepository.findAllByOrderByCreatedAtDesc();
-        List<Retrospect> retrospects = retrospectRepository.findAllByOrderByCreatedDateDesc();
+        List<Retrospect> retrospects = retrospectRepository.findAllByVisibilityTrueOrderByCreatedDateDesc();
 
         //회고일지, 커뮤니티 리스트를 합쳐 하나의 리스트로
         List<CommunityDto.CombinedCategoryResponse> responses = retrospects.stream().map(
@@ -327,7 +327,7 @@ public class CommunityService {
 
         responses.addAll(communityResponses);
 
-        //최신 순으로 정렬해주기
+        //최신 순으로 정렬해주기 : reversed() !
         responses.sort(Comparator.comparing(CommunityDto.CombinedCategoryResponse::getCreatedDate).reversed());
 
         return responses;
