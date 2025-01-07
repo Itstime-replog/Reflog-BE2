@@ -6,7 +6,7 @@ import itstime.reflog.goal.domain.DailyGoal;
 import itstime.reflog.goal.dto.DailyGoalDto;
 import itstime.reflog.goal.repository.DailyGoalRepository;
 import itstime.reflog.member.domain.Member;
-import itstime.reflog.member.repository.MemberRepository;
+import itstime.reflog.member.service.MemberServiceHelper;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -17,12 +17,12 @@ import java.time.LocalDate;
 @RequiredArgsConstructor
 public class DailyGoalService {
     private final DailyGoalRepository dailyGoalRepository;
-    private final MemberRepository memberRepository;
+    private final MemberServiceHelper memberServiceHelper;
+
 
     @Transactional
-    public void createDailyGoal(Long memberId, DailyGoalDto.DailyGoalSaveOrUpdateRequest dto){
-        Member member = memberRepository.findById(memberId)
-                .orElseThrow(()-> new GeneralException(ErrorStatus._MEMBER_NOT_FOUND));
+    public void createDailyGoal(String memberId, DailyGoalDto.DailyGoalSaveOrUpdateRequest dto){
+        Member member = memberServiceHelper.findMemberByUuid(memberId);
 
         // 해당 날짜에 이미 목표가 존재하는지 확인
         LocalDate today = LocalDate.now();
@@ -40,9 +40,8 @@ public class DailyGoalService {
     }
 
     @Transactional
-    public DailyGoalDto.DailyGoalResponse getDailyGoalByMemberIdAndDate(Long memberId, LocalDate date){
-        Member member = memberRepository.findById(memberId)
-                .orElseThrow(() -> new GeneralException(ErrorStatus._MEMBER_NOT_FOUND));
+    public DailyGoalDto.DailyGoalResponse getDailyGoalByMemberIdAndDate(String memberId, LocalDate date){
+        Member member = memberServiceHelper.findMemberByUuid(memberId);
 
         DailyGoal dailyGoal = dailyGoalRepository.findByMemberAndCreatedDate(member, date);
 
@@ -54,12 +53,11 @@ public class DailyGoalService {
     }
 
     @Transactional
-    public void updateDailyGoal(LocalDate createdDate, Long memberId, DailyGoalDto.DailyGoalSaveOrUpdateRequest request){
+    public void updateDailyGoal(LocalDate createdDate, String memberId, DailyGoalDto.DailyGoalSaveOrUpdateRequest request){
         DailyGoal dailyGoal = dailyGoalRepository.findById(createdDate)
                 .orElseThrow(() -> new GeneralException((ErrorStatus._DAILY_GOAL_NOT_FOUND)));
 
-        Member member = memberRepository.findById(memberId)
-                .orElseThrow(() -> new GeneralException(ErrorStatus._MEMBER_NOT_FOUND));
+        Member member = memberServiceHelper.findMemberByUuid(memberId);
 
         dailyGoal.update(request.getContent(), member);
 

@@ -1,5 +1,6 @@
 package itstime.reflog.retrospect.controller;
 
+import itstime.reflog.common.annotation.UserId;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -13,7 +14,6 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import itstime.reflog.common.CommonApiResponse;
-import itstime.reflog.retrospect.domain.Retrospect;
 import itstime.reflog.retrospect.dto.RetrospectDto;
 import itstime.reflog.retrospect.service.RetrospectService;
 import jakarta.validation.Valid;
@@ -48,8 +48,8 @@ public class RetrospectController {
 	)
 	@PostMapping
 	public ResponseEntity<CommonApiResponse<Void>> createRetrospect(
-		@RequestParam Long memberId,
-		@Valid @RequestBody RetrospectDto.RetrospectSaveOrUpdateRequest dto
+			@UserId String memberId,
+			@Valid @RequestBody RetrospectDto.RetrospectSaveOrUpdateRequest dto
 	){
 		retrospectService.createRetrospect(memberId, dto);
 		return ResponseEntity.ok(CommonApiResponse.onSuccess(null));
@@ -128,7 +128,7 @@ public class RetrospectController {
 	)
 	@GetMapping("/filter")
 	public ResponseEntity<CommonApiResponse<List<RetrospectDto.RetrospectCategoryResponse>>> getFilteredRetrospect(
-			@RequestParam Long memberId,
+			@UserId String memberId,
 			@RequestParam String category
 	){
 		List<RetrospectDto.RetrospectCategoryResponse> responses = retrospectService.getRetrospect(category, memberId);

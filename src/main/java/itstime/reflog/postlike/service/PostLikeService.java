@@ -5,7 +5,7 @@ import itstime.reflog.common.exception.GeneralException;
 import itstime.reflog.community.domain.Community;
 import itstime.reflog.community.repository.CommunityRepository;
 import itstime.reflog.member.domain.Member;
-import itstime.reflog.member.repository.MemberRepository;
+import itstime.reflog.member.service.MemberServiceHelper;
 import itstime.reflog.postlike.domain.PostLike;
 import itstime.reflog.postlike.domain.enums.PostType;
 import itstime.reflog.postlike.repository.PostLikeRepository;
@@ -19,14 +19,14 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class PostLikeService {
     private final PostLikeRepository postLikeRepository;
-    private final MemberRepository memberRepository;
     private final CommunityRepository communityRepository;
     private final RetrospectRepository retrospectRepository;
+    private final MemberServiceHelper memberServiceHelper;
+
 
     @Transactional
-    public void togglePostLike(Long memberId,Long postId, String postType){
-        Member member = memberRepository.findById(memberId)
-                .orElseThrow(()-> new GeneralException(ErrorStatus._MEMBER_NOT_FOUND));
+    public void togglePostLike(String memberId, Long postId, String postType){
+        Member member = memberServiceHelper.findMemberByUuid(memberId);
 
         PostLike postLike;
 

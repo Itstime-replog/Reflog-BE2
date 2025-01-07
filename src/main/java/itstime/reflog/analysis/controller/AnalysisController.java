@@ -9,6 +9,7 @@ import itstime.reflog.analysis.dto.AnalysisDto;
 import itstime.reflog.analysis.service.MonthlyAnalysisService;
 import itstime.reflog.analysis.service.WeeklyAnalysisService;
 import itstime.reflog.common.CommonApiResponse;
+import itstime.reflog.common.annotation.UserId;
 import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
@@ -51,7 +52,7 @@ public class AnalysisController {
     )
     @GetMapping("/weekly-analysis")
     public ResponseEntity<CommonApiResponse<AnalysisDto.AnalysisDtoResponse>> getWeeklyAnalysis(
-            @RequestParam Long memberId,
+            @UserId String memberId,
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date
     ){
         AnalysisDto.AnalysisDtoResponse analysis = weeklyAnalysisService.getWeeklyAnalysisReport(memberId, date);
@@ -81,7 +82,7 @@ public class AnalysisController {
     )
     @GetMapping("/monthly-analysis")
     public ResponseEntity<CommonApiResponse<AnalysisDto.AnalysisDtoResponse>> getMonthlyAnalysis(
-            @RequestParam Long memberId,
+            @UserId String memberId,
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date
     ){
         AnalysisDto.AnalysisDtoResponse analysis = monthlyAnalysisService.getMonthlyAnalysisReport(memberId, date);
