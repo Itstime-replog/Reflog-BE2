@@ -1,16 +1,29 @@
 package itstime.reflog.mypage.service;
 
+import itstime.reflog.comment.repository.CommentRepository;
 import itstime.reflog.common.code.status.ErrorStatus;
 import itstime.reflog.common.exception.GeneralException;
+import itstime.reflog.community.domain.Community;
+import itstime.reflog.community.repository.CommunityRepository;
 import itstime.reflog.member.domain.Member;
 import itstime.reflog.member.repository.MemberRepository;
 import itstime.reflog.mission.service.MissionService;
 import itstime.reflog.mypage.domain.MyPage;
 import itstime.reflog.mypage.dto.MyPageDto;
 import itstime.reflog.mypage.repository.MyPageRepository;
+import itstime.reflog.postlike.domain.PostLike;
+import itstime.reflog.postlike.domain.enums.PostType;
+import itstime.reflog.postlike.repository.PostLikeRepository;
+import itstime.reflog.postlike.service.PostLikeService;
+import itstime.reflog.retrospect.domain.Retrospect;
+import itstime.reflog.retrospect.repository.RetrospectRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+import java.util.UUID;
+import java.util.stream.Collectors;
 
 import static itstime.reflog.mission.domain.Badge.FIRST_MEETING;
 
@@ -22,6 +35,11 @@ public class MyPageService {
     private final MemberRepository memberRepository;
     private final InitializationService initializationService;
     private final MissionService missionService;
+    private final CommunityRepository communityRepository;
+    private final RetrospectRepository retrospectRepository;
+    private final CommentRepository commentRepository;
+    private final PostLikeRepository postLikeRepository;
+    private final PostLikeService postLikeService;
 
     @Transactional
     public MyPageDto.MyPageInfoResponse getMyInformation(Long memberId) {
@@ -80,5 +98,87 @@ public class MyPageService {
         myPage.update(dto, member);
 
         myPageRepository.save(myPage);
+    }
+
+    @Transactional
+    public List<MyPageDto.MyPagePostResponse> getMyPost(String memberId) {
+        // 1. 멤버 조회
+        Member member = memberRepository.findByUuid(UUID.fromString(memberId))
+                .orElseThrow(() -> new GeneralException(ErrorStatus._MEMBER_NOT_FOUND));
+
+        // 2. 내가 작성한 커뮤니티 글 전체조회
+        List<Community> communityList = communityRepository.findAllByMemberOrderByIdDesc(member);
+
+        // 3. 내가 작성한 커뮤니티 글 정리
+        List<MyPageDto.MyPagePostResponse> responses = communityList.stream()
+                .map(community -> {
+
+                    // 좋아요 총 개수
+                    int totalLike = postLikeService.getSumCommunityPostLike(community);
+                    // 댓글 총 개수
+                    long commentCount = commentRepository.countByCommunity(community);
+
+                    return MyPageDto.MyPagePostResponse.fromCommunity(community, totalLike, commentCount);
+                })
+                .collect(Collectors.toList());
+
+        // 4. 내가 작성한 회고일지 글 전체조회
+        List<Retrospect> retrospectList = retrospectRepository.findAllByMemberOrderByIdDesc(member);
+
+        // 5. 내가 작성한 회고일지 글 정리
+        List<MyPageDto.MyPagePostResponse> retrospectResponses = retrospectList.stream()
+                .map(retrospect -> {
+
+                    // 좋아요 총 개수
+                    int totalLike = postLikeService.getSumRetrospectPostLike(retrospect);
+                    // 댓글 총 개수
+                    long commentCount = commentRepository.countByRetrospect(retrospect);
+
+                    return MyPageDto.MyPagePostResponse.fromRetrospect(retrospect, totalLike, commentCount);
+                }).toList();
+
+        responses.addAll(retrospectResponses);
+        return responses;
+    }
+
+    @Transactional
+    public List<MyPageDto.MyPagePostResponse> getMyLikePost(String memberId) {
+        // 1. 멤버 조회
+        Member member = memberRepository.findByUuid(UUID.fromString(memberId))
+                .orElseThrow(() -> new GeneralException(ErrorStatus._MEMBER_NOT_FOUND));
+
+        // 2. 내가 좋아요 한 커뮤니티 글 전체조회
+        List<PostLike> postLikeList = postLikeRepository.findAllByMemberAndPostType(member, PostType.COMMUNITY);
+
+        // 3. 내가 좋아요 한 커뮤니티 글 정리
+        List<MyPageDto.MyPagePostResponse> responses = postLikeList.stream()
+                .map(postLike -> {
+
+                    // 좋아요 총 개수
+                    int totalLike = postLikeService.getSumCommunityPostLike(postLike.getCommunity());
+                    // 댓글 총 개수
+                    long commentCount = commentRepository.countByCommunity(postLike.getCommunity());
+
+                    return MyPageDto.MyPagePostResponse.fromCommunity(postLike.getCommunity(), totalLike, commentCount);
+                })
+                .collect(Collectors.toList());
+
+        // 4. 내가 좋아요 한 회고일지 글 전체조회
+        List<PostLike> postLikeList1 = postLikeRepository.findAllByMemberAndPostType(member, PostType.RETROSPECT);
+
+        // 5. 내가 좋아요 한 회고일지 글 정리
+        List<MyPageDto.MyPagePostResponse> retrospectResponses = postLikeList1.stream()
+                .map(postLike -> {
+
+                    // 좋아요 총 개수
+                    int totalLike = postLikeService.getSumRetrospectPostLike(postLike.getRetrospect());
+                    // 댓글 총 개수
+                    long commentCount = commentRepository.countByRetrospect(postLike.getRetrospect());
+
+                    return MyPageDto.MyPagePostResponse.fromRetrospect(postLike.getRetrospect(), totalLike, commentCount);
+                }).toList();
+
+        responses.addAll(retrospectResponses);
+        return responses;
     }
 }

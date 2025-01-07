@@ -2,6 +2,7 @@ package itstime.reflog.oauth.token.repository;
 
 import itstime.reflog.oauth.token.domain.RefreshToken;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
@@ -16,7 +17,7 @@ public class RefreshTokenRepository{
 
     @Value("${jwt.refresh-token.expiration-time}")
     private long REFRESH_TOKEN_EXPIRATION_TIME;
-
+    @Qualifier("redisTemplate")
     private final RedisTemplate redisTemplate;
     private static final String REFRESH_TOKEN_PREFIX = "refresh:";
 

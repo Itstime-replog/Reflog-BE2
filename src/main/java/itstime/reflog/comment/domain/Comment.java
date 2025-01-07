@@ -4,6 +4,7 @@ import itstime.reflog.comment.dto.CommentDto;
 import itstime.reflog.commentLike.domain.CommentLike;
 import itstime.reflog.community.domain.Community;
 import itstime.reflog.member.domain.Member;
+import itstime.reflog.retrospect.domain.Retrospect;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -27,8 +28,12 @@ public class Comment {
     private String content;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "commnunity_id", nullable = false)
+    @JoinColumn(name = "commnunity_id", nullable = true)
     private Community community;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "retrospect_id", nullable = true)
+    private Retrospect retrospect;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id", nullable = false)
