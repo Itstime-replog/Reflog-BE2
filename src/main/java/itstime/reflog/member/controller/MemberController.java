@@ -41,9 +41,8 @@ public class MemberController {
 	}
 
 	@DeleteMapping("/delete")
-	public ResponseEntity<CommonApiResponse<Void>> delete(@RequestHeader("Authorization") String accessToken) {
+	public ResponseEntity<CommonApiResponse<Void>> delete(@RequestParam("token") String token) {
 		// 1. Access Token에서 사용자 UUID 추출
-		String token = jwtUtil.getTokenFromHeader(accessToken);
 		UUID userId = jwtUtil.getUuidFromToken(token);
 
 		// 2. 사용자 데이터 삭제
