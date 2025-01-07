@@ -37,6 +37,5 @@ public interface RetrospectRepository extends JpaRepository<Retrospect, Long> {
 	List<Retrospect> findByTitleContainingAndVisibilityIsTrue(@Param("title") String title);
 
 	//생성날짜 기준 정렬
-	@Query("SELECT r FROM Retrospect r ORDER BY r.createdDate DESC")
-	List<Retrospect> getRetrospectInorder();
+	List<Retrospect> findAllByOrderByCreatedDateDesc();
 }

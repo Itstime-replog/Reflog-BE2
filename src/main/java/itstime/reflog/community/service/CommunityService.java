@@ -2,6 +2,7 @@ package itstime.reflog.community.service;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -285,14 +286,51 @@ public class CommunityService {
 	}
 
     @Transactional
-    public List<CommunityDto.CombinedCategoryResponse> getAllCommunity(Long memberId){
+    public List<CommunityDto.CombinedCategoryResponse> getAllCommunity(Long memberId) {
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new GeneralException(ErrorStatus._MEMBER_NOT_FOUND));
 
-        List<Community> communities = communityRepository.getCommunitiesInorder();
-        List<Retrospect> retrospects = retrospectRepository.getRetrospectInorder();
+        List<Community> communities = communityRepository.findAllByOrderByCreatedAtDesc();
+        List<Retrospect> retrospects = retrospectRepository.findAllByOrderByCreatedDateDesc();
 
+        //회고일지, 커뮤니티 리스트를 합쳐 하나의 리스트로
+        List<CommunityDto.CombinedCategoryResponse> responses = retrospects.stream().map(
+                        retrospect -> {
+                            String nickname = myPageRepository.findByMember(retrospect.getMember())
+                                    .map(MyPage::getNickname)
+                                    .orElse("닉네임 없음");
+                            //좋아요 있는지 없는지 플래그
+                            Boolean isLike = postLikeRepository.findByMemberAndRetrospect(member, retrospect).isPresent();
 
+                            //게시물마다 좋아요 총 갯수 반환
+                            int totalLike = postLikeService.getSumRetrospectPostLike(retrospect);
+
+                            return CommunityDto.CombinedCategoryResponse.fromRetrospect(retrospect, nickname, isLike, totalLike);
+                        })
+                .collect(Collectors.toList());
+
+        List<CommunityDto.CombinedCategoryResponse> communityResponses = communities.stream()
+                .map(community -> {
+                    String nickname = myPageRepository.findByMember(community.getMember())
+                            .map(MyPage::getNickname)
+                            .orElse("닉네임 없음");
+
+                    //좋아요 있는지 없는지 플래그
+                    Boolean isLike = postLikeRepository.findByMemberAndCommunity(member, community).isPresent();
+
+                    //게시물마다 좋아요 총 갯수 반환
+                    int totalLike = postLikeService.getSumCommunityPostLike(community);
+
+                    return CommunityDto.CombinedCategoryResponse.fromCommunity(community, nickname, isLike, totalLike);
+                })
+                .collect(Collectors.toList());
+
+        responses.addAll(communityResponses);
+
+        //최신 순으로 정렬해주기
+        responses.sort(Comparator.comparing(CommunityDto.CombinedCategoryResponse::getCreatedDate).reversed());
+
+        return responses;
     }
 
 }
