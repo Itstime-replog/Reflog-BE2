@@ -68,7 +68,7 @@ public class MyPageService {
 
         initializationService.initializeForNewMember(myPage);
 
-        missionService.incrementMissionProgress(Long.valueOf(memberId), FIRST_MEETING);
+        missionService.incrementMissionProgress(member.getId(), FIRST_MEETING);
     }
 
     @Transactional

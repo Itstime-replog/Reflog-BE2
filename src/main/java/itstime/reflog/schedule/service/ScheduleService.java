@@ -58,8 +58,9 @@ public class ScheduleService {
 
     @Transactional
     public List<ScheduleDto.ScheduleAllResponse> getAllSchedule(String memberId, int month) {
+        Member member = memberServiceHelper.findMemberByUuid(memberId);
 
-        List<Schedule> schedules = scheduleRepository.findByMemberAndStartDateTimeMonth(Long.valueOf(memberId), month);
+        List<Schedule> schedules = scheduleRepository.findByMemberAndStartDateTimeMonth(member.getId(), month);
 
         return schedules.stream()
                 .map(schedule -> new ScheduleDto.ScheduleAllResponse(
