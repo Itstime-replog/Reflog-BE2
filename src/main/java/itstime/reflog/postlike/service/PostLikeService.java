@@ -109,24 +109,19 @@ public class PostLikeService {
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(()-> new GeneralException(ErrorStatus._MEMBER_NOT_FOUND));
 
-        List<Object[]> postLikesTop = new ArrayList<>(postLikeRepository.findAllCommunityPostLikesTop());
-        postLikesTop.addAll(postLikeRepository.findAllRetrospectPostLikesTop());
-
-        //좋아요 수인 object[1]이 Object 타입이기 떄문에 Long 타입으로 바꿔 준 후 비교 정렬
-        postLikesTop.sort((o1, o2) -> Long.compare((Long) o2[2], (Long) o1[2]));
-
-        //이 중 상위 세개만 가져옴
-        List<Object[]> postLikesTopThree = postLikesTop.stream().limit(3).toList();
 
         //반환하는 배열 초기화
         List<CommunityDto.CombinedCategoryResponse> combinedCategoryResponses = new ArrayList<>();
+
+
 
         //상위 세개에 대해 반환 객체로 만들어 배열에 저장
         for (int i = 0; i<postLikesTopThree.size(); i++){
             if (postLikesTopThree.get(i)[0].equals("community")) {
 
                 Community community = communityRepository.findById((Long) postLikesTopThree.get(i)[1])
-                        .orElseThrow(() -> new GeneralException(ErrorStatus._POST_NOT_FOUND));                String nickname = myPageRepository.findByMember(community.getMember())
+                        .orElseThrow(() -> new GeneralException(ErrorStatus._POST_NOT_FOUND));
+                String nickname = myPageRepository.findByMember(community.getMember())
                         .map(MyPage::getNickname)
                         .orElse("닉네임 없음");
                 //좋아요 있는지 없는지 플래그
