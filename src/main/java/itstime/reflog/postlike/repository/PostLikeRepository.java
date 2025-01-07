@@ -1,6 +1,7 @@
 package itstime.reflog.postlike.repository;
 
-import io.lettuce.core.dynamic.annotation.Param;
+import itstime.reflog.postlike.domain.enums.PostType;
+import org.springframework.data.repository.query.Param;
 import itstime.reflog.community.domain.Community;
 import itstime.reflog.member.domain.Member;
 import itstime.reflog.postlike.domain.PostLike;
@@ -24,4 +25,7 @@ public interface PostLikeRepository extends JpaRepository<PostLike, Long> {
     //DB에서 retrospect 좋아요 합 계산
     @Query("SELECT COUNT(pl) FROM PostLike pl WHERE pl.retrospect = :retrospect")
     int countByRetrospect(@Param("retrospect") Retrospect retrospect);
+
+    // 내가 좋아요를 누른 모든 커뮤니티 or 회고일지 글
+    List<PostLike> findAllByMemberAndPostType(Member member, PostType postType);
 }

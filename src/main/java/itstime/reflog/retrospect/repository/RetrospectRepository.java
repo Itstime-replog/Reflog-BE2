@@ -3,10 +3,7 @@ package itstime.reflog.retrospect.repository;
 import java.time.LocalDate;
 import java.util.Optional;
 
-import itstime.reflog.community.domain.Community;
 import itstime.reflog.member.domain.Member;
-import itstime.reflog.retrospect.domain.StudyType;
-import itstime.reflog.todolist.domain.Todolist;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
@@ -35,4 +32,7 @@ public interface RetrospectRepository extends JpaRepository<Retrospect, Long> {
 	//제목에 키워드를 포함하고 공개로 설정된 회고일지 찾기
 	@Query("SELECT r FROM Retrospect r WHERE r.visibility = true AND r.title LIKE %:title%")
 	List<Retrospect> findByTitleContainingAndVisibilityIsTrue(@Param("title") String title);
+
+	//내가 작성한 글 모두 찾기
+	List<Retrospect> findAllByMemberOrderByIdDesc(Member member);
 }
