@@ -3,6 +3,7 @@ package itstime.reflog.todolist.controller;
 import java.time.LocalDate;
 import java.util.List;
 
+import itstime.reflog.common.annotation.UserId;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -53,8 +54,8 @@ public class TodolistController {
 	)
 	@PostMapping("/todolist")
 	public ResponseEntity<CommonApiResponse<Void>> createTodolist(
-		@RequestParam Long memberId,
-		@RequestBody TodolistDto.TodolistSaveOrUpdateRequest dto
+			@UserId String memberId,
+			@RequestBody TodolistDto.TodolistSaveOrUpdateRequest dto
 	) {
 		todolistService.createTodolist(memberId, dto);
 		return ResponseEntity.ok(CommonApiResponse.onSuccess(null));
@@ -83,8 +84,8 @@ public class TodolistController {
 	)
 	@GetMapping("/todolist")
 	public ResponseEntity<CommonApiResponse<List<TodolistDto.TodolistResponse>>> getTodolistByMemberIdAndDate(
-		@RequestParam Long memberId,
-		@RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date
+			@UserId String memberId,
+			@RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date
 	) {
 		List<TodolistDto.TodolistResponse> todolists = todolistService.getTodolistByMemberIdAndDate(memberId, date);
 		return ResponseEntity.ok(CommonApiResponse.onSuccess(todolists));
@@ -121,7 +122,7 @@ public class TodolistController {
 	@PatchMapping("/todolist/{todolistId}")
 	public ResponseEntity<CommonApiResponse<Void>> updateTodolist(
 		@PathVariable Long todolistId,
-		@RequestParam Long memberId,
+		@UserId String memberId,
 		@RequestBody @Valid TodolistDto.TodolistSaveOrUpdateRequest request
 	) {
 		todolistService.updateTodolist(todolistId, memberId, request);
