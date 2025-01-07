@@ -22,17 +22,17 @@ spring:
     hibernate:
       ddl-auto: update
 
-  redis:
-    data:
-      pool:
-        min-idle: 0
-        max-idle: 8
-        max-active: 8
+#  redis:
+#    data:
+#      pool:
+#        min-idle: 0
+#        max-idle: 8
+#        max-active: 8
 
   data:
     redis:
+      host: redis
       port: 6379
-      host: 172.17.0.3
 
 
   security:
