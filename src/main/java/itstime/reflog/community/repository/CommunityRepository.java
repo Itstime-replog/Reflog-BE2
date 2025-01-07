@@ -25,6 +25,9 @@ public interface CommunityRepository extends JpaRepository<Community, Long> {
     @Query("SELECT c FROM Community c WHERE c.title LIKE %:title%")
     List<Community> searchCommunitiesByTitleContaining(@Param("title") String title);
 
+    //최신 순 정렬
+    List<Community> findAllByOrderByCreatedAtDesc();
+
     //내가 작성한 글 모두 찾기
     List<Community> findAllByMemberOrderByIdDesc(Member member);
 }
