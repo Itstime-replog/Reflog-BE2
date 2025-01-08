@@ -25,7 +25,6 @@ import org.springframework.stereotype.Service;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
-import java.time.Month;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -255,12 +254,12 @@ public class MonthlyAnalysisService {
         missionService.incrementMissionProgress(member.getId(), myPage, MONTHLY_REPORTER);
 
         // 알림
-        sendMonthlyNotification(analysis.getStartDate().getMonth(), member);
+        sendMonthlyNotification(analysis.getStartDate().getMonthValue(), member);
 
         return AnalysisDto.AnalysisDtoResponse.fromEntity(analysis);
     }
 
-    public void sendMonthlyNotification(Month month, Member member) {
+    public void sendMonthlyNotification(int month, Member member) {
         notificationService.sendNotification(
                 member.getId(),
                 month + "월 월간 분석보고서가 도착했어요!",
