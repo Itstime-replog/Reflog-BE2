@@ -1,8 +1,9 @@
 package itstime.reflog.notification.domain;
 
 public enum NotificationType {
-    MISSION,
+    BADGE,
     POST,
     COMMENT,
-    POSTLIKE
+    POSTLIKE,
+    MONTHLYANALYSIS
 }
