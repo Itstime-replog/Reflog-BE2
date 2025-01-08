@@ -47,8 +47,8 @@ public class MyPageController {
     )
     @GetMapping("/myinfo")
     public ResponseEntity<CommonApiResponse<MyPageDto.MyPageInfoResponse>> getMyInformation(
-            @RequestParam Long memberId
-    ) {
+            @UserId String memberId
+            ) {
         MyPageDto.MyPageInfoResponse myInfo = myPageService.getMyInformation(memberId);
         return ResponseEntity.ok(CommonApiResponse.onSuccess(myInfo));
     }
@@ -76,7 +76,7 @@ public class MyPageController {
     )
     @PostMapping("/myinfo/profile")
     public ResponseEntity<CommonApiResponse<Void>> createProfile(
-            @RequestParam Long memberId,
+            @UserId String memberId,
             @Valid @RequestBody MyPageDto.MyPageProfileRequest dto
     ) {
         myPageService.createProfile(memberId, dto);
@@ -106,8 +106,8 @@ public class MyPageController {
     )
     @GetMapping("/myinfo/profile")
     public ResponseEntity<CommonApiResponse<MyPageDto.MyPageProfileResponse>> getProfile(
-            @RequestParam Long memberId
-    ) {
+            @UserId String memberId
+            ) {
         MyPageDto.MyPageProfileResponse profile = myPageService.getProfile(memberId);
         return ResponseEntity.ok(CommonApiResponse.onSuccess(profile));
     }
@@ -135,7 +135,7 @@ public class MyPageController {
     )
     @PatchMapping("/myinfo/profile")
     public ResponseEntity<CommonApiResponse<Void>> updateProfile(
-            @RequestParam Long memberId,
+            @UserId String memberId,
             @Valid @RequestBody MyPageDto.MyPageProfileRequest dto
     ) {
         myPageService.updateProfile(memberId, dto);

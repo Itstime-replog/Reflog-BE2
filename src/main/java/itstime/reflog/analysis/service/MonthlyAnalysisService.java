@@ -11,6 +11,7 @@ import itstime.reflog.common.code.status.ErrorStatus;
 import itstime.reflog.common.exception.GeneralException;
 import itstime.reflog.member.domain.Member;
 import itstime.reflog.member.repository.MemberRepository;
+import itstime.reflog.member.service.MemberServiceHelper;
 import itstime.reflog.retrospect.domain.Retrospect;
 import itstime.reflog.todolist.domain.Todolist;
 import jakarta.transaction.Transactional;
@@ -37,6 +38,8 @@ public class MonthlyAnalysisService {
     private final ImprovementRepository improvementRepository;
     private final PeriodFilter periodFilter;
     private final AnalysisCalculator analysisCalculator;
+    private final MemberServiceHelper memberServiceHelper;
+
 
     @Transactional
     public void createMonthlyAnalysis(Long memberId) {
@@ -211,7 +214,7 @@ public class MonthlyAnalysisService {
     }
 
     @Transactional
-    public AnalysisDto.AnalysisDtoResponse getMonthlyAnalysisReport(Long memberId, LocalDate date) {
+    public AnalysisDto.AnalysisDtoResponse getMonthlyAnalysisReport(String memberId, LocalDate date) {
 
         //현재 날짜보다 이후 날짜 조회시 예외 발생
         LocalDate today = LocalDate.now();
@@ -225,8 +228,7 @@ public class MonthlyAnalysisService {
             throw new GeneralException(ErrorStatus._ANALYSIS_NOT_ALREADY);
         }
 
-        Member member = memberRepository.findById(memberId)
-                .orElseThrow(() -> new GeneralException(ErrorStatus._MEMBER_NOT_FOUND));
+        Member member = memberServiceHelper.findMemberByUuid(memberId);
 
         WeeklyAnalysis analysis = analysisRepository.findByMemberAndStartDate(member, date);
 

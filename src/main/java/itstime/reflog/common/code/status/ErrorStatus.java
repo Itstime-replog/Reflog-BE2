@@ -64,7 +64,8 @@ public enum ErrorStatus implements BaseErrorCode {
 	_POST_NOT_FOUND(HttpStatus.NOT_FOUND, "POSTLIKE404", "해당 게시물이 존재하지 않습니다"),
 	// comment 관련 에러
 	_COMMENT_NOT_FOUND(HttpStatus.NOT_FOUND, "COMMENT404", "해당 댓글을 찾을 수 없습니다."),
-	_PARENT_COMMENT_NOT_FOUND(HttpStatus.NOT_FOUND, "COMMENT404", "해당 부모 댓글을 찾을 수 없습니다.");
+	_PARENT_COMMENT_NOT_FOUND(HttpStatus.NOT_FOUND, "COMMENT404", "해당 부모 댓글을 찾을 수 없습니다."),
+	_INVALID_POST_TYPE(HttpStatus.NOT_FOUND, "COMMENT404", "해당 댓글에 대한 게시글의 타입이 존재하지 않습니다.");
 
 	private final HttpStatus httpStatus;
 	private final String code;

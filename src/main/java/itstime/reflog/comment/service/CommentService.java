@@ -3,40 +3,53 @@ package itstime.reflog.comment.service;
 import itstime.reflog.comment.domain.Comment;
 import itstime.reflog.comment.dto.CommentDto;
 import itstime.reflog.comment.repository.CommentRepository;
-import itstime.reflog.commentLike.domain.CommentLike;
-import itstime.reflog.commentLike.repository.CommentLikeRepository;
+import itstime.reflog.commentlike.domain.CommentLike;
+import itstime.reflog.commentlike.repository.CommentLikeRepository;
 import itstime.reflog.common.code.status.ErrorStatus;
 import itstime.reflog.common.exception.GeneralException;
 import itstime.reflog.community.domain.Community;
 import itstime.reflog.community.repository.CommunityRepository;
 import itstime.reflog.member.domain.Member;
-import itstime.reflog.member.repository.MemberRepository;
+import itstime.reflog.member.service.MemberServiceHelper;
+import itstime.reflog.postlike.domain.enums.PostType;
+import itstime.reflog.retrospect.domain.Retrospect;
+import itstime.reflog.retrospect.repository.RetrospectRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.Optional;
-import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
 public class CommentService {
-
-    private final MemberRepository memberRepository;
     private final CommunityRepository communityRepository;
+    private final RetrospectRepository retrospectRepository;
     private final CommentRepository commentRepository;
     private final CommentLikeRepository commentLikeRepository;
+    private final MemberServiceHelper memberServiceHelper;
+
 
     @Transactional
-    public void createComment(Long communityId, String memberId, CommentDto.CommentSaveOrUpdateRequest dto) {
+    public void createComment(Long postId, String memberId, CommentDto.CommentSaveOrUpdateRequest dto) {
         // 1. 멤버 조회
-        Member member = memberRepository.findByUuid(UUID.fromString(memberId))
-                .orElseThrow(() -> new GeneralException(ErrorStatus._MEMBER_NOT_FOUND));
+        Member member = memberServiceHelper.findMemberByUuid(memberId);
 
-        // 2. 커뮤니티 조회
-        Community community = communityRepository.findById(communityId)
-                .orElseThrow(() -> new GeneralException(ErrorStatus._COMMUNITY_NOT_FOUND));
+        // 2. 게시물 조회
+        PostType postType = PostType.valueOf(dto.getPostType());
+        Community community = null;
+        Retrospect retrospect = null;
+
+        if (postType == PostType.COMMUNITY) {
+            community = communityRepository.findById(postId)
+                    .orElseThrow(() -> new GeneralException(ErrorStatus._COMMUNITY_NOT_FOUND));
+        } else if (postType == PostType.RETROSPECT) {
+            retrospect = retrospectRepository.findById(postId)
+                    .orElseThrow(() -> new GeneralException(ErrorStatus._RETROSPECT_NOT_FOUND));
+        } else {
+            throw new GeneralException(ErrorStatus._INVALID_POST_TYPE);
+        }
 
         // 3. parent 댓글 확인
         Comment parentComment = null;
@@ -48,12 +61,18 @@ public class CommentService {
         // 4. 댓글 생성
         Comment comment = Comment.builder()
                 .content(dto.getContent())
-                .community(community)
+                .postType(postType)
                 .member(member)
                 .parent(parentComment)
                 .createdAt(LocalDateTime.now())
                 .updatedAt(LocalDateTime.now())
                 .build();
+
+        if (postType == PostType.COMMUNITY) {
+            comment.setCommunity(community);
+        } else {
+            comment.setRetrospect(retrospect);
+        }
 
         // 5. 댓글 저장
         commentRepository.save(comment);
@@ -86,8 +105,7 @@ public class CommentService {
                 .orElseThrow(() -> new GeneralException(ErrorStatus._COMMENT_NOT_FOUND));
 
         // 2. 멤버 조회
-        Member member = memberRepository.findByUuid(UUID.fromString(memberId))
-                .orElseThrow(() -> new GeneralException(ErrorStatus._MEMBER_NOT_FOUND));
+        Member member = memberServiceHelper.findMemberByUuid(memberId);
 
         // 3. 좋아요 상태 확인
         Optional<CommentLike> optionalCommentLike = commentLikeRepository.findByCommentAndMember(comment, member);

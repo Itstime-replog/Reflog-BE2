@@ -10,6 +10,7 @@ import itstime.reflog.member.repository.MemberRepository;
 import itstime.reflog.mypage.domain.MyPage;
 import itstime.reflog.mypage.repository.MyPageRepository;
 import itstime.reflog.postlike.domain.PopularPost;
+import itstime.reflog.member.service.MemberServiceHelper;
 import itstime.reflog.postlike.domain.PostLike;
 import itstime.reflog.postlike.domain.enums.PostType;
 import itstime.reflog.postlike.repository.PopularPostRepository;
@@ -28,16 +29,15 @@ import java.util.List;
 @RequiredArgsConstructor
 public class PostLikeService {
     private final PostLikeRepository postLikeRepository;
-    private final MemberRepository memberRepository;
     private final CommunityRepository communityRepository;
     private final RetrospectRepository retrospectRepository;
     private final MyPageRepository myPageRepository;
     private final PopularPostRepository popularPostRepository;
+    private final MemberServiceHelper memberServiceHelper;
 
     @Transactional
-    public void togglePostLike(Long memberId,Long postId, String postType){
-        Member member = memberRepository.findById(memberId)
-                .orElseThrow(()-> new GeneralException(ErrorStatus._MEMBER_NOT_FOUND));
+    public void togglePostLike(String memberId, Long postId, String postType){
+        Member member = memberServiceHelper.findMemberByUuid(memberId);
 
         PostLike postLike;
 

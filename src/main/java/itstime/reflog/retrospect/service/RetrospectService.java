@@ -2,14 +2,13 @@ package itstime.reflog.retrospect.service;
 
 import java.util.List;
 
-import itstime.reflog.todolist.dto.TodolistDto;
+import itstime.reflog.member.service.MemberServiceHelper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import itstime.reflog.common.code.status.ErrorStatus;
 import itstime.reflog.common.exception.GeneralException;
 import itstime.reflog.member.domain.Member;
-import itstime.reflog.member.repository.MemberRepository;
 import itstime.reflog.retrospect.domain.Bad;
 import itstime.reflog.retrospect.domain.Good;
 import itstime.reflog.retrospect.domain.Retrospect;
@@ -24,16 +23,16 @@ import lombok.RequiredArgsConstructor;
 @Service
 @RequiredArgsConstructor
 public class RetrospectService {
-	private final MemberRepository memberRepository;
 	private final StudyTypeRepository studyTypeRepository;
 	private final RetrospectRepository retrospectRepository;
 	private final GoodRepository goodRepository;
 	private final BadRepository badRepository;
+	private final MemberServiceHelper memberServiceHelper;
+
 
 	@Transactional
-	public void createRetrospect(Long memberId, RetrospectDto.RetrospectSaveOrUpdateRequest dto) {
-		Member member = memberRepository.findById(memberId)
-			.orElseThrow(() -> new GeneralException(ErrorStatus._MEMBER_NOT_FOUND));
+	public void createRetrospect(String memberId, RetrospectDto.RetrospectSaveOrUpdateRequest dto) {
+		Member member = memberServiceHelper.findMemberByUuid(memberId);
 
 		Retrospect retrospect = Retrospect.builder()
 			.title(dto.getTitle())
@@ -119,10 +118,8 @@ public class RetrospectService {
 	}
 
 	@Transactional(readOnly = true)
-	public List<RetrospectDto.RetrospectCategoryResponse> getRetrospect(String category, Long memberId) {
-
-		Member member = memberRepository.findById(memberId)
-				.orElseThrow(() -> new GeneralException(ErrorStatus._MEMBER_NOT_FOUND));
+	public List<RetrospectDto.RetrospectCategoryResponse> getRetrospect(String category, String memberId) {
+		Member member = memberServiceHelper.findMemberByUuid(memberId);
 
 		// Retrospect 조회
 		List<Retrospect> retrospects;

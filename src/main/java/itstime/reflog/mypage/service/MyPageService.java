@@ -6,7 +6,7 @@ import itstime.reflog.common.exception.GeneralException;
 import itstime.reflog.community.domain.Community;
 import itstime.reflog.community.repository.CommunityRepository;
 import itstime.reflog.member.domain.Member;
-import itstime.reflog.member.repository.MemberRepository;
+import itstime.reflog.member.service.MemberServiceHelper;
 import itstime.reflog.mission.service.MissionService;
 import itstime.reflog.mypage.domain.MyPage;
 import itstime.reflog.mypage.dto.MyPageDto;
@@ -22,7 +22,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.UUID;
 import java.util.stream.Collectors;
 
 import static itstime.reflog.mission.domain.Badge.FIRST_MEETING;
@@ -32,7 +31,6 @@ import static itstime.reflog.mission.domain.Badge.FIRST_MEETING;
 public class MyPageService {
 
     private final MyPageRepository myPageRepository;
-    private final MemberRepository memberRepository;
     private final InitializationService initializationService;
     private final MissionService missionService;
     private final CommunityRepository communityRepository;
@@ -40,11 +38,12 @@ public class MyPageService {
     private final CommentRepository commentRepository;
     private final PostLikeRepository postLikeRepository;
     private final PostLikeService postLikeService;
+    private final MemberServiceHelper memberServiceHelper;
+
 
     @Transactional
-    public MyPageDto.MyPageInfoResponse getMyInformation(Long memberId) {
-        Member member = memberRepository.findById(memberId)
-                .orElseThrow(() -> new GeneralException(ErrorStatus._MEMBER_NOT_FOUND));
+    public MyPageDto.MyPageInfoResponse getMyInformation(String memberId) {
+        Member member = memberServiceHelper.findMemberByUuid(memberId);
 
         MyPage myPage = myPageRepository.findByMember(member)
                 .orElseThrow(() -> new GeneralException(ErrorStatus._MYPAGE_NOT_FOUND));
@@ -55,9 +54,8 @@ public class MyPageService {
     }
 
     @Transactional
-    public void createProfile(Long memberId, MyPageDto.MyPageProfileRequest dto) {
-        Member member = memberRepository.findById(memberId)
-                .orElseThrow(() -> new GeneralException(ErrorStatus._MEMBER_NOT_FOUND));
+    public void createProfile(String memberId, MyPageDto.MyPageProfileRequest dto) {
+        Member member = memberServiceHelper.findMemberByUuid(memberId);
 
         MyPage myPage = MyPage.builder()
                 .nickname(dto.getNickname())
@@ -70,13 +68,12 @@ public class MyPageService {
 
         initializationService.initializeForNewMember(myPage);
 
-        missionService.incrementMissionProgress(memberId, FIRST_MEETING);
+        missionService.incrementMissionProgress(member.getId(), FIRST_MEETING);
     }
 
     @Transactional
-    public MyPageDto.MyPageProfileResponse getProfile(Long memberId) {
-        Member member = memberRepository.findById(memberId)
-                .orElseThrow(() -> new GeneralException(ErrorStatus._MEMBER_NOT_FOUND));
+    public MyPageDto.MyPageProfileResponse getProfile(String memberId) {
+        Member member = memberServiceHelper.findMemberByUuid(memberId);
 
         MyPage myPage = myPageRepository.findByMember(member)
                 .orElseThrow(() -> new GeneralException(ErrorStatus._MYPAGE_NOT_FOUND));
@@ -88,9 +85,8 @@ public class MyPageService {
     }
 
     @Transactional
-    public void updateProfile(Long memberId, MyPageDto.MyPageProfileRequest dto) {
-        Member member = memberRepository.findById(memberId)
-                .orElseThrow(() -> new GeneralException(ErrorStatus._MEMBER_NOT_FOUND));
+    public void updateProfile(String memberId, MyPageDto.MyPageProfileRequest dto) {
+        Member member = memberServiceHelper.findMemberByUuid(memberId);
 
         MyPage myPage = myPageRepository.findByMember(member)
                 .orElseThrow(() -> new GeneralException(ErrorStatus._MYPAGE_NOT_FOUND));
@@ -103,8 +99,7 @@ public class MyPageService {
     @Transactional
     public List<MyPageDto.MyPagePostResponse> getMyPost(String memberId) {
         // 1. 멤버 조회
-        Member member = memberRepository.findByUuid(UUID.fromString(memberId))
-                .orElseThrow(() -> new GeneralException(ErrorStatus._MEMBER_NOT_FOUND));
+        Member member = memberServiceHelper.findMemberByUuid(memberId);
 
         // 2. 내가 작성한 커뮤니티 글 전체조회
         List<Community> communityList = communityRepository.findAllByMemberOrderByIdDesc(member);
@@ -144,8 +139,7 @@ public class MyPageService {
     @Transactional
     public List<MyPageDto.MyPagePostResponse> getMyLikePost(String memberId) {
         // 1. 멤버 조회
-        Member member = memberRepository.findByUuid(UUID.fromString(memberId))
-                .orElseThrow(() -> new GeneralException(ErrorStatus._MEMBER_NOT_FOUND));
+        Member member = memberServiceHelper.findMemberByUuid(memberId);
 
         // 2. 내가 좋아요 한 커뮤니티 글 전체조회
         List<PostLike> postLikeList = postLikeRepository.findAllByMemberAndPostType(member, PostType.COMMUNITY);
