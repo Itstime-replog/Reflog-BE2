@@ -231,7 +231,9 @@ public class CommunityService {
                     //게시물마다 좋아요 총 갯수 반환
                     int totalLike = postLikeService.getSumCommunityPostLike(community);
 
-                    return CommunityDto.CombinedCategoryResponse.fromCommunity(community, nickname, isLike, totalLike);
+                    //게시물마다 댓글 수 반환
+                    Long totalComment = commentRepository.countByCommunity(community);
+                    return CommunityDto.CombinedCategoryResponse.fromCommunity(community, nickname, isLike, totalLike, totalComment);
                 })
                 .collect(Collectors.toList());
 
@@ -250,7 +252,10 @@ public class CommunityService {
                         //게시물마다 좋아요 총 갯수 반환
                         int totalLike = postLikeService.getSumRetrospectPostLike(retrospect);
 
-                        return CommunityDto.CombinedCategoryResponse.fromRetrospect(retrospect, nickname, isLike, totalLike);
+                        //게시물마다 댓글 수 반환
+                        Long totalComment = commentRepository.countByRetrospect(retrospect);
+
+                        return CommunityDto.CombinedCategoryResponse.fromRetrospect(retrospect, nickname, isLike, totalLike, totalComment);
                     })
                     .collect(Collectors.toList());
             responses.addAll(retrospectResponses); // 두 리스트 합치기(회고일지, 커뮤니티)
@@ -280,7 +285,9 @@ public class CommunityService {
                     //게시물마다 좋아요 총 갯수 반환
                     int totalLike = postLikeService.getSumCommunityPostLike(community);
 
-                    return CommunityDto.CombinedCategoryResponse.fromCommunity(community, nickname, isLike, totalLike);
+                    //게시물마다 댓글 수 반환
+                    Long totalComment = commentRepository.countByCommunity(community);
+                    return CommunityDto.CombinedCategoryResponse.fromCommunity(community, nickname, isLike, totalLike, totalComment);
                 })
                 .collect(Collectors.toList());
 
@@ -298,7 +305,10 @@ public class CommunityService {
                     //게시물마다 좋아요 총 갯수 반환
                     int totalLike = postLikeService.getSumRetrospectPostLike(retrospect);
 
-                    return CommunityDto.CombinedCategoryResponse.fromRetrospect(retrospect, nickname, isLike, totalLike);
+                    //게시물마다 댓글 수 반환
+                    Long totalComment = commentRepository.countByRetrospect(retrospect);
+
+                    return CommunityDto.CombinedCategoryResponse.fromRetrospect(retrospect, nickname, isLike, totalLike, totalComment);
                 })
                 .collect(Collectors.toList());
         responses.addAll(retrospectResponses); // 두 리스트 합치기(회고일지, 커뮤니티)
@@ -325,7 +335,10 @@ public class CommunityService {
                             //게시물마다 좋아요 총 갯수 반환
                             int totalLike = postLikeService.getSumRetrospectPostLike(retrospect);
 
-                            return CommunityDto.CombinedCategoryResponse.fromRetrospect(retrospect, nickname, isLike, totalLike);
+                            //게시물마다 댓글 수 반환
+                            Long totalComment = commentRepository.countByRetrospect(retrospect);
+
+                            return CommunityDto.CombinedCategoryResponse.fromRetrospect(retrospect, nickname, isLike, totalLike, totalComment);
                         })
                 .collect(Collectors.toList());
 
@@ -341,7 +354,10 @@ public class CommunityService {
                     //게시물마다 좋아요 총 갯수 반환
                     int totalLike = postLikeService.getSumCommunityPostLike(community);
 
-                    return CommunityDto.CombinedCategoryResponse.fromCommunity(community, nickname, isLike, totalLike);
+                    //게시물마다 댓글 수 반환
+                    Long totalComment = commentRepository.countByCommunity(community);
+
+                    return CommunityDto.CombinedCategoryResponse.fromCommunity(community, nickname, isLike, totalLike, totalComment);
                 })
                 .collect(Collectors.toList());
 

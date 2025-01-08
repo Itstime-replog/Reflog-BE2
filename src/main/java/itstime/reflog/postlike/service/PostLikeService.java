@@ -1,5 +1,6 @@
 package itstime.reflog.postlike.service;
 
+import itstime.reflog.comment.repository.CommentRepository;
 import itstime.reflog.common.code.status.ErrorStatus;
 import itstime.reflog.common.exception.GeneralException;
 import itstime.reflog.community.domain.Community;
@@ -40,6 +41,7 @@ public class PostLikeService {
     private final PopularPostRepository popularPostRepository;
     private final MemberServiceHelper memberServiceHelper;
     private final MissionService missionService;
+    private final CommentRepository commentRepository;
 
 
 
@@ -195,7 +197,10 @@ public class PostLikeService {
                         Boolean isLike = postLikeRepository.findLikeByMemberAndCommunity(member, community).isPresent();
                         int totalLike = getSumCommunityPostLike(community);
 
-                        return CommunityDto.CombinedCategoryResponse.fromCommunity(community, nickname, isLike, totalLike);
+                        //게시물마다 댓글 수 반환
+                        Long totalComment = commentRepository.countByCommunity(community);
+
+                        return CommunityDto.CombinedCategoryResponse.fromCommunity(community, nickname, isLike, totalLike, totalComment);
 
                     } else if (popularPost.getPostType() == PostType.RETROSPECT) {
                         Retrospect retrospect = retrospectRepository.findById(popularPost.getPostId())
@@ -206,7 +211,10 @@ public class PostLikeService {
                         Boolean isLike = postLikeRepository.findLikeByMemberAndRetrospect(member, retrospect).isPresent();
                         int totalLike = getSumRetrospectPostLike(retrospect);
 
-                        return CommunityDto.CombinedCategoryResponse.fromRetrospect(retrospect, nickname, isLike, totalLike);
+                        //게시물마다 댓글 수 반환
+                        Long totalComment = commentRepository.countByRetrospect(retrospect);
+
+                        return CommunityDto.CombinedCategoryResponse.fromRetrospect(retrospect, nickname, isLike, totalLike, totalComment);
 
                     } else {
                         throw new GeneralException(ErrorStatus._POST_NOT_FOUND);
