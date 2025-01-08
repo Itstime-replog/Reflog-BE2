@@ -160,7 +160,7 @@ public class CommentService {
         notificationService.sendNotification(
                 receiver.getId(),
                 nickname + " 님이 " + title + "에 댓글을 남겼습니다.",
-                NotificationType.POSTLIKE
+                NotificationType.COMMUNITY
         );
     }
 
@@ -174,7 +174,7 @@ public class CommentService {
         notificationService.sendNotification(
                 receiver.getId(),
                 nickname + " 님이 " + title + "에 댓글을 남겼습니다.",
-                NotificationType.COMMENT
+                NotificationType.COMMUNITY
         );
     }
 }

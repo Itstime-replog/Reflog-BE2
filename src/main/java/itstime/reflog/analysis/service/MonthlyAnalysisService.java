@@ -263,7 +263,7 @@ public class MonthlyAnalysisService {
         notificationService.sendNotification(
                 member.getId(),
                 month + "월 월간 분석보고서가 도착했어요!",
-                NotificationType.MONTHLYANALYSIS
+                NotificationType.ANALYSIS
         );
     }
 }

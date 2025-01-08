@@ -268,7 +268,7 @@ public class WeeklyAnalysisService {
         notificationService.sendNotification(
                 member.getId(),
                 month + "월 " + weekOfMonth + "" + " 월간 분석보고서가 도착했어요!",
-                NotificationType.WEEKLYANALYSIS
+                NotificationType.ANALYSIS
         );
     }
 }
