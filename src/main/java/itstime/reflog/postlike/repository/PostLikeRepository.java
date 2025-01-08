@@ -31,12 +31,12 @@ public interface PostLikeRepository extends JpaRepository<PostLike, Long> {
 
     //community 게시물 좋아요 많은 순으로 정렬하고 id, 좋아요 수 반환 : Object[0] = id, Object[1] = 좋아요 수
     //타입을 구분하기 위해 앞에 타입도 반환
-    @Query("SELECT 'COMMUNITY', pl.community.id, COUNT(pl) as likeCount FROM PostLike pl GROUP BY pl.community.id " +
+    @Query("SELECT 'COMMUNITY', pl.community.id, COUNT(pl) as likeCount FROM PostLike pl WHERE pl.postType = 'COMMUNITY' GROUP BY pl.community.id " +
             "ORDER BY likeCount DESC")
-    List<Object[]> findAllCommunityPostLikesTop();
+    List<Object[]> findCommunityByPostLikeTop();
 
     //retrospect 게시물 좋아요 많은 순으로 정렬
-    @Query("SELECT 'RETROSPECT', pl.retrospect.id, COUNT(pl) as likeCount FROM PostLike pl GROUP BY pl.retrospect.id " +
+    @Query("SELECT 'RETROSPECT', pl.retrospect.id, COUNT(pl) as likeCount FROM PostLike pl WHERE pl.postType = 'RETROSPECT' GROUP BY pl.retrospect.id " +
             "ORDER BY likeCount DESC")
-    List<Object[]> findAllRetrospectPostLikesTop();
+    List<Object[]> findARetrospectPostLikesTop();
 }
