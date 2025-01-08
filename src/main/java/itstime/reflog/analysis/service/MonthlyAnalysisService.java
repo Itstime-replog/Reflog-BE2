@@ -15,6 +15,8 @@ import itstime.reflog.member.service.MemberServiceHelper;
 import itstime.reflog.mission.service.MissionService;
 import itstime.reflog.mypage.domain.MyPage;
 import itstime.reflog.mypage.repository.MyPageRepository;
+import itstime.reflog.notification.domain.NotificationType;
+import itstime.reflog.notification.service.NotificationService;
 import itstime.reflog.retrospect.domain.Retrospect;
 import itstime.reflog.todolist.domain.Todolist;
 import jakarta.transaction.Transactional;
@@ -23,6 +25,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
+import java.time.Month;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -46,8 +49,7 @@ public class MonthlyAnalysisService {
     private final MemberServiceHelper memberServiceHelper;
     private final MissionService missionService;
     private final MyPageRepository myPageRepository;
-
-
+    private final NotificationService notificationService;
 
 
     @Transactional
@@ -252,6 +254,17 @@ public class MonthlyAnalysisService {
 
         missionService.incrementMissionProgress(member.getId(), myPage, MONTHLY_REPORTER);
 
+        // 알림
+        sendMonthlyNotification(analysis.getStartDate().getMonth(), member);
+
         return AnalysisDto.AnalysisDtoResponse.fromEntity(analysis);
+    }
+
+    public void sendMonthlyNotification(Month month, Member member) {
+        notificationService.sendNotification(
+                member.getId(),
+                month + "월 월간 분석보고서가 도착했어요!",
+                NotificationType.MONTHLYANALYSIS
+        );
     }
 }
