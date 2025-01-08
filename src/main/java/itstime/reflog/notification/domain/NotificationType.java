@@ -6,5 +6,6 @@ public enum NotificationType {
     COMMENT,
     POSTLIKE,
     MONTHLYANALYSIS,
-    WEEKLYANALYSIS
+    WEEKLYANALYSIS,
+    SCHEDULE
 }

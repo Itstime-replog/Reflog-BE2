@@ -54,7 +54,7 @@ public class ScheduleController {
 
     @Operation(
             summary = "일정등록 조회 API",
-            description = "특정 회원의 특정 날짜에 해당하는 일정등록을 조회합니다.",
+            description = "특정 회원의 특정 날짜에 해당하는 일정등록을 조회합니다. 알림이 켜있을 경우 isOn이 true이다.",
             responses = {
                     @ApiResponse(
                             responseCode = "200",
