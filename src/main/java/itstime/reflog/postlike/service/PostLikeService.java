@@ -11,6 +11,7 @@ import itstime.reflog.mypage.domain.MyPage;
 import itstime.reflog.mypage.repository.MyPageRepository;
 import itstime.reflog.postlike.domain.PopularPost;
 import itstime.reflog.member.service.MemberServiceHelper;
+import itstime.reflog.mission.service.MissionService;
 import itstime.reflog.postlike.domain.PostLike;
 import itstime.reflog.postlike.domain.enums.PostType;
 import itstime.reflog.postlike.repository.PopularPostRepository;
@@ -21,8 +22,9 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import static itstime.reflog.mission.domain.Badge.POWER_OF_HEART;
+
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 
 @Service
@@ -34,11 +36,18 @@ public class PostLikeService {
     private final MyPageRepository myPageRepository;
     private final PopularPostRepository popularPostRepository;
     private final MemberServiceHelper memberServiceHelper;
+    private final MissionService missionService;
+
+
+
     private final MemberRepository memberRepository;
 
     @Transactional
     public void togglePostLike(String memberId, Long postId, String postType){
         Member member = memberServiceHelper.findMemberByUuid(memberId);
+
+        MyPage myPage = myPageRepository.findByMember(member)
+                .orElseThrow(() -> new GeneralException(ErrorStatus._MYPAGE_NOT_FOUND));
 
         PostLike postLike;
 
@@ -64,6 +73,9 @@ public class PostLikeService {
                         .build();
 
                 postLikeRepository.save(newPostLike);
+
+                // 미션
+                missionService.incrementMissionProgress(member.getId(), myPage, POWER_OF_HEART);
             }
         }
         else if (PostType.RETROSPECT == PostType.valueOf(postType)){
@@ -87,6 +99,9 @@ public class PostLikeService {
                         .build();
 
                 postLikeRepository.save(newPostLike);
+
+                // 미션
+                missionService.incrementMissionProgress(member.getId(), myPage, POWER_OF_HEART);
             }
         }
         //3. enum으로 설정하지 않은 글 유형이 올 경우 에러 출력

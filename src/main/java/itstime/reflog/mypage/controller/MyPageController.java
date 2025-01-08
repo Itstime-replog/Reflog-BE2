@@ -48,7 +48,7 @@ public class MyPageController {
     @GetMapping("/myinfo")
     public ResponseEntity<CommonApiResponse<MyPageDto.MyPageInfoResponse>> getMyInformation(
             @UserId String memberId
-            ) {
+    ) {
         MyPageDto.MyPageInfoResponse myInfo = myPageService.getMyInformation(memberId);
         return ResponseEntity.ok(CommonApiResponse.onSuccess(myInfo));
     }
@@ -107,7 +107,7 @@ public class MyPageController {
     @GetMapping("/myinfo/profile")
     public ResponseEntity<CommonApiResponse<MyPageDto.MyPageProfileResponse>> getProfile(
             @UserId String memberId
-            ) {
+    ) {
         MyPageDto.MyPageProfileResponse profile = myPageService.getProfile(memberId);
         return ResponseEntity.ok(CommonApiResponse.onSuccess(profile));
     }
@@ -200,34 +200,32 @@ public class MyPageController {
         return ResponseEntity.ok(CommonApiResponse.onSuccess(responses));
     }
 
-
-
-//    @Operation(
-//            summary = "마이페이지 미션/배지 조회 API",
-//            description = "특정 회원에 해당하는 마이페이지 미션/배지를 조회합니다.",
-//            responses = {
-//                    @ApiResponse(
-//                            responseCode = "200",
-//                            description = "마이페이지 미션/배지 조회 성공",
-//                            content = @Content(schema = @Schema(implementation = CommonApiResponse.class))
-//                    ),
-//                    @ApiResponse(
-//                            responseCode = "404",
-//                            description = "해당 회원 또는 마이페이지 미션/배지를 찾을 수 없음",
-//                            content = @Content(schema = @Schema(implementation = CommonApiResponse.class))
-//                    ),
-//                    @ApiResponse(
-//                            responseCode = "500",
-//                            description = "서버 에러",
-//                            content = @Content(schema = @Schema(implementation = CommonApiResponse.class))
-//                    )
-//            }
-//    )
-//    @GetMapping("/")
-//    public ResponseEntity<CommonApiResponse<MyPageDto.MyPageMissionResponse>> getMission(
-//            @RequestParam Long memberId
-//    ) {
-//        MyPageDto.MyPageMissionResponse mission = myPageService.getMission(memberId);
-//        return ResponseEntity.ok(CommonApiResponse.onSuccess(mission));
-//    }
+    @Operation(
+            summary = "마이페이지 미션/배지 조회 API",
+            description = "특정 회원에 해당하는 마이페이지 미션/배지를 조회합니다.",
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "마이페이지 미션/배지 조회 성공",
+                            content = @Content(schema = @Schema(implementation = CommonApiResponse.class))
+                    ),
+                    @ApiResponse(
+                            responseCode = "404",
+                            description = "해당 회원 또는 마이페이지 미션/배지를 찾을 수 없음",
+                            content = @Content(schema = @Schema(implementation = CommonApiResponse.class))
+                    ),
+                    @ApiResponse(
+                            responseCode = "500",
+                            description = "서버 에러",
+                            content = @Content(schema = @Schema(implementation = CommonApiResponse.class))
+                    )
+            }
+    )
+    @GetMapping("/badges")
+    public ResponseEntity<CommonApiResponse<List<MyPageDto.MyPageBadgeResponse>>> getMyPageBadge(
+            @UserId String memberId
+    ) {
+        List<MyPageDto.MyPageBadgeResponse> myPageBadge = myPageService.getMyPageBadge(memberId);
+        return ResponseEntity.ok(CommonApiResponse.onSuccess(myPageBadge));
+    }
 }
