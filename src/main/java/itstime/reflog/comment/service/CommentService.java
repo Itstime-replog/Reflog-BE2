@@ -96,9 +96,9 @@ public class CommentService {
         // 7. 알림
         if (retrospect == null) {
             assert community != null;
-            sendCommunityCommentLikeNotification(community, member);
+            sendCommunityCommentNotification(community, member);
         }else{
-            sendRetrospectCommentLikeNotification(retrospect, member);
+            sendRetrospectCommentNotification(retrospect, member);
         }
     }
 
@@ -150,7 +150,7 @@ public class CommentService {
         }
     }
 
-    public void sendCommunityCommentLikeNotification(Community community, Member sender) {
+    public void sendCommunityCommentNotification(Community community, Member sender) {
         Member receiver = community.getMember(); // 알림 받는 자
 
         String title = community.getTitle(); // 글 제목
@@ -159,12 +159,12 @@ public class CommentService {
 
         notificationService.sendNotification(
                 receiver.getId(),
-                nickname + " 님이 " + title + "에 좋아요를 눌렀습니다.",
+                nickname + " 님이 " + title + "에 댓글을 남겼습니다.",
                 NotificationType.POSTLIKE
         );
     }
 
-    public void sendRetrospectCommentLikeNotification(Retrospect retrospect, Member sender) {
+    public void sendRetrospectCommentNotification(Retrospect retrospect, Member sender) {
         Member receiver = retrospect.getMember(); // 알림 받는 자
 
         String title = retrospect.getTitle(); // 글 제목
