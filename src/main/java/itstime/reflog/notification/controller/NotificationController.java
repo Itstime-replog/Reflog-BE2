@@ -1,10 +1,10 @@
 package itstime.reflog.notification.controller;
 
 import io.swagger.v3.oas.annotations.tags.Tag;
+import itstime.reflog.common.annotation.UserId;
 import itstime.reflog.notification.service.NotificationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
@@ -17,8 +17,10 @@ public class NotificationController {
 
     private final NotificationService notificationService;
 
-    @GetMapping("/subscribe/{memberId}")
-    public SseEmitter subscribe(@PathVariable Long memberId) {
+    @GetMapping("/subscribe")
+    public SseEmitter subscribe(
+            @UserId String memberId
+    ) {
         return notificationService.subscribe(memberId);
     }
 }

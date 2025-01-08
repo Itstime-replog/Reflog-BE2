@@ -1,5 +1,7 @@
 package itstime.reflog.notification.service;
 
+import itstime.reflog.member.domain.Member;
+import itstime.reflog.member.service.MemberServiceHelper;
 import itstime.reflog.notification.domain.Notification;
 import itstime.reflog.notification.domain.NotificationType;
 import itstime.reflog.notification.repository.NotificationRepository;
@@ -16,16 +18,21 @@ import java.util.concurrent.ConcurrentHashMap;
 public class NotificationService {
 
     private final NotificationRepository notificationRepository;
-    private final Map<Long, SseEmitter> emitters = new ConcurrentHashMap<>();
+    private final Map<Long, SseEmitter> emitters = new ConcurrentHashMap<>(); // 사용자별 연결 관리
+    private final MemberServiceHelper memberServiceHelper;
 
-    public SseEmitter subscribe(Long memberId) {
-        SseEmitter emitter = new SseEmitter(60 * 1000L); // 60 seconds timeout
-        emitters.put(memberId, emitter);
 
-        // Remove emitter on completion, timeout, or error
-        emitter.onCompletion(() -> emitters.remove(memberId));
-        emitter.onTimeout(() -> emitters.remove(memberId));
-        emitter.onError(e -> emitters.remove(memberId));
+    public SseEmitter subscribe(String memberId) {
+        // 1. 멤버 조회
+        Member member = memberServiceHelper.findMemberByUuid(memberId);
+
+        SseEmitter emitter = new SseEmitter(60 * 1000L); // 60초 동안 연결 유지
+        emitters.put(member.getId(), emitter);
+
+        // 연결 종료 시 제거
+        emitter.onCompletion(() -> emitters.remove(member.getId()));
+        emitter.onTimeout(() -> emitters.remove(member.getId()));
+        emitter.onError(e -> emitters.remove(member.getId()));
 
         return emitter;
     }
@@ -46,7 +53,7 @@ public class NotificationService {
             try {
                 emitter.send(SseEmitter.event().name("notification").data(message));
             } catch (Exception e) {
-                emitters.remove(memberId); // Remove emitter on failure
+                emitters.remove(memberId); // 실패 시 연결 제거
             }
         }
     }
