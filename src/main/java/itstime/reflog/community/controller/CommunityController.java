@@ -5,6 +5,7 @@ import java.util.UUID;
 
 import itstime.reflog.common.annotation.UserId;
 import itstime.reflog.mypage.dto.MyPageDto;
+import itstime.reflog.postlike.dto.PostLikeDto;
 import itstime.reflog.postlike.service.PostLikeService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -216,8 +217,9 @@ public class CommunityController {
     }
 
     @Operation(
-            summary = "커뮤니티 게시물 좋아요 API",
-            description = "커뮤니티 게시글 좋아요 버튼 누를때 사용하는 API입니다. postType에는 회고일지일 경우에는 RETROSPECT, 커뮤니티 게시물일 경우에는 COMMUNITY를 보내주면 됩니다.",
+            summary = "커뮤니티 게시물 좋아요/북마크 API",
+            description = "커뮤니티 게시글 좋아요/북마크 버튼 누를때 사용하는 API입니다. postType에는 회고일지일 경우에는 RETROSPECT, 커뮤니티 게시물일 경우에는 COMMUNITY를 보내주면 됩니다." +
+                    "likeType애는 북마크인 경우에는 BOOKMARK, 좋아요안 경우에는 LIKE 를 보내주면 됩니다.",
             responses = {
                     @ApiResponse(
                             responseCode = "200",
@@ -237,9 +239,9 @@ public class CommunityController {
     public ResponseEntity<CommonApiResponse<Void>> togglePostLike(
             @UserId String memberId,
             @PathVariable Long postId,
-            @RequestParam String postType
-    ) {
-        postLikeService.togglePostLike(memberId, postId, postType);
+            @RequestBody PostLikeDto.PostLikeSaveRequest dto
+            ) {
+        postLikeService.togglePostLike(memberId, postId, dto);
         return ResponseEntity.ok(CommonApiResponse.onSuccess(null));
     }
 
@@ -289,7 +291,7 @@ public class CommunityController {
 	)
 	@GetMapping("/popular")
 	public ResponseEntity<CommonApiResponse<List<CommunityDto.CombinedCategoryResponse>>> getTopLikeCommunityPosts(
-			@RequestParam Long memberId
+            @UserId String memberId
 	)
 	{
 		List<CommunityDto.CombinedCategoryResponse> responses = postLikeService.getTopLikeCommunityPosts(memberId);

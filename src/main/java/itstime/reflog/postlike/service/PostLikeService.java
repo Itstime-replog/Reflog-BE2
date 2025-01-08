@@ -13,6 +13,7 @@ import itstime.reflog.postlike.domain.PopularPost;
 import itstime.reflog.member.service.MemberServiceHelper;
 import itstime.reflog.mission.service.MissionService;
 import itstime.reflog.postlike.domain.PostLike;
+import itstime.reflog.postlike.domain.enums.LikeType;
 import itstime.reflog.postlike.domain.enums.PostType;
 import itstime.reflog.postlike.repository.PopularPostRepository;
 import itstime.reflog.postlike.repository.PostLikeRepository;
@@ -43,7 +44,7 @@ public class PostLikeService {
     private final MemberRepository memberRepository;
 
     @Transactional
-    public void togglePostLike(String memberId, Long postId, String postType){
+    public void togglePostLike(String memberId, Long postId, String postType, String likeType){
         Member member = memberServiceHelper.findMemberByUuid(memberId);
 
         MyPage myPage = myPageRepository.findByMember(member)
@@ -52,56 +53,109 @@ public class PostLikeService {
         PostLike postLike;
 
         //1. 글 유형에 따라 다른 엔티티에서 테이블 가져오기
-        if (PostType.COMMUNITY == PostType.valueOf(postType)){
+        if (PostType.COMMUNITY == PostType.valueOf(postType)) {
             Community community = communityRepository.findById(postId)
-                    .orElseThrow(()-> new GeneralException(ErrorStatus._COMMUNITY_NOT_FOUND));
+                    .orElseThrow(() -> new GeneralException(ErrorStatus._COMMUNITY_NOT_FOUND));
 
-            //커뮤니티, 멤버 id와 일치하는 좋아요 가져오기
-            postLike = postLikeRepository.findByMemberAndCommunity(member, community)
-                    .orElse(null);
+            //좋아요인 경우
+            if (LikeType.LIKE == LikeType.valueOf(likeType)) {
+                //커뮤니티, 멤버 id와 일치하는 좋아요 가져오기
+                postLike = postLikeRepository.findLikeByMemberAndCommunity(member, community)
+                        .orElse(null);
 
-            //2.좋아요 존재 여부 확인
-            if (postLike != null){
-                //좋아요가 이미 있다면 테이블 삭제
-                postLikeRepository.delete(postLike);
+                //2.좋아요 존재 여부 확인
+                if (postLike != null && postLike.getLikeType().equals(LikeType.LIKE)) {
+                    //좋아요가 이미 있다면 테이블 삭제
+                    postLikeRepository.delete(postLike);
+                } else {
+                    //좋아요가 없다면 테이블 생성
+                    PostLike newPostLike = PostLike.builder()
+                            .member(member)
+                            .community(community)
+                            .postType(PostType.COMMUNITY)
+                            .likeType(LikeType.LIKE) //좋아요
+                            .build();
+
+                    postLikeRepository.save(newPostLike);
+
+                    // 미션
+                    missionService.incrementMissionProgress(member.getId(), myPage, POWER_OF_HEART);
+                }
+
+            } else if (LikeType.BOOKMARK == LikeType.valueOf(likeType)) {
+                //커뮤니티, 멤버 id와 일치하는 북마크 가져오기
+                postLike = postLikeRepository.findBookmarkByMemberAndCommunity(member, community)
+                        .orElse(null);
+
+                if (postLike != null && postLike.getLikeType().equals(LikeType.BOOKMARK)) {
+                    //북마크가 이미 있다면 테이블 삭제
+                    postLikeRepository.delete(postLike);
+                } else {
+                    //북마크가 없다면 테이블 생성
+                    PostLike newPostLike = PostLike.builder()
+                            .member(member)
+                            .community(community)
+                            .postType(PostType.COMMUNITY)
+                            .likeType(LikeType.BOOKMARK) //북마크
+                            .build();
+
+                    postLikeRepository.save(newPostLike);
+
+                }
             } else {
-                //좋아요가 없다면 테이블 생성
-                PostLike newPostLike = PostLike.builder()
-                        .member(member)
-                        .community(community)
-                        .postType(PostType.COMMUNITY)
-                        .build();
-
-                postLikeRepository.save(newPostLike);
-
-                // 미션
-                missionService.incrementMissionProgress(member.getId(), myPage, POWER_OF_HEART);
+                throw new GeneralException(ErrorStatus._POSTLIKE_LIKETYPE_BAD_REQUEST);
             }
         }
         else if (PostType.RETROSPECT == PostType.valueOf(postType)){
             Retrospect retrospect = retrospectRepository.findById(postId)
                     .orElseThrow(()-> new GeneralException(ErrorStatus._RETROSPECT_NOT_FOUND));
 
-            //회고일지, 멤버 id와 일치하는 좋아요 가져오기
-            postLike = postLikeRepository.findByMemberAndRetrospect(member, retrospect)
-                    .orElse(null);
+            if (LikeType.LIKE == LikeType.valueOf(likeType)) {
 
-            //2.좋아요 존재 여부 확인
-            if (postLike != null){
-                //좋아요가 이미 있다면 테이블 삭제
-                postLikeRepository.delete(postLike);
+                //회고일지, 멤버 id와 일치하는 좋아요 가져오기
+                postLike = postLikeRepository.findLikeByMemberAndRetrospect(member, retrospect)
+                        .orElse(null);
+
+                //2.좋아요 존재 여부 확인
+                if (postLike != null && postLike.getLikeType().equals(LikeType.LIKE)) {
+                    //좋아요가 이미 있다면 테이블 삭제
+                    postLikeRepository.delete(postLike);
+                } else {
+                    //좋아요가 없다면 테이블 생성
+                    PostLike newPostLike = PostLike.builder()
+                            .member(member)
+                            .retrospect(retrospect)
+                            .postType(PostType.RETROSPECT)
+                            .likeType(LikeType.LIKE)
+                            .build();
+
+                    postLikeRepository.save(newPostLike);
+
+                    // 미션
+                    missionService.incrementMissionProgress(member.getId(), myPage, POWER_OF_HEART);
+                }
+            } else if (LikeType.BOOKMARK == LikeType.valueOf(likeType)) { //북마크한경우
+                //커뮤니티, 멤버 id와 일치하는 북마크 가져오기
+                postLike = postLikeRepository.findBookmarkByMemberAndRetrospect(member, retrospect)
+                        .orElse(null);
+
+                if (postLike != null && postLike.getLikeType().equals(LikeType.BOOKMARK)) {
+                    //북마크가 이미 있다면 테이블 삭제
+                    postLikeRepository.delete(postLike);
+                } else {
+                    //좋아요가 없다면 테이블 생성
+                    PostLike newPostLike = PostLike.builder()
+                            .member(member)
+                            .retrospect(retrospect)
+                            .postType(PostType.RETROSPECT)
+                            .likeType(LikeType.BOOKMARK) //북마크
+                            .build();
+
+                    postLikeRepository.save(newPostLike);
+
+                }
             } else {
-                //좋아요가 없다면 테이블 생성
-                PostLike newPostLike = PostLike.builder()
-                        .member(member)
-                        .retrospect(retrospect)
-                        .postType(PostType.RETROSPECT)
-                        .build();
-
-                postLikeRepository.save(newPostLike);
-
-                // 미션
-                missionService.incrementMissionProgress(member.getId(), myPage, POWER_OF_HEART);
+                throw new GeneralException(ErrorStatus._POSTLIKE_LIKETYPE_BAD_REQUEST);
             }
         }
         //3. enum으로 설정하지 않은 글 유형이 올 경우 에러 출력
@@ -123,9 +177,8 @@ public class PostLikeService {
     }
 
     @Transactional
-    public List<CommunityDto.CombinedCategoryResponse> getTopLikeCommunityPosts(Long memberId) {
-        Member member = memberRepository.findById(memberId)
-                .orElseThrow(() -> new GeneralException(ErrorStatus._MEMBER_NOT_FOUND));
+    public List<CommunityDto.CombinedCategoryResponse> getTopLikeCommunityPosts(String memberId) {
+        Member member = memberServiceHelper.findMemberByUuid(memberId);
 
         // 반환하는 배열 초기화
         List<CommunityDto.CombinedCategoryResponse> combinedCategoryResponses = new ArrayList<>();
@@ -141,7 +194,7 @@ public class PostLikeService {
                             .map(MyPage::getNickname)
                             .orElse("닉네임 없음");
                     // 좋아요 있는지 없는지 플래그
-                    Boolean isLike = postLikeRepository.findByMemberAndCommunity(member, community).isPresent();
+                    Boolean isLike = postLikeRepository.findLikeByMemberAndCommunity(member, community).isPresent();
                     // 게시물마다 좋아요 총 갯수 반환
                     int totalLike = getSumCommunityPostLike(community);
 
@@ -155,7 +208,7 @@ public class PostLikeService {
                             .map(MyPage::getNickname)
                             .orElse("닉네임 없음");
                     // 좋아요 있는지 없는지 플래그
-                    Boolean isLike = postLikeRepository.findByMemberAndRetrospect(member, retrospect).isPresent();
+                    Boolean isLike = postLikeRepository.findLikeByMemberAndRetrospect(member, retrospect).isPresent();
                     // 게시물마다 좋아요 총 갯수 반환
                     int totalLike = getSumRetrospectPostLike(retrospect);
 

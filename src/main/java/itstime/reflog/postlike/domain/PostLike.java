@@ -36,6 +36,6 @@ public class PostLike {
     private PostType postType;
 
     @Enumerated(EnumType.STRING)
-    private LikeType likeType;
+    private LikeType likeType; //북마크인지 좋아요인지 구분하기 위해
 
 }
