@@ -11,4 +11,11 @@ public class PostLikeDto {
         private String postType;
         private String likeType;
     }
+
+    @Getter
+    @AllArgsConstructor
+    public static class BookMarkResponse{
+        private String title;
+        private String content;
+    }
 }

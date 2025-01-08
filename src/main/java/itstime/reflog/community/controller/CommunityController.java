@@ -323,4 +323,30 @@ public class CommunityController {
         List<MyPageDto.MyPagePostResponse> responses = communityService.getPostsByProfile(nickname);
         return ResponseEntity.ok(CommonApiResponse.onSuccess(responses));
     }
+
+    @Operation(
+            summary = "북마크 조회 API",
+            description = "커뮤니티 게시글 중 북마크 된 게시물들을 조회한다.",
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "북마크된 게시물 조회 성공"
+                    ),
+                    @ApiResponse(
+                            responseCode = "404",
+                            description = "해당 회원을 찾을 수 없음"
+                    ),
+                    @ApiResponse(
+                            responseCode = "500",
+                            description = "서버 에러"
+                    )
+            }
+    )
+    @GetMapping("/bookmark")
+    public ResponseEntity<CommonApiResponse<List<PostLikeDto.BookMarkResponse>>> getBookmarks(
+            @UserId String memberId
+    ){
+        List<PostLikeDto.BookMarkResponse> responses = postLikeService.getBookmarks(memberId);
+        return ResponseEntity.ok(CommonApiResponse.onSuccess(responses));
+    }
 }
