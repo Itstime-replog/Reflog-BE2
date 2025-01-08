@@ -254,16 +254,17 @@ public class MonthlyAnalysisService {
         missionService.incrementMissionProgress(member.getId(), myPage, MONTHLY_REPORTER);
 
         // 알림
-        sendMonthlyNotification(analysis.getStartDate().getMonthValue(), member);
+        sendMonthlyNotification(analysis.getStartDate().getMonthValue(), member, date);
 
         return AnalysisDto.AnalysisDtoResponse.fromEntity(analysis);
     }
 
-    public void sendMonthlyNotification(int month, Member member) {
+    public void sendMonthlyNotification(int month, Member member, LocalDate date) {
         notificationService.sendNotification(
                 member.getId(),
                 month + "월 월간 분석보고서가 도착했어요!",
-                NotificationType.ANALYSIS
+                NotificationType.ANALYSIS,
+                "/api/v1/monthly-analysis?date=" + date
         );
     }
 }

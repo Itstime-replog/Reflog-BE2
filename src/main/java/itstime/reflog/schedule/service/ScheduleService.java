@@ -180,7 +180,8 @@ public class ScheduleService {
         notificationService.sendNotification(
                 memberId,
                 "오늘은 " + title + " D-day 입니다!",
-                NotificationType.SCHEDULE
+                NotificationType.SCHEDULE,
+                "api/v1/plan/schedule"
         );
     }
 }

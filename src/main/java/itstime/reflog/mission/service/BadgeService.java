@@ -37,7 +37,8 @@ public class BadgeService {
         notificationService.sendNotification(
                 memberId,
                 badge.getKoreanName() + " 배지를 획득했어요!",
-                NotificationType.BADGE
+                NotificationType.BADGE,
+                "/api/v1/mypage/badges"
         );
     }
 }

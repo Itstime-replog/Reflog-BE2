@@ -4,6 +4,7 @@ import itstime.reflog.member.domain.Member;
 import itstime.reflog.member.service.MemberServiceHelper;
 import itstime.reflog.notification.domain.Notification;
 import itstime.reflog.notification.domain.NotificationType;
+import itstime.reflog.notification.dto.NotificationDto;
 import itstime.reflog.notification.repository.NotificationRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -37,11 +38,12 @@ public class NotificationService {
         return emitter;
     }
 
-    public void sendNotification(Long memberId, String message, NotificationType type) {
+    public void sendNotification(Long memberId, String message, NotificationType type, String url) {
         // Save the notification to the database
         Notification notification = Notification.builder()
                 .memberId(memberId)
                 .message(message)
+                .url(url)
                 .type(type)
                 .createdAt(LocalDateTime.now())
                 .build();
@@ -51,7 +53,8 @@ public class NotificationService {
         SseEmitter emitter = emitters.get(memberId);
         if (emitter != null) {
             try {
-                emitter.send(SseEmitter.event().name("notification").data(message));
+                NotificationDto.NotificationResponse response = new NotificationDto.NotificationResponse(message, type, url);
+                emitter.send(SseEmitter.event().name("notification").data(response));
             } catch (Exception e) {
                 emitters.remove(memberId); // 실패 시 연결 제거
             }

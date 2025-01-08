@@ -185,7 +185,8 @@ public class PostLikeService {
         notificationService.sendNotification(
                 receiver.getId(),
                 nickname + " 님이 " + title + "에 좋아요를 눌렀습니다.",
-                NotificationType.COMMUNITY
+                NotificationType.COMMUNITY,
+                "/api/v1/communities/" + community.getId()
         );
     }
 
@@ -199,7 +200,8 @@ public class PostLikeService {
         notificationService.sendNotification(
                 receiver.getId(),
                 nickname + " 님이 " + title + "에 좋아요를 눌렀습니다.",
-                NotificationType.COMMUNITY
+                NotificationType.COMMUNITY,
+                "/api/v1/retrospect/?retrospectId=" + retrospect.getId()
         );
     }
 }

@@ -255,12 +255,12 @@ public class WeeklyAnalysisService {
         missionService.incrementMissionProgress(member.getId(), myPage, WEEKLY_REPORTER);
 
         // 알림
-        sendWeeklyNotification(analysis.getStartDate(), member);
+        sendWeeklyNotification(analysis.getStartDate(), member, date);
 
         return AnalysisDto.AnalysisDtoResponse.fromEntity(analysis);
     }
 
-    public void sendWeeklyNotification(LocalDate startDate, Member member) {
+    public void sendWeeklyNotification(LocalDate startDate, Member member, LocalDate date) {
 
         String month = startDate.getMonth().toString();
         int weekOfMonth = startDate.get(ChronoField.ALIGNED_WEEK_OF_MONTH);
@@ -268,7 +268,8 @@ public class WeeklyAnalysisService {
         notificationService.sendNotification(
                 member.getId(),
                 month + "월 " + weekOfMonth + "" + " 월간 분석보고서가 도착했어요!",
-                NotificationType.ANALYSIS
+                NotificationType.ANALYSIS,
+                "/api/v1/weekly-analysis?date=" + date
         );
     }
 }

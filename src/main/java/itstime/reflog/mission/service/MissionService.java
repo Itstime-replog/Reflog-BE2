@@ -82,7 +82,8 @@ public class MissionService {
         notificationService.sendNotification(
                 memberId,
                 content,
-                NotificationType.BADGE
+                NotificationType.BADGE,
+                "/api/v1/mypage/badges"
         );
     }
 }
