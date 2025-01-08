@@ -11,6 +11,9 @@ import itstime.reflog.community.domain.Community;
 import itstime.reflog.community.repository.CommunityRepository;
 import itstime.reflog.member.domain.Member;
 import itstime.reflog.member.service.MemberServiceHelper;
+import itstime.reflog.mission.service.MissionService;
+import itstime.reflog.mypage.domain.MyPage;
+import itstime.reflog.mypage.repository.MyPageRepository;
 import itstime.reflog.postlike.domain.enums.PostType;
 import itstime.reflog.retrospect.domain.Retrospect;
 import itstime.reflog.retrospect.repository.RetrospectRepository;
@@ -21,6 +24,8 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.util.Optional;
 
+import static itstime.reflog.mission.domain.Badge.POWER_OF_COMMENTS;
+
 @Service
 @RequiredArgsConstructor
 public class CommentService {
@@ -29,6 +34,10 @@ public class CommentService {
     private final CommentRepository commentRepository;
     private final CommentLikeRepository commentLikeRepository;
     private final MemberServiceHelper memberServiceHelper;
+    private final MissionService missionService;
+    private final MyPageRepository myPageRepository;
+
+
 
 
     @Transactional
@@ -76,6 +85,12 @@ public class CommentService {
 
         // 5. 댓글 저장
         commentRepository.save(comment);
+
+        // 6. 미션
+        MyPage myPage = myPageRepository.findByMember(member)
+                .orElseThrow(() -> new GeneralException(ErrorStatus._MYPAGE_NOT_FOUND));
+
+        missionService.incrementMissionProgress(member.getId(), myPage, POWER_OF_COMMENTS);
     }
 
     @Transactional
