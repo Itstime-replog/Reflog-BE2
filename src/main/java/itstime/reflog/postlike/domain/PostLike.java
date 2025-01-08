@@ -3,6 +3,7 @@ package itstime.reflog.postlike.domain;
 import itstime.reflog.analysis.domain.enums.Period;
 import itstime.reflog.community.domain.Community;
 import itstime.reflog.member.domain.Member;
+import itstime.reflog.postlike.domain.enums.LikeType;
 import itstime.reflog.postlike.domain.enums.PostType;
 import itstime.reflog.retrospect.domain.Retrospect;
 import jakarta.persistence.*;
@@ -33,5 +34,8 @@ public class PostLike {
 
     @Enumerated(EnumType.STRING)
     private PostType postType;
+
+    @Enumerated(EnumType.STRING)
+    private LikeType likeType;
 
 }
