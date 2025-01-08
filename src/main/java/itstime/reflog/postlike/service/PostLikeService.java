@@ -12,8 +12,6 @@ import itstime.reflog.mypage.repository.MyPageRepository;
 import itstime.reflog.postlike.domain.PopularPost;
 import itstime.reflog.member.service.MemberServiceHelper;
 import itstime.reflog.mission.service.MissionService;
-import itstime.reflog.mypage.domain.MyPage;
-import itstime.reflog.mypage.repository.MyPageRepository;
 import itstime.reflog.postlike.domain.PostLike;
 import itstime.reflog.postlike.domain.enums.PostType;
 import itstime.reflog.postlike.repository.PopularPostRepository;
@@ -27,7 +25,6 @@ import org.springframework.stereotype.Service;
 import static itstime.reflog.mission.domain.Badge.POWER_OF_HEART;
 
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 
 @Service
