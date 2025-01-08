@@ -19,13 +19,13 @@ public class PopularScheduler {
     private final PostLikeRepository postLikeRepository;
     private final PopularPostRepository popularPostRepository;
 
-    @Scheduled(cron = "0 56 9 * * *")
+    @Scheduled(cron = "0 0 0 * * *")
     public void scheduledPopularPosts() {
 
         //1. 이전에 있던 인기글 목록 지우기
         popularPostRepository.deleteAll();
 
-        //2. 커뮤니티, 회고일지 좋아요 순으로 각각 가져오기
+        //2. 커뮤니티, 회고일지 좋아요 순으로 각각 가져와서 하나의 배열에 저장
         List<Object[]> postLikesTop = new ArrayList<>(postLikeRepository.findCommunityByPostLikeTop());
         postLikesTop.addAll(postLikeRepository.findARetrospectPostLikesTop());
 
