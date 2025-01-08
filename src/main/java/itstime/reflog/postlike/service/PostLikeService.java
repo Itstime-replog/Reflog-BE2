@@ -15,6 +15,7 @@ import itstime.reflog.mission.service.MissionService;
 import itstime.reflog.postlike.domain.PostLike;
 import itstime.reflog.postlike.domain.enums.LikeType;
 import itstime.reflog.postlike.domain.enums.PostType;
+import itstime.reflog.postlike.dto.PostLikeDto;
 import itstime.reflog.postlike.repository.PopularPostRepository;
 import itstime.reflog.postlike.repository.PostLikeRepository;
 import itstime.reflog.retrospect.domain.Retrospect;
@@ -44,7 +45,7 @@ public class PostLikeService {
     private final MemberRepository memberRepository;
 
     @Transactional
-    public void togglePostLike(String memberId, Long postId, String postType, String likeType){
+    public void togglePostLike(String memberId, Long postId, PostLikeDto.PostLikeSaveRequest dto){
         Member member = memberServiceHelper.findMemberByUuid(memberId);
 
         MyPage myPage = myPageRepository.findByMember(member)
@@ -53,12 +54,12 @@ public class PostLikeService {
         PostLike postLike;
 
         //1. 글 유형에 따라 다른 엔티티에서 테이블 가져오기
-        if (PostType.COMMUNITY == PostType.valueOf(postType)) {
+        if (PostType.COMMUNITY == PostType.valueOf(dto.getPostType())) {
             Community community = communityRepository.findById(postId)
                     .orElseThrow(() -> new GeneralException(ErrorStatus._COMMUNITY_NOT_FOUND));
 
             //좋아요인 경우
-            if (LikeType.LIKE == LikeType.valueOf(likeType)) {
+            if (LikeType.LIKE == LikeType.valueOf(dto.getLikeType())) {
                 //커뮤니티, 멤버 id와 일치하는 좋아요 가져오기
                 postLike = postLikeRepository.findLikeByMemberAndCommunity(member, community)
                         .orElse(null);
@@ -82,7 +83,7 @@ public class PostLikeService {
                     missionService.incrementMissionProgress(member.getId(), myPage, POWER_OF_HEART);
                 }
 
-            } else if (LikeType.BOOKMARK == LikeType.valueOf(likeType)) {
+            } else if (LikeType.BOOKMARK == LikeType.valueOf(dto.getLikeType())) {
                 //커뮤니티, 멤버 id와 일치하는 북마크 가져오기
                 postLike = postLikeRepository.findBookmarkByMemberAndCommunity(member, community)
                         .orElse(null);
@@ -106,11 +107,11 @@ public class PostLikeService {
                 throw new GeneralException(ErrorStatus._POSTLIKE_LIKETYPE_BAD_REQUEST);
             }
         }
-        else if (PostType.RETROSPECT == PostType.valueOf(postType)){
+        else if (PostType.RETROSPECT == PostType.valueOf(dto.getPostType())){
             Retrospect retrospect = retrospectRepository.findById(postId)
                     .orElseThrow(()-> new GeneralException(ErrorStatus._RETROSPECT_NOT_FOUND));
 
-            if (LikeType.LIKE == LikeType.valueOf(likeType)) {
+            if (LikeType.LIKE == LikeType.valueOf(dto.getLikeType())) {
 
                 //회고일지, 멤버 id와 일치하는 좋아요 가져오기
                 postLike = postLikeRepository.findLikeByMemberAndRetrospect(member, retrospect)
@@ -134,7 +135,7 @@ public class PostLikeService {
                     // 미션
                     missionService.incrementMissionProgress(member.getId(), myPage, POWER_OF_HEART);
                 }
-            } else if (LikeType.BOOKMARK == LikeType.valueOf(likeType)) { //북마크한경우
+            } else if (LikeType.BOOKMARK == LikeType.valueOf(dto.getLikeType())) { //북마크한경우
                 //커뮤니티, 멤버 id와 일치하는 북마크 가져오기
                 postLike = postLikeRepository.findBookmarkByMemberAndRetrospect(member, retrospect)
                         .orElse(null);
