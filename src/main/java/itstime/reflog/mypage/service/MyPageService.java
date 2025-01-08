@@ -58,8 +58,18 @@ public class MyPageService {
 
     @Transactional
     public void createProfile(String memberId, MyPageDto.MyPageProfileRequest dto) {
+        // 1. 멤버 조회
         Member member = memberServiceHelper.findMemberByUuid(memberId);
 
+        // 2. 닉네임&이메일 중복 확인
+        if (myPageRepository.findByNickname(dto.getNickname()).isPresent()) {
+            throw new GeneralException(ErrorStatus._DUPLICATE_NICKNAME);
+        }
+        if (myPageRepository.findByEmail(dto.getEmail()).isPresent()) {
+            throw new GeneralException(ErrorStatus._DUPLICATE_EMAIL);
+        }
+
+        // 3. 마이페이지 생성
         MyPage myPage = MyPage.builder()
                 .nickname(dto.getNickname())
                 .email(dto.getEmail())
@@ -69,8 +79,10 @@ public class MyPageService {
         myPageRepository.save(myPage);
         myPageRepository.flush();
 
+        // 4. 유저 미션&배지 생성
         initializationService.initializeForNewMember(myPage);
 
+        // 5. 미션
         missionService.incrementMissionProgress(member.getId(), myPage, FIRST_MEETING);
     }
 

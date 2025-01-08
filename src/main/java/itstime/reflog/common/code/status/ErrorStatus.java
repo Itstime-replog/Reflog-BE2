@@ -25,6 +25,8 @@ public enum ErrorStatus implements BaseErrorCode {
 
 	// MyPage 관련 에러
 	_MYPAGE_NOT_FOUND(HttpStatus.NOT_FOUND, "MYPAGE404", "해당 마이페이지를 찾을 수 없습니다."),
+	_DUPLICATE_NICKNAME(HttpStatus.NOT_FOUND, "MYPAGE409", "이미 존재하는 닉네임입니다."),
+	_DUPLICATE_EMAIL(HttpStatus.NOT_FOUND, "MYPAGE409", "이미 존재하는 이메일입니다."),
 
 	// mission 관련 에러
 	_MISSION_NOT_FOUND(HttpStatus.NOT_FOUND, "MISSION404", "해당 미션을 찾을 수 없습니다."),
