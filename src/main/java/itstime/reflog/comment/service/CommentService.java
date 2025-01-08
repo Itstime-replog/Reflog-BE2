@@ -14,6 +14,8 @@ import itstime.reflog.member.service.MemberServiceHelper;
 import itstime.reflog.mission.service.MissionService;
 import itstime.reflog.mypage.domain.MyPage;
 import itstime.reflog.mypage.repository.MyPageRepository;
+import itstime.reflog.notification.domain.NotificationType;
+import itstime.reflog.notification.service.NotificationService;
 import itstime.reflog.postlike.domain.enums.PostType;
 import itstime.reflog.retrospect.domain.Retrospect;
 import itstime.reflog.retrospect.repository.RetrospectRepository;
@@ -36,8 +38,7 @@ public class CommentService {
     private final MemberServiceHelper memberServiceHelper;
     private final MissionService missionService;
     private final MyPageRepository myPageRepository;
-
-
+    private final NotificationService notificationService;
 
 
     @Transactional
@@ -91,6 +92,14 @@ public class CommentService {
                 .orElseThrow(() -> new GeneralException(ErrorStatus._MYPAGE_NOT_FOUND));
 
         missionService.incrementMissionProgress(member.getId(), myPage, POWER_OF_COMMENTS);
+
+        // 7. 알림
+        if (retrospect == null) {
+            assert community != null;
+            sendCommunityCommentLikeNotification(community, member);
+        }else{
+            sendRetrospectCommentLikeNotification(retrospect, member);
+        }
     }
 
     @Transactional
@@ -114,7 +123,7 @@ public class CommentService {
     }
 
     @Transactional
-    public void toggleCommentLike(Long commentId,  String memberId) {
+    public void toggleCommentLike(Long commentId, String memberId) {
         // 1. 댓글 조회
         Comment comment = commentRepository.findById(commentId)
                 .orElseThrow(() -> new GeneralException(ErrorStatus._COMMENT_NOT_FOUND));
@@ -139,6 +148,33 @@ public class CommentService {
 
             commentLikeRepository.save(newLike);
         }
+    }
 
+    public void sendCommunityCommentLikeNotification(Community community, Member sender) {
+        Member receiver = community.getMember(); // 알림 받는 자
+
+        String title = community.getTitle(); // 글 제목
+
+        String nickname = sender.getMyPage().getNickname(); // 좋아요 누른 자
+
+        notificationService.sendNotification(
+                receiver.getId(),
+                nickname + " 님이 " + title + "에 좋아요를 눌렀습니다.",
+                NotificationType.POSTLIKE
+        );
+    }
+
+    public void sendRetrospectCommentLikeNotification(Retrospect retrospect, Member sender) {
+        Member receiver = retrospect.getMember(); // 알림 받는 자
+
+        String title = retrospect.getTitle(); // 글 제목
+
+        String nickname = sender.getMyPage().getNickname(); // 좋아요 누른 자
+
+        notificationService.sendNotification(
+                receiver.getId(),
+                nickname + " 님이 " + title + "에 댓글을 남겼습니다.",
+                NotificationType.POSTLIKE
+        );
     }
 }
