@@ -26,7 +26,7 @@ public class NotificationService {
         // 1. 멤버 조회
         Member member = memberServiceHelper.findMemberByUuid(memberId);
 
-        SseEmitter emitter = new SseEmitter(60 * 1000L); // 60초 동안 연결 유지
+        SseEmitter emitter = new SseEmitter(60 * 60 * 1000L); // 3600초 = 1시간 동안 연결 유지
         emitters.put(member.getId(), emitter);
 
         // 연결 종료 시 제거
