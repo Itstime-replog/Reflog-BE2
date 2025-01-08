@@ -34,6 +34,7 @@ public class PostLikeService {
     private final MyPageRepository myPageRepository;
     private final PopularPostRepository popularPostRepository;
     private final MemberServiceHelper memberServiceHelper;
+    private final MemberRepository memberRepository;
 
     @Transactional
     public void togglePostLike(String memberId, Long postId, String postType){
