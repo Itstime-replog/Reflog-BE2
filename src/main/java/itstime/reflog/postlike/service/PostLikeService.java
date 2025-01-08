@@ -28,6 +28,7 @@ import static itstime.reflog.mission.domain.Badge.POWER_OF_HEART;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -181,47 +182,62 @@ public class PostLikeService {
     public List<CommunityDto.CombinedCategoryResponse> getTopLikeCommunityPosts(String memberId) {
         Member member = memberServiceHelper.findMemberByUuid(memberId);
 
-        // 반환하는 배열 초기화
-        List<CommunityDto.CombinedCategoryResponse> combinedCategoryResponses = new ArrayList<>();
-
         List<PopularPost> postLikesTopThree = popularPostRepository.findAll();
 
-        postLikesTopThree.forEach(popularPost -> {
-            CommunityDto.CombinedCategoryResponse response = switch (popularPost.getPostType()) {
-                case COMMUNITY -> {
-                    Community community = communityRepository.findById(popularPost.getPostId())
-                            .orElseThrow(() -> new GeneralException(ErrorStatus._POST_NOT_FOUND));
-                    String nickname = myPageRepository.findByMember(community.getMember())
-                            .map(MyPage::getNickname)
-                            .orElse("닉네임 없음");
-                    // 좋아요 있는지 없는지 플래그
-                    Boolean isLike = postLikeRepository.findLikeByMemberAndCommunity(member, community).isPresent();
-                    // 게시물마다 좋아요 총 갯수 반환
-                    int totalLike = getSumCommunityPostLike(community);
+        return postLikesTopThree.stream()
+                .map(popularPost -> {
+                    if (popularPost.getPostType() == PostType.COMMUNITY) {
+                        Community community = communityRepository.findById(popularPost.getPostId())
+                                .orElseThrow(() -> new GeneralException(ErrorStatus._POST_NOT_FOUND));
+                        String nickname = myPageRepository.findByMember(community.getMember())
+                                .map(MyPage::getNickname)
+                                .orElse("닉네임 없음");
+                        Boolean isLike = postLikeRepository.findLikeByMemberAndCommunity(member, community).isPresent();
+                        int totalLike = getSumCommunityPostLike(community);
 
-                    //switch에서 값 반환 yield
-                    yield CommunityDto.CombinedCategoryResponse.fromCommunity(community, nickname, isLike, totalLike);
-                }
-                case RETROSPECT -> {
-                    Retrospect retrospect = retrospectRepository.findById(popularPost.getPostId())
-                            .orElseThrow(() -> new GeneralException(ErrorStatus._POST_NOT_FOUND));
-                    String nickname = myPageRepository.findByMember(retrospect.getMember())
-                            .map(MyPage::getNickname)
-                            .orElse("닉네임 없음");
-                    // 좋아요 있는지 없는지 플래그
-                    Boolean isLike = postLikeRepository.findLikeByMemberAndRetrospect(member, retrospect).isPresent();
-                    // 게시물마다 좋아요 총 갯수 반환
-                    int totalLike = getSumRetrospectPostLike(retrospect);
+                        return CommunityDto.CombinedCategoryResponse.fromCommunity(community, nickname, isLike, totalLike);
 
-                    yield CommunityDto.CombinedCategoryResponse.fromRetrospect(retrospect, nickname, isLike, totalLike);
-                }
-                default -> throw new GeneralException(ErrorStatus._POST_NOT_FOUND); // 예외 처리
-            };
+                    } else if (popularPost.getPostType() == PostType.RETROSPECT) {
+                        Retrospect retrospect = retrospectRepository.findById(popularPost.getPostId())
+                                .orElseThrow(() -> new GeneralException(ErrorStatus._POST_NOT_FOUND));
+                        String nickname = myPageRepository.findByMember(retrospect.getMember())
+                                .map(MyPage::getNickname)
+                                .orElse("닉네임 없음");
+                        Boolean isLike = postLikeRepository.findLikeByMemberAndRetrospect(member, retrospect).isPresent();
+                        int totalLike = getSumRetrospectPostLike(retrospect);
 
-            combinedCategoryResponses.add(response);
-        });
+                        return CommunityDto.CombinedCategoryResponse.fromRetrospect(retrospect, nickname, isLike, totalLike);
 
-        return combinedCategoryResponses;
+                    } else {
+                        throw new GeneralException(ErrorStatus._POST_NOT_FOUND);
+                    }
+                })
+                .collect(Collectors.toList());
+    }
+
+    @Transactional
+    public List<PostLikeDto.BookMarkResponse> getBookmarks(String memberId){
+        Member member = memberServiceHelper.findMemberByUuid(memberId);
+
+        List<PostLike> postLikes = postLikeRepository.findPostLikesByMember(member);
+
+        return postLikes.stream()
+                .map(postLike -> {
+
+                    //커뮤니티 타입인 경우 커뮤니티 응답
+                    if (postLike.getPostType() == PostType.COMMUNITY) {
+                        Community community = communityRepository.findById(postLike.getCommunity().getId())
+                                .orElseThrow(() -> new GeneralException(ErrorStatus._POST_NOT_FOUND));
+                        return PostLikeDto.BookMarkResponse.fromCommunityEntity(community);
+
+                    } else if (postLike.getPostType() == PostType.RETROSPECT) {
+                        Retrospect retrospect = retrospectRepository.findById(postLike.getRetrospect().getId())
+                                .orElseThrow(() -> new GeneralException(ErrorStatus._POST_NOT_FOUND));
+                        return PostLikeDto.BookMarkResponse.fromRetrospectEntity(retrospect);
+                    }
+                    throw new GeneralException(ErrorStatus._POSTLIKE_BAD_REQUEST);
+                })
+                .collect(Collectors.toList());
     }
 
 }

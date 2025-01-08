@@ -15,18 +15,19 @@ import java.util.Optional;
 public interface PostLikeRepository extends JpaRepository<PostLike, Long> {
 
     //좋아요 가져오기,,, 널이 될수 있음
-    @Query("SELECT pl from PostLike pl WHERE pl.likeType = 'LIKE'")
-    Optional<PostLike> findLikeByMemberAndCommunity (Member member, Community community);
+    @Query("SELECT pl from PostLike pl WHERE pl.likeType = 'LIKE' AND pl.member = :member AND pl.community = :community")
+    Optional<PostLike> findLikeByMemberAndCommunity (@Param("member") Member member, @Param("community") Community community);
 
-    @Query("SELECT pl from PostLike pl WHERE pl.likeType = 'LIKE'")
-    Optional<PostLike> findLikeByMemberAndRetrospect (Member member, Retrospect retrospect);
+    @Query("SELECT pl from PostLike pl WHERE pl.likeType = 'LIKE' AND pl.member = :member AND pl.retrospect = :retrospect")
+    Optional<PostLike> findLikeByMemberAndRetrospect (@Param("member") Member member, @Param("retrospect") Retrospect retrospect);
 
-    //북마크 가져오기,, 널이 될수있음
-    @Query("SELECT pl from PostLike pl WHERE pl.likeType = 'BOOKMARK'")
-    Optional<PostLike> findBookmarkByMemberAndCommunity (Member member, Community community);
+    //북마크 가져오기
+    @Query("SELECT pl FROM PostLike pl WHERE pl.likeType = 'BOOKMARK' AND pl.member = :member AND pl.community = :community")
+    Optional<PostLike> findBookmarkByMemberAndCommunity(@Param("member") Member member, @Param("community") Community community);
 
-    @Query("SELECT pl from PostLike pl WHERE pl.likeType = 'BOOKMARK'")
-    Optional<PostLike> findBookmarkByMemberAndRetrospect (Member member, Retrospect retrospect);
+    @Query("SELECT pl FROM PostLike pl WHERE pl.likeType = 'BOOKMARK' AND pl.member = :member AND pl.retrospect = :retrospect")
+    Optional<PostLike> findBookmarkByMemberAndRetrospect(@Param("member") Member member, @Param("retrospect") Retrospect retrospect);
+
 
     //DB에서 community 좋아요 합 계산
     @Query("SELECT COUNT(pl) FROM PostLike pl WHERE pl.community = :community AND pl.likeType = 'LIKE'")
@@ -49,4 +50,7 @@ public interface PostLikeRepository extends JpaRepository<PostLike, Long> {
     @Query("SELECT 'RETROSPECT', pl.retrospect.id, COUNT(pl) as likeCount FROM PostLike pl WHERE pl.postType = 'RETROSPECT' AND pl.likeType = 'LIKE' GROUP BY pl.retrospect.id " +
             "ORDER BY likeCount DESC")
     List<Object[]> findARetrospectPostLikesTop();
+
+    @Query("SELECT pl from PostLike pl WHERE pl.likeType = 'BOOKMARK' AND pl.member = :member")
+    List<PostLike> findPostLikesByMember(@Param("member") Member member);
 }
