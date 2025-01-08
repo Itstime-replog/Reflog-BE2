@@ -6,15 +6,7 @@ import java.util.List;
 import itstime.reflog.common.annotation.UserId;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PatchMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -163,5 +155,39 @@ public class TodolistController {
 		return ResponseEntity.ok(CommonApiResponse.onSuccess(null));
 	}
 
-
+	@Operation(
+			summary = "투두리스트 체크 API",
+			description = "특정 투두리스트 항목을 삭제합니다. AccessToken 필요.",
+			parameters = {
+					@Parameter(
+							name = "todolistId",
+							description = "삭제하려는 투두리스트의 고유 ID",
+							required = true
+					)
+			},
+			responses = {
+					@ApiResponse(
+							responseCode = "200",
+							description = "투두리스트 삭제 성공",
+							content = @Content(schema = @Schema(implementation = CommonApiResponse.class))
+					),
+					@ApiResponse(
+							responseCode = "404",
+							description = "해당 투두리스트를 찾을 수 없음",
+							content = @Content(schema = @Schema(implementation = CommonApiResponse.class))
+					),
+					@ApiResponse(
+							responseCode = "500",
+							description = "서버 에러",
+							content = @Content(schema = @Schema(implementation = CommonApiResponse.class))
+					)
+			}
+	)
+	@PostMapping("/todolist/check")
+	public ResponseEntity<CommonApiResponse<Void>> checkTodolist(
+			@UserId String memberId
+	) {
+		todolistService.checkTodolist(memberId);
+		return ResponseEntity.ok(CommonApiResponse.onSuccess(null));
+	}
 }

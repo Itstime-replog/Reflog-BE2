@@ -4,6 +4,9 @@ import java.time.LocalDate;
 import java.util.List;
 
 import itstime.reflog.member.service.MemberServiceHelper;
+import itstime.reflog.mission.service.MissionService;
+import itstime.reflog.mypage.domain.MyPage;
+import itstime.reflog.mypage.repository.MyPageRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -15,11 +18,17 @@ import itstime.reflog.todolist.dto.TodolistDto;
 import itstime.reflog.todolist.repository.TodolistRepository;
 import lombok.RequiredArgsConstructor;
 
+import static itstime.reflog.mission.domain.Badge.HABIT_STARTER;
+
 @Service
 @RequiredArgsConstructor
 public class TodolistService {
 	private final TodolistRepository todolistRepository;
 	private final MemberServiceHelper memberServiceHelper;
+	private final MissionService missionService;
+	private final MyPageRepository myPageRepository;
+
+
 
 
 	@Transactional
@@ -70,5 +79,15 @@ public class TodolistService {
 		todolistRepository.delete(todolist);
 	}
 
+	@Transactional
+	public void checkTodolist(String memberId) {
+		// 미션
+		Member member = memberServiceHelper.findMemberByUuid(memberId);
 
+		MyPage myPage = myPageRepository.findByMember(member)
+				.orElseThrow(() -> new GeneralException(ErrorStatus._MYPAGE_NOT_FOUND));
+
+		missionService.incrementMissionProgress(member.getId(), myPage, HABIT_STARTER);
+
+	}
 }
