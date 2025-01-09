@@ -1,10 +1,27 @@
 <!DOCTYPE html>
-<html lang="en">
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>회고일지를 잊으셨나요? 다시 시작해보세요!</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reflog Reminder</title>
 </head>
-<body>
-회고일지를 잊으셨나요? 다시 시작해보세요!
+<body style="font-family: Arial, sans-serif; margin: 0; padding: 0; background-color: #f8f9fa;">
+<div style="padding: 10px; background-color: white; width: 600px; max-width: 100%; margin: auto; box-shadow: none; text-align: center; border: 1px solid #e0e0e0; min-height: 711px; display: flex; flex-direction: column; ">
+    <div style="margin-bottom: 100px;">
+        <img src="http://54.180.61.91:8080/images/sample.png" alt="Reflog 로고" style="width: 100%; height: auto; max-width: 606px; object-fit: cover; margin-top: 0px;">
+    </div>
+    <div style="text-align: left; padding: 0 40px;">
+        <h2 style="margin: 0; font-size: 25px; font-weight: 600; color: #000000; line-height: 30px;" th:text="${name} + '님, 안녕하세요!'"></h2> <br>
+        <p style="margin: 10px 0; font-size: 14px; font-weight: 500; color: #494A4F; line-height: 16.71px;">회고일지 작성을 잊은지 약 한 달이 지났어요😂</p>
+        <p style="margin: 10px 0; font-size: 14px; font-weight: 500; color: #494A4F; line-height: 16.71px;">그러나 언제든 다시 시작할 수 있다는 사실!</p>
+        <p style="margin: 10px 0; font-size: 14px; font-weight: 500; color: #494A4F; line-height: 16.71px;">작은 습관이 큰 변화를 만들어요.</p>
+        <p style="margin: 10px 0; font-size: 14px; font-weight: 500; color: #494A4F; line-height: 16.71px;">오늘의 회고일지 작성으로 한 걸음 더 나아가보는건 어떨까요?</p><br>
+        <p style="margin: 10px 0; font-size: 14px; font-weight: 500; color: #494A4F; line-height: 16.71px;">다른 유저들도 꾸준히 회고일지를 작성하고 있어요.</p>
+        <p style="margin: 10px 0; font-size: 14px; font-weight: 500; color: #494A4F; line-height: 16.71px;">일지 작성이 어렵다면 다른 사람의 회고일지를 확인해 동기를 부여받아 보세요!</p>
+
+    </div>
+    <a href="#" style="padding: 0 70px; line-height: 33px; font-size: 14px; color: #0059FF; text-decoration: none; border: 1.2px solid #0059FF; border-radius: 24px; margin: 142px auto 20px;">회고일지 작성하러 가기</a>
+</div>
 </body>
 </html>
+

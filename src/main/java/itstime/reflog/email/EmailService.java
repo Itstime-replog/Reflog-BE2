@@ -27,13 +27,13 @@ public class EmailService {
 	private final MemberRepository memberRepository;
 
 	@Async
-	public void sendEmail(String email, String templateName, String date) {
+	public void sendEmail(String email, String templateName, String date, String name) {
 		MimeMessage mimeMessage = javaMailSender.createMimeMessage();
 		try {
 			MimeMessageHelper mimeMessageHelper = new MimeMessageHelper(mimeMessage, false, "UTF-8");
 			mimeMessageHelper.setTo(email); // 수신자
-			mimeMessageHelper.setSubject("Reflog - 회고일지를 작성해주세요!"); // 메일 제목
-			mimeMessageHelper.setText(setContext(templateName, date), true); // 메일 본문
+			mimeMessageHelper.setSubject(getSubjectByTemplate(templateName)); // 메일 제목
+			mimeMessageHelper.setText(setContext(templateName, date, name), true); // 메일 본문
 
 			javaMailSender.send(mimeMessage);
 			log.info("Succeeded to send email to " + email);
@@ -42,9 +42,23 @@ public class EmailService {
 		}
 	}
 
-	public String setContext(String templateName, String date) {
+	private String getSubjectByTemplate(String templateName) {
+		switch (templateName) {
+			case "day":
+				return "똑똑! 리플로그가 회고일지를 기다리고 있어요.";
+			case "week":
+				return "이번주도 리플로그가 응원해요! 하루 10분만 투자해보세요.";
+			case "month":
+				return "회고일지를 잊으셨나요? 다시 시작해보세요!";
+			default:
+				return "Reflog - 회고일지를 작성해주세요!";
+		}
+	}
+
+	public String setContext(String templateName, String date, String name) {
 		Context context = new Context();
 		context.setVariable("date", date);
+		context.setVariable("name", name);
 		return templateEngine.process(templateName, context); // HTML 템플릿 처리
 	}
 

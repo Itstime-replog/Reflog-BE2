@@ -1,10 +1,22 @@
 <!DOCTYPE html>
-<html lang="en">
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>작은 회고가 큰 변화를 만듭니다. 오늘도 한 걸음 나아가세요!</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reflog Reminder</title>
 </head>
-<body>
-작은 회고가 큰 변화를 만듭니다. 오늘도 한 걸음 나아가세요!
+<body style="font-family: Arial, sans-serif; margin: 0; padding: 0; background-color: #f8f9fa;">
+<div style="padding: 10px; background-color: white; width: 600px; max-width: 100%; margin: auto; box-shadow: none; text-align: center; border: 1px solid #e0e0e0; min-height: 711px; display: flex; flex-direction: column; ">
+    <div style="margin-bottom: 100px;">
+        <img src="http://54.180.61.91:8080/images/sample.png" alt="Reflog 로고" style="width: 100%; height: auto; max-width: 606px; object-fit: cover; margin-top: 0px;">
+    </div>
+    <div style="text-align: left; padding: 0 40px;">
+        <h2 style="margin: 0; font-size: 25px; font-weight: 600; color: #000000; line-height: 30px;" th:text="${name} + '님, 안녕하세요!'"></h2> <br>
+        <p style="margin: 10px 0; font-size: 14px; font-weight: 500; color: #494A4F; line-height: 16.71px;" th:text="'어제 회고일지 작성을 잊은 ' + ${name} + '님을 위해 찾아왔어요.'"></p>
+        <p style="margin: 10px 0; font-size: 14px; font-weight: 500; color: #494A4F; line-height: 16.71px;">아직 포기하긴 일러요!</p>
+        <p style="margin: 10px 0; font-size: 14px; font-weight: 500; color: #494A4F; line-height: 16.71px;">10분만 투자해 오늘의 생각과 배움을 기록하며 내일의 더 나은 나를 만들어봐요!</p>
+    </div>
+    <a href="#" style="padding: 0 70px; line-height: 33px; font-size: 14px; color: #0059FF; text-decoration: none; border: 1.2px solid #0059FF; border-radius: 24px; margin: 250px auto 20px;">회고일지 작성하러 가기</a>
+</div>
 </body>
 </html>
