@@ -6,16 +6,16 @@
     <title>Reflog Reminder</title>
 </head>
 <body style="font-family: 'Arial', sans-serif; margin: 0; padding: 0; background-color: #f8f9fa; display: flex; justify-content: center; align-items: center; height: 100vh;">
-<div style="padding: 20px; background-color: white; width: 600px; height: 711px; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); text-align: center; position: relative;">
-    <div style="position: relative;">
+<div class="container" style="padding: 20px; background-color: white; width: 600px; height: 711px; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); text-align: center; position: relative;">
+    <div class="header">
         <img src="http://localhost:8080/images/sample.png" alt="Reflog 로고" style="width: 606px; height: 82px; position: absolute; top: 16px; left: 17px; object-fit: cover;">
     </div>
-    <div style="position: relative;">
-        <h2 style="font-family: 'Pretendard', Arial, sans-serif; font-size: 25px; font-weight: 600; color: #000000; position: absolute; top: 174px; left: 65px; margin: 0; width: calc(640px - 2 * 65px); line-height: 30px; letter-spacing: 0.22px; text-align: left;" th:text="'[[${name}]]님, 안녕하세요!'"></h2>
-        <p style="font-family: 'Pretendard', Arial, sans-serif; font-size: 14px; font-weight: 500; color: #494A4F; position: absolute; top: 235px; left: 65px; margin: 0; width: calc(640px - 2 * 65px); line-height: 16.71px; text-align: left;">어제 회고일지 작성을 잊은 윤주님을 위해 찾아왔어요.</p>
-        <p style="font-family: 'Pretendard', Arial, sans-serif; font-size: 14px; font-weight: 500; color: #494A4F; position: absolute; top: 259px; left: 65px; margin: 0; width: calc(640px - 2 * 65px); line-height: 16.71px; text-align: left;">아직 포기하긴 일러요!</p>
-        <p style="font-family: 'Pretendard', Arial, sans-serif; font-size: 14px; font-weight: 500; color: #494A4F; position: absolute; top: 302px; left: 65px; margin: 0; width: calc(640px - 2 * 65px); line-height: 16.71px; text-align: left;">10분만 투자해 오늘의 생각과 배움을 기록하며 내일의 더 나은 나를 만들어봐요!</p>
-        <a href="#" style="display: inline-block; width: 270px; height: 33px; line-height: 33px; font-size: 14px; font-weight: 500; color: #0059FF; text-align: center; text-decoration: none; border: 1.2px solid #0059FF; border-radius: 24px; position: absolute; top: 580px; left: 165px; background-color: white; transition: background-color 0.3s ease, color 0.3s ease;">회고일지 작성하러 가기</a>
+    <div class="content">
+        <h2 th:text="'[[${name}]]님, 안녕하세요!'" style="font-family: 'Pretendard', Arial, sans-serif; position: absolute; left: 65px; margin: 0; width: calc(640px - 2 * 65px); font-size: 25px; font-weight: 600; color: #000000; top: 174px; line-height: 30px; letter-spacing: 0.22px; text-align: left;"></h2>
+        <p class="intro" style="position: absolute; left: 65px; margin: 0; width: calc(640px - 2 * 65px); font-family: 'Pretendard', Arial, sans-serif; font-size: 14px; font-weight: 500; color: #494A4F; line-height: 16.71px; text-align: left; top: 235px;">어제 회고일지 작성을 잊은 윤주님을 위해 찾아왔어요.</p>
+        <p class="encouragement" style="position: absolute; left: 65px; margin: 0; width: calc(640px - 2 * 65px); font-family: 'Pretendard', Arial, sans-serif; font-size: 14px; font-weight: 500; color: #494A4F; line-height: 16.71px; text-align: left; top: 259px;">아직 포기하긴 일러요!</p>
+        <p class="action" style="position: absolute; left: 65px; margin: 0; width: calc(640px - 2 * 65px); font-family: 'Pretendard', Arial, sans-serif; font-size: 14px; font-weight: 500; color: #494A4F; line-height: 16.71px; text-align: left; top: 302px;">10분만 투자해 오늘의 생각과 배움을 기록하며 내일의 더 나은 나를 만들어봐요!</p>
+        <a href="#" class="button" style="display: inline-block; width: 270px; height: 33px; line-height: 33px; font-size: 14px; font-weight: 500; color: #0059FF; text-align: center; text-decoration: none; border: 1.2px solid #0059FF; border-radius: 24px; position: absolute; top: 580px; left: 185px; background-color: white; transition: background-color 0.3s ease, color 0.3s ease;">회고일지 작성하러 가기</a>
     </div>
 </div>
 </body>
