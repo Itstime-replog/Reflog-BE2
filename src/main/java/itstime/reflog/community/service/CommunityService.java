@@ -226,12 +226,14 @@ public class CommunityService {
                             .orElse("닉네임 없음");
 
                     //좋아요 있는지 없는지 플래그
-                    Boolean isLike = postLikeRepository.findByMemberAndCommunity(member, community).isPresent();
+                    Boolean isLike = postLikeRepository.findLikeByMemberAndCommunity(member, community).isPresent();
 
                     //게시물마다 좋아요 총 갯수 반환
                     int totalLike = postLikeService.getSumCommunityPostLike(community);
 
-                    return CommunityDto.CombinedCategoryResponse.fromCommunity(community, nickname, isLike, totalLike);
+                    //게시물마다 댓글 수 반환
+                    Long totalComment = commentRepository.countByCommunity(community);
+                    return CommunityDto.CombinedCategoryResponse.fromCommunity(community, nickname, isLike, totalLike, totalComment);
                 })
                 .collect(Collectors.toList());
 
@@ -245,12 +247,15 @@ public class CommunityService {
                                 .orElse("닉네임 없음");
 
                         //좋아요 있는지 없는지 플래그
-                        Boolean isLike = postLikeRepository.findByMemberAndRetrospect(member, retrospect).isPresent();
+                        Boolean isLike = postLikeRepository.findLikeByMemberAndRetrospect(member, retrospect).isPresent();
 
                         //게시물마다 좋아요 총 갯수 반환
                         int totalLike = postLikeService.getSumRetrospectPostLike(retrospect);
 
-                        return CommunityDto.CombinedCategoryResponse.fromRetrospect(retrospect, nickname, isLike, totalLike);
+                        //게시물마다 댓글 수 반환
+                        Long totalComment = commentRepository.countByRetrospect(retrospect);
+
+                        return CommunityDto.CombinedCategoryResponse.fromRetrospect(retrospect, nickname, isLike, totalLike, totalComment);
                     })
                     .collect(Collectors.toList());
             responses.addAll(retrospectResponses); // 두 리스트 합치기(회고일지, 커뮤니티)
@@ -275,12 +280,14 @@ public class CommunityService {
                             .orElse("닉네임 없음");
 
                     //좋아요 있는지 없는지 플래그
-                    Boolean isLike = postLikeRepository.findByMemberAndCommunity(member, community).isPresent();
+                    Boolean isLike = postLikeRepository.findLikeByMemberAndCommunity(member, community).isPresent();
 
                     //게시물마다 좋아요 총 갯수 반환
                     int totalLike = postLikeService.getSumCommunityPostLike(community);
 
-                    return CommunityDto.CombinedCategoryResponse.fromCommunity(community, nickname, isLike, totalLike);
+                    //게시물마다 댓글 수 반환
+                    Long totalComment = commentRepository.countByCommunity(community);
+                    return CommunityDto.CombinedCategoryResponse.fromCommunity(community, nickname, isLike, totalLike, totalComment);
                 })
                 .collect(Collectors.toList());
 
@@ -293,12 +300,15 @@ public class CommunityService {
                             .map(MyPage::getNickname)
                             .orElse("닉네임 없음");
                     //좋아요 있는지 없는지 플래그
-                    Boolean isLike = postLikeRepository.findByMemberAndRetrospect(member, retrospect).isPresent();
+                    Boolean isLike = postLikeRepository.findLikeByMemberAndRetrospect(member, retrospect).isPresent();
 
                     //게시물마다 좋아요 총 갯수 반환
                     int totalLike = postLikeService.getSumRetrospectPostLike(retrospect);
 
-                    return CommunityDto.CombinedCategoryResponse.fromRetrospect(retrospect, nickname, isLike, totalLike);
+                    //게시물마다 댓글 수 반환
+                    Long totalComment = commentRepository.countByRetrospect(retrospect);
+
+                    return CommunityDto.CombinedCategoryResponse.fromRetrospect(retrospect, nickname, isLike, totalLike, totalComment);
                 })
                 .collect(Collectors.toList());
         responses.addAll(retrospectResponses); // 두 리스트 합치기(회고일지, 커뮤니티)
@@ -320,12 +330,15 @@ public class CommunityService {
                                     .map(MyPage::getNickname)
                                     .orElse("닉네임 없음");
                             //좋아요 있는지 없는지 플래그
-                            Boolean isLike = postLikeRepository.findByMemberAndRetrospect(member, retrospect).isPresent();
+                            Boolean isLike = postLikeRepository.findBookmarkByMemberAndRetrospect(member, retrospect).isPresent();
 
                             //게시물마다 좋아요 총 갯수 반환
                             int totalLike = postLikeService.getSumRetrospectPostLike(retrospect);
 
-                            return CommunityDto.CombinedCategoryResponse.fromRetrospect(retrospect, nickname, isLike, totalLike);
+                            //게시물마다 댓글 수 반환
+                            Long totalComment = commentRepository.countByRetrospect(retrospect);
+
+                            return CommunityDto.CombinedCategoryResponse.fromRetrospect(retrospect, nickname, isLike, totalLike, totalComment);
                         })
                 .collect(Collectors.toList());
 
@@ -336,12 +349,15 @@ public class CommunityService {
                             .orElse("닉네임 없음");
 
                     //좋아요 있는지 없는지 플래그
-                    Boolean isLike = postLikeRepository.findByMemberAndCommunity(member, community).isPresent();
+                    Boolean isLike = postLikeRepository.findBookmarkByMemberAndCommunity(member, community).isPresent();
 
                     //게시물마다 좋아요 총 갯수 반환
                     int totalLike = postLikeService.getSumCommunityPostLike(community);
 
-                    return CommunityDto.CombinedCategoryResponse.fromCommunity(community, nickname, isLike, totalLike);
+                    //게시물마다 댓글 수 반환
+                    Long totalComment = commentRepository.countByCommunity(community);
+
+                    return CommunityDto.CombinedCategoryResponse.fromCommunity(community, nickname, isLike, totalLike, totalComment);
                 })
                 .collect(Collectors.toList());
 

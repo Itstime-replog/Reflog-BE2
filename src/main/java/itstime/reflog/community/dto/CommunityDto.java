@@ -44,8 +44,9 @@ public class CommunityDto {
 		private Integer understandingLevel;// Retrospect 전용
 		private Boolean isLike;
 		private int totalLike;
+		private Long totalComment;
 
-		public static CombinedCategoryResponse fromCommunity(Community community, String writer, Boolean isLike, Integer totalLike) {
+		public static CombinedCategoryResponse fromCommunity(Community community, String writer, Boolean isLike, Integer totalLike, Long totalComment) {
 			return CombinedCategoryResponse.builder()
 					.title(community.getTitle())
 					.content(community.getContent())
@@ -53,12 +54,13 @@ public class CommunityDto {
 					.postTypes(community.getPostTypes())
 					.learningTypes(community.getLearningTypes())
 					.isLike(isLike)
+					.totalComment(totalComment)
 					.totalLike(totalLike)
 					.writer(writer)
 					.build();
 		}
 
-		public static CombinedCategoryResponse fromRetrospect(Retrospect retrospect, String writer, Boolean isLike, Integer totalLike) {
+		public static CombinedCategoryResponse fromRetrospect(Retrospect retrospect, String writer, Boolean isLike, Integer totalLike, Long totalComment) {
 			return CombinedCategoryResponse.builder()
 					.title(retrospect.getTitle())
 					.createdDate(retrospect.getCreatedDate().atStartOfDay())
@@ -70,6 +72,7 @@ public class CommunityDto {
 					.understandingLevel(retrospect.getUnderstandingLevel())
 					.isLike(isLike)
 					.totalLike(totalLike)
+					.totalComment(totalComment)
 					.writer(writer)
 					.build();
 		}
