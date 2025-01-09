@@ -1,10 +1,115 @@
 <!DOCTYPE html>
-<html lang="en">
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>회고일지를 통해 자신의 성장과 발전을 확인하세요!</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reflog Reminder</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f8f9fa;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .container {
+            padding: 20px;
+            background-color: white;
+            width: 600px;
+            height: 711px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            position: relative;
+        }
+
+        .header img {
+            width: 606px;
+            height: 82px;
+            position: absolute;
+            top: 16px;
+            left: 17px;
+            object-fit: cover;
+        }
+
+        .content h2, .content p {
+            font-family: 'Pretendard', Arial, sans-serif;
+            position: absolute;
+            left: 65px;
+            margin: 0;
+            width: calc(640px - 2 * 65px);
+        }
+
+        .content h2 {
+            font-size: 25px;
+            font-weight: 600;
+            color: #000000;
+            top: 174px;
+            line-height: 30px;
+            letter-spacing: 0.22px;
+            text-align: left;
+        }
+
+        .content p {
+            font-size: 14px;
+            font-weight: 500;
+            color: #494A4F;
+            line-height: 16.71px;
+            text-align: left;
+        }
+
+        .content p.intro {
+            top: 235px;
+        }
+
+        .content p.encouragement {
+            top: 259px;
+        }
+
+        .content p.action {
+            top: 302px;
+        }
+
+        .button {
+            display: inline-block;
+            width: 270px;
+            height: 33px;
+            line-height: 33px;
+            font-size: 14px;
+            font-weight: 500;
+            color: #0059FF;
+            text-align: center;
+            text-decoration: none;
+            border: 1.2px solid #0059FF;
+            border-radius: 24px;
+            position: absolute;
+            top: 580px;
+            left: 165px;
+            background-color: white;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        .button:hover {
+            background-color: #0059FF;
+            color: white;
+        }
+    </style>
 </head>
 <body>
-회고일지를 통해 자신의 성장과 발전을 확인하세요!
+<div class="container">
+    <div class="header">
+        <img th:src="@{/images/sample.png}" alt="Reflog 로고">
+    </div>
+    <div class="content">
+        <h2 th:text="'[[${name}]]님, 안녕하세요!'"></h2>
+        <p class="intro">성장은 스스로를 돌아보는 데서 시작하는거 알죠?</p>
+        <p class="encouragement">회고는 성장을 위한 첫걸음이에요.</p>
+        <p class="action">회고일지를 통해 자신의 성장과 발전을 확인해봐요. 이번주도 파이팅!</p>
+        <a href="#" class="button">회고일지 작성하러 가기</a>
+    </div>
+</div>
 </body>
 </html>
