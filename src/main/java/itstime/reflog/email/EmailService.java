@@ -27,13 +27,13 @@ public class EmailService {
 	private final MemberRepository memberRepository;
 
 	@Async
-	public void sendEmail(String email, String templateName, String date) {
+	public void sendEmail(String email, String templateName, String date, String name) {
 		MimeMessage mimeMessage = javaMailSender.createMimeMessage();
 		try {
 			MimeMessageHelper mimeMessageHelper = new MimeMessageHelper(mimeMessage, false, "UTF-8");
 			mimeMessageHelper.setTo(email); // 수신자
 			mimeMessageHelper.setSubject("Reflog - 회고일지를 작성해주세요!"); // 메일 제목
-			mimeMessageHelper.setText(setContext(templateName, date), true); // 메일 본문
+			mimeMessageHelper.setText(setContext(templateName, date, name), true); // 메일 본문
 
 			javaMailSender.send(mimeMessage);
 			log.info("Succeeded to send email to " + email);
@@ -42,9 +42,10 @@ public class EmailService {
 		}
 	}
 
-	public String setContext(String templateName, String date) {
+	public String setContext(String templateName, String date, String name) {
 		Context context = new Context();
 		context.setVariable("date", date);
+		context.setVariable("name", name);
 		return templateEngine.process(templateName, context); // HTML 템플릿 처리
 	}
 

@@ -30,7 +30,7 @@ public class EmailSchedulerService {
 			long daysDifference = ChronoUnit.DAYS.between(latestDate, today);
 
 			if (daysDifference == 2) { // 이틀 차이
-				emailService.sendEmail(member.getEmail(), "day", today.toString());
+				emailService.sendEmail(member.getEmail(), "day", today.toString(), member.getName());
 			}
 		}
 	}
@@ -45,7 +45,7 @@ public class EmailSchedulerService {
 			long daysDifference = ChronoUnit.DAYS.between(latestDate, today);
 
 			if (daysDifference > 2 && daysDifference < 30) { // 이틀 이상, 한 달 미만
-				emailService.sendEmail(member.getEmail(), "week", today.toString());
+				emailService.sendEmail(member.getEmail(), "week", today.toString(), member.getName());
 			}
 		}
 	}
@@ -60,7 +60,7 @@ public class EmailSchedulerService {
 			long daysDifference = ChronoUnit.DAYS.between(latestDate, today);
 
 			if (daysDifference >= 30) { // 한 달 이상
-				emailService.sendEmail(member.getEmail(), "month", today.toString());
+				emailService.sendEmail(member.getEmail(), "month", today.toString(), member.getName());
 			}
 		}
 	}
