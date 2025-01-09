@@ -19,7 +19,7 @@ public class EmailSchedulerService {
 	private final EmailService emailService;
 	private final MemberRepository memberRepository;
 
-	@Scheduled(cron = "0 0 12 * * *") // 매일 12시 실행
+	@Scheduled(cron = "0 34 15 * * *") // 매일 12시 실행
 	public void sendDailyEmail() {
 		List<Member> members = memberRepository.findAll();
 		for (Member member : members) {
