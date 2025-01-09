@@ -24,6 +24,8 @@ public class Notification {
     @Column(nullable = false)
     private String message;
 
+    private String url;
+
     @Column(nullable = false)
     private LocalDateTime createdAt;
 

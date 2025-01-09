@@ -10,6 +10,8 @@ import itstime.reflog.member.domain.Member;
 import itstime.reflog.member.repository.MemberRepository;
 import itstime.reflog.mypage.domain.MyPage;
 import itstime.reflog.mypage.repository.MyPageRepository;
+import itstime.reflog.notification.domain.NotificationType;
+import itstime.reflog.notification.service.NotificationService;
 import itstime.reflog.postlike.domain.PopularPost;
 import itstime.reflog.member.service.MemberServiceHelper;
 import itstime.reflog.mission.service.MissionService;
@@ -49,6 +51,11 @@ public class PostLikeService {
 
     @Transactional
     public void togglePostLike(String memberId, Long postId, PostLikeDto.PostLikeSaveRequest dto){
+    private final NotificationService notificationService;
+    private final MemberRepository memberRepository;
+
+    @Transactional
+    public void togglePostLike(String memberId, Long postId, String postType) {
         Member member = memberServiceHelper.findMemberByUuid(memberId);
 
         MyPage myPage = myPageRepository.findByMember(member)
@@ -85,6 +92,9 @@ public class PostLikeService {
                     // 미션
                     missionService.incrementMissionProgress(member.getId(), myPage, POWER_OF_HEART);
                 }
+        if (PostType.COMMUNITY == PostType.valueOf(postType)) {
+            Community community = communityRepository.findById(postId)
+                    .orElseThrow(() -> new GeneralException(ErrorStatus._COMMUNITY_NOT_FOUND));
 
             } else if (LikeType.BOOKMARK == LikeType.valueOf(dto.getLikeType())) {
                 //커뮤니티, 멤버 id와 일치하는 북마크 가져오기
@@ -111,8 +121,29 @@ public class PostLikeService {
             }
         }
         else if (PostType.RETROSPECT == PostType.valueOf(dto.getPostType())){
+            //2. 좋아요 존재 여부 확인
+            if (postLike != null) {
+                //좋아요가 이미 있다면 테이블 삭제
+                postLikeRepository.delete(postLike);
+            } else {
+                //좋아요가 없다면 테이블 생성
+                PostLike newPostLike = PostLike.builder()
+                        .member(member)
+                        .community(community)
+                        .postType(PostType.COMMUNITY)
+                        .build();
+
+                postLikeRepository.save(newPostLike);
+
+                // 미션
+                missionService.incrementMissionProgress(member.getId(), myPage, POWER_OF_HEART);
+
+                // 알림
+                sendCommunityLikeNotification(community, member);
+            }
+        } else if (PostType.RETROSPECT == PostType.valueOf(postType)) {
             Retrospect retrospect = retrospectRepository.findById(postId)
-                    .orElseThrow(()-> new GeneralException(ErrorStatus._RETROSPECT_NOT_FOUND));
+                    .orElseThrow(() -> new GeneralException(ErrorStatus._RETROSPECT_NOT_FOUND));
 
             if (LikeType.LIKE == LikeType.valueOf(dto.getLikeType())) {
 
@@ -160,6 +191,25 @@ public class PostLikeService {
                 }
             } else {
                 throw new GeneralException(ErrorStatus._POSTLIKE_LIKETYPE_BAD_REQUEST);
+            //2.좋아요 존재 여부 확인
+            if (postLike != null) {
+                //좋아요가 이미 있다면 테이블 삭제
+                postLikeRepository.delete(postLike);
+            } else {
+                //좋아요가 없다면 테이블 생성
+                PostLike newPostLike = PostLike.builder()
+                        .member(member)
+                        .retrospect(retrospect)
+                        .postType(PostType.RETROSPECT)
+                        .build();
+
+                postLikeRepository.save(newPostLike);
+
+                // 미션
+                missionService.incrementMissionProgress(member.getId(), myPage, POWER_OF_HEART);
+
+                // 알림
+                sendRetrospectLikeNotification(retrospect, member);
             }
         }
         //3. enum으로 설정하지 않은 글 유형이 올 경우 에러 출력
@@ -171,12 +221,12 @@ public class PostLikeService {
 
     //게시물마다 좋아요 갯수 항상 0이상이므로 int로
     @Transactional
-    public int getSumCommunityPostLike(Community community){
+    public int getSumCommunityPostLike(Community community) {
         return postLikeRepository.countByCommunity(community);
     }
 
     @Transactional
-    public int getSumRetrospectPostLike(Retrospect retrospect){
+    public int getSumRetrospectPostLike(Retrospect retrospect) {
         return postLikeRepository.countByRetrospect(retrospect);
     }
 
@@ -248,4 +298,34 @@ public class PostLikeService {
                 .collect(Collectors.toList());
     }
 
+
+    public void sendCommunityLikeNotification(Community community, Member sender) {
+        Member receiver = community.getMember(); // 알림 받는 자
+
+        String title = community.getTitle(); // 글 제목
+
+        String nickname = sender.getMyPage().getNickname(); // 좋아요 누른 자
+
+        notificationService.sendNotification(
+                receiver.getId(),
+                nickname + " 님이 " + title + "에 좋아요를 눌렀습니다.",
+                NotificationType.COMMUNITY,
+                "/api/v1/communities/" + community.getId()
+        );
+    }
+
+    public void sendRetrospectLikeNotification(Retrospect retrospect, Member sender) {
+        Member receiver = retrospect.getMember(); // 알림 받는 자
+
+        String title = retrospect.getTitle(); // 글 제목
+
+        String nickname = sender.getMyPage().getNickname(); // 좋아요 누른 자
+
+        notificationService.sendNotification(
+                receiver.getId(),
+                nickname + " 님이 " + title + "에 좋아요를 눌렀습니다.",
+                NotificationType.COMMUNITY,
+                "/api/v1/retrospect/?retrospectId=" + retrospect.getId()
+        );
+    }
 }
