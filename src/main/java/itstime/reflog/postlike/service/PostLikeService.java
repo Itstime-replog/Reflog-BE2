@@ -44,8 +44,7 @@ public class PostLikeService {
     private final MemberServiceHelper memberServiceHelper;
     private final MissionService missionService;
     private final CommentRepository commentRepository;
-
-
+    private final NotificationService notificationService;
 
     private final MemberRepository memberRepository;
 
@@ -92,9 +91,6 @@ public class PostLikeService {
                     // 미션
                     missionService.incrementMissionProgress(member.getId(), myPage, POWER_OF_HEART);
                 }
-        if (PostType.COMMUNITY == PostType.valueOf(postType)) {
-            Community community = communityRepository.findById(postId)
-                    .orElseThrow(() -> new GeneralException(ErrorStatus._COMMUNITY_NOT_FOUND));
 
             } else if (LikeType.BOOKMARK == LikeType.valueOf(dto.getLikeType())) {
                 //커뮤니티, 멤버 id와 일치하는 북마크 가져오기
