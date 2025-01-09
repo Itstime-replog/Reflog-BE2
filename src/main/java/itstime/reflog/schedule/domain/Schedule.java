@@ -3,12 +3,10 @@ package itstime.reflog.schedule.domain;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import itstime.reflog.member.domain.Member;
 import itstime.reflog.schedule.dto.ScheduleDto;
-import itstime.reflog.todolist.dto.TodolistDto;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.format.annotation.DateTimeFormat;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Entity
@@ -29,9 +27,7 @@ public class Schedule {
     private String content;
 
     private Boolean allday;
-
-//    @Column(name = "created_date", nullable = false)
-//    private LocalDate createdDate;
+    private Boolean isOn;
 
     @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm")
     @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm")
@@ -49,6 +45,7 @@ public class Schedule {
         this.title = request.getTitle();
         this.content = request.getContent();
         this.allday = request.isAllday();
+        this.isOn = request.getIsOn();
         this.startDateTime = request.getStartDateTime();
         this.endDateTime = request.getEndDateTime();
         this.member = member;

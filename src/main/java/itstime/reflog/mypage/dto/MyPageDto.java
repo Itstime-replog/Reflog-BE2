@@ -1,6 +1,8 @@
 package itstime.reflog.mypage.dto;
 
 import itstime.reflog.community.domain.Community;
+import itstime.reflog.mission.domain.Badge;
+import itstime.reflog.mission.domain.UserBadge;
 import itstime.reflog.retrospect.domain.Retrospect;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Pattern;
@@ -80,6 +82,21 @@ public class MyPageDto {
                     .understandingLevel(retrospect.getUnderstandingLevel())
                     .totalLike(totalLike)
                     .commentCount(commentCount)
+                    .build();
+        }
+    }
+
+    @Getter
+    @Builder
+    @AllArgsConstructor
+    public static class MyPageBadgeResponse {
+        private Badge badgeName;
+        private boolean isEarned;
+
+        public static MyPageBadgeResponse fromBadge(UserBadge userBadge) {
+            return MyPageBadgeResponse.builder()
+                    .badgeName(userBadge.getBadge())
+                    .isEarned(userBadge.isEarned())
                     .build();
         }
     }

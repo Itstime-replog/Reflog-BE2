@@ -7,6 +7,8 @@ import itstime.reflog.community.domain.Community;
 import itstime.reflog.community.repository.CommunityRepository;
 import itstime.reflog.member.domain.Member;
 import itstime.reflog.member.service.MemberServiceHelper;
+import itstime.reflog.mission.domain.UserBadge;
+import itstime.reflog.mission.repository.UserBadgeRepository;
 import itstime.reflog.mission.service.MissionService;
 import itstime.reflog.mypage.domain.MyPage;
 import itstime.reflog.mypage.dto.MyPageDto;
@@ -39,6 +41,7 @@ public class MyPageService {
     private final PostLikeRepository postLikeRepository;
     private final PostLikeService postLikeService;
     private final MemberServiceHelper memberServiceHelper;
+    private final UserBadgeRepository userBadgeRepository;
 
 
     @Transactional
@@ -55,8 +58,18 @@ public class MyPageService {
 
     @Transactional
     public void createProfile(String memberId, MyPageDto.MyPageProfileRequest dto) {
+        // 1. 멤버 조회
         Member member = memberServiceHelper.findMemberByUuid(memberId);
 
+        // 2. 닉네임&이메일 중복 확인
+        if (myPageRepository.findByNickname(dto.getNickname()).isPresent()) {
+            throw new GeneralException(ErrorStatus._DUPLICATE_NICKNAME);
+        }
+        if (myPageRepository.findByEmail(dto.getEmail()).isPresent()) {
+            throw new GeneralException(ErrorStatus._DUPLICATE_EMAIL);
+        }
+
+        // 3. 마이페이지 생성
         MyPage myPage = MyPage.builder()
                 .nickname(dto.getNickname())
                 .email(dto.getEmail())
@@ -66,9 +79,11 @@ public class MyPageService {
         myPageRepository.save(myPage);
         myPageRepository.flush();
 
+        // 4. 유저 미션&배지 생성
         initializationService.initializeForNewMember(myPage);
 
-        missionService.incrementMissionProgress(member.getId(), FIRST_MEETING);
+        // 5. 미션
+        missionService.incrementMissionProgress(member.getId(), myPage, FIRST_MEETING);
     }
 
     @Transactional
@@ -174,5 +189,22 @@ public class MyPageService {
 
         responses.addAll(retrospectResponses);
         return responses;
+    }
+
+    @Transactional
+    public List<MyPageDto.MyPageBadgeResponse> getMyPageBadge(String memberId) {
+        // 1. 멤버 조회
+        Member member = memberServiceHelper.findMemberByUuid(memberId);
+
+        // 2. 마이페이지 조회
+        MyPage myPage = myPageRepository.findByMember(member)
+                .orElseThrow(() -> new GeneralException(ErrorStatus._MYPAGE_NOT_FOUND));
+
+        // 3. 유저 미션 조회
+        List<UserBadge> userBadges = userBadgeRepository.findByMyPage(myPage);
+
+        return userBadges.stream()
+                .map(MyPageDto.MyPageBadgeResponse::fromBadge)
+                .collect(Collectors.toList());
     }
 }

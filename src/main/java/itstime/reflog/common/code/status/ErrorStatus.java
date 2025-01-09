@@ -25,6 +25,8 @@ public enum ErrorStatus implements BaseErrorCode {
 
 	// MyPage 관련 에러
 	_MYPAGE_NOT_FOUND(HttpStatus.NOT_FOUND, "MYPAGE404", "해당 마이페이지를 찾을 수 없습니다."),
+	_DUPLICATE_NICKNAME(HttpStatus.NOT_FOUND, "MYPAGE409", "이미 존재하는 닉네임입니다."),
+	_DUPLICATE_EMAIL(HttpStatus.NOT_FOUND, "MYPAGE409", "이미 존재하는 이메일입니다."),
 
 	// mission 관련 에러
 	_MISSION_NOT_FOUND(HttpStatus.NOT_FOUND, "MISSION404", "해당 미션을 찾을 수 없습니다."),
@@ -61,10 +63,18 @@ public enum ErrorStatus implements BaseErrorCode {
 
 	//PostLike 관련 에러
 	_POSTLIKE_BAD_REQUEST(HttpStatus.BAD_REQUEST, "POSTLIKE400", "올바른 PostType을 입력해주세요."),
+	_POST_NOT_FOUND(HttpStatus.NOT_FOUND, "POSTLIKE404", "해당 게시물이 존재하지 않습니다"),
 	// comment 관련 에러
 	_COMMENT_NOT_FOUND(HttpStatus.NOT_FOUND, "COMMENT404", "해당 댓글을 찾을 수 없습니다."),
 	_PARENT_COMMENT_NOT_FOUND(HttpStatus.NOT_FOUND, "COMMENT404", "해당 부모 댓글을 찾을 수 없습니다."),
-	_INVALID_POST_TYPE(HttpStatus.NOT_FOUND, "COMMENT404", "해당 댓글에 대한 게시글의 타입이 존재하지 않습니다.");
+	_INVALID_POST_TYPE(HttpStatus.NOT_FOUND, "COMMENT404", "해당 댓글에 대한 게시글의 타입이 존재하지 않습니다."),
+	// NotificationSettings 관련 에러
+	_NOTIFICATIONSETTINGS_NOT_FOUND(HttpStatus.NOT_FOUND, "NOTIFICATIONSETTINGS404", "해당 알림 설정이 존재하지 않습니다"),
+
+	// Notification 관련 에러
+	_DELAY(HttpStatus.NOT_FOUND, "NOTIFICATION404", "시작시간이 더 미래일 수는 없습니다."),
+	_NOTIFICATION_NOT_FOUND(HttpStatus.NOT_FOUND, "NOTIFICATION404", "해당 알림이 존재하지 않습니다")
+	;
 
 	private final HttpStatus httpStatus;
 	private final String code;

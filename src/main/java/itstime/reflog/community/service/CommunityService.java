@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import itstime.reflog.member.service.MemberServiceHelper;
+import itstime.reflog.mission.service.MissionService;
 import itstime.reflog.mypage.dto.MyPageDto;
 import itstime.reflog.postlike.domain.enums.PostType;
 import itstime.reflog.postlike.repository.PostLikeRepository;
@@ -34,6 +35,8 @@ import itstime.reflog.member.domain.Member;
 import itstime.reflog.s3.AmazonS3Manager;
 import lombok.RequiredArgsConstructor;
 
+import static itstime.reflog.mission.domain.Badge.KING_OF_COMMUNICATION;
+
 @Service
 @RequiredArgsConstructor
 public class CommunityService {
@@ -45,6 +48,7 @@ public class CommunityService {
     private final CommentRepository commentRepository;
     private final PostLikeService postLikeService;
     private final PostLikeRepository postLikeRepository;
+    private final MissionService missionService;
     private final MemberServiceHelper memberServiceHelper;
 
 
@@ -84,6 +88,12 @@ public class CommunityService {
         });
 
         communityRepository.save(community);
+
+        // 미션
+        MyPage myPage = myPageRepository.findByMember(member)
+                .orElseThrow(() -> new GeneralException(ErrorStatus._MYPAGE_NOT_FOUND));
+
+        missionService.incrementMissionProgress(member.getId(), myPage, KING_OF_COMMUNICATION);
 
     }
 

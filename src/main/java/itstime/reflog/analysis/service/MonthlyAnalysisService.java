@@ -12,6 +12,11 @@ import itstime.reflog.common.exception.GeneralException;
 import itstime.reflog.member.domain.Member;
 import itstime.reflog.member.repository.MemberRepository;
 import itstime.reflog.member.service.MemberServiceHelper;
+import itstime.reflog.mission.service.MissionService;
+import itstime.reflog.mypage.domain.MyPage;
+import itstime.reflog.mypage.repository.MyPageRepository;
+import itstime.reflog.notification.domain.NotificationType;
+import itstime.reflog.notification.service.NotificationService;
 import itstime.reflog.retrospect.domain.Retrospect;
 import itstime.reflog.todolist.domain.Todolist;
 import jakarta.transaction.Transactional;
@@ -24,6 +29,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+
+import static itstime.reflog.mission.domain.Badge.MONTHLY_REPORTER;
 
 @Service
 @AllArgsConstructor
@@ -39,6 +46,9 @@ public class MonthlyAnalysisService {
     private final PeriodFilter periodFilter;
     private final AnalysisCalculator analysisCalculator;
     private final MemberServiceHelper memberServiceHelper;
+    private final MissionService missionService;
+    private final MyPageRepository myPageRepository;
+    private final NotificationService notificationService;
 
 
     @Transactional
@@ -237,6 +247,24 @@ public class MonthlyAnalysisService {
             throw new GeneralException(ErrorStatus._ANALYSIS_NOT_FOUND);  // 적절한 예외 처리
         }
 
+        // 미션
+        MyPage myPage = myPageRepository.findByMember(member)
+                .orElseThrow(() -> new GeneralException(ErrorStatus._MYPAGE_NOT_FOUND));
+
+        missionService.incrementMissionProgress(member.getId(), myPage, MONTHLY_REPORTER);
+
+        // 알림
+        sendMonthlyNotification(analysis.getStartDate().getMonthValue(), member, date);
+
         return AnalysisDto.AnalysisDtoResponse.fromEntity(analysis);
+    }
+
+    public void sendMonthlyNotification(int month, Member member, LocalDate date) {
+        notificationService.sendNotification(
+                member.getId(),
+                month + "월 월간 분석보고서가 도착했어요!",
+                NotificationType.ANALYSIS,
+                "/api/v1/monthly-analysis?date=" + date
+        );
     }
 }

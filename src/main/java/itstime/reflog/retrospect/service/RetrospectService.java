@@ -3,6 +3,9 @@ package itstime.reflog.retrospect.service;
 import java.util.List;
 
 import itstime.reflog.member.service.MemberServiceHelper;
+import itstime.reflog.mission.service.MissionService;
+import itstime.reflog.mypage.domain.MyPage;
+import itstime.reflog.mypage.repository.MyPageRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,6 +23,8 @@ import itstime.reflog.retrospect.repository.RetrospectRepository;
 import itstime.reflog.retrospect.repository.StudyTypeRepository;
 import lombok.RequiredArgsConstructor;
 
+import static itstime.reflog.mission.domain.Badge.*;
+
 @Service
 @RequiredArgsConstructor
 public class RetrospectService {
@@ -27,6 +32,8 @@ public class RetrospectService {
 	private final RetrospectRepository retrospectRepository;
 	private final GoodRepository goodRepository;
 	private final BadRepository badRepository;
+	private final MissionService missionService;
+	private final MyPageRepository myPageRepository;
 	private final MemberServiceHelper memberServiceHelper;
 
 
@@ -69,12 +76,32 @@ public class RetrospectService {
 				.build())
 			.toList();
 		badRepository.saveAll(bads);
+
+		// 미션
+		MyPage myPage = myPageRepository.findByMember(member)
+				.orElseThrow(() -> new GeneralException(ErrorStatus._MYPAGE_NOT_FOUND));
+
+		missionService.incrementMissionProgress(member.getId(), myPage, RETROSPECTIVE_STARTER);
+		missionService.incrementMissionProgress(member.getId(), myPage, RETROSPECTIVE_GURU);
+		missionService.incrementMissionProgress(member.getId(), myPage, RETROSPECTIVE_MANIA);
+
+		if(!dto.isVisibility()){
+			missionService.incrementMissionProgress(member.getId(), myPage, MOTIVATION_STARTER);
+		}
 	}
 
 	@Transactional(readOnly = true)
-	public RetrospectDto.RetrospectResponse getRetrospect(Long retrospectId) {
+	public RetrospectDto.RetrospectResponse getRetrospect(Long retrospectId, String memberId) {
 		Retrospect retrospect = retrospectRepository.findById(retrospectId)
 			.orElseThrow(() -> new GeneralException(ErrorStatus._RETROSPECT_NOT_FOUND));
+
+		// 미션
+		Member member = memberServiceHelper.findMemberByUuid(memberId);
+
+		MyPage myPage = myPageRepository.findByMember(member)
+				.orElseThrow(() -> new GeneralException(ErrorStatus._MYPAGE_NOT_FOUND));
+
+		missionService.incrementMissionProgress(member.getId(), myPage, RETROSPECTIVE_REVIEWER);
 
 		return RetrospectDto.RetrospectResponse.fromEntity(retrospect);
 	}
@@ -118,7 +145,7 @@ public class RetrospectService {
 	}
 
 	@Transactional(readOnly = true)
-	public List<RetrospectDto.RetrospectCategoryResponse> getRetrospect(String category, String memberId) {
+	public List<RetrospectDto.RetrospectCategoryResponse> getFilteredRetrospect(String category, String memberId) {
 		Member member = memberServiceHelper.findMemberByUuid(memberId);
 
 		// Retrospect 조회

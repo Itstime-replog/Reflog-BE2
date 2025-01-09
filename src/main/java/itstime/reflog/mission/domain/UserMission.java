@@ -32,6 +32,6 @@ public class UserMission {
     }
 
     public boolean isCompleted() {
-        return this.progressCount >= badge.getTargetNum();
+        return this.progressCount == badge.getTargetNum();
     }
 }

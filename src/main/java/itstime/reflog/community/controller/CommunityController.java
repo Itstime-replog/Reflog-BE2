@@ -269,6 +269,33 @@ public class CommunityController {
         return ResponseEntity.ok(CommonApiResponse.onSuccess(responses));
     }
 
+	@Operation(
+			summary = "커뮤니티 인기글 조회 API",
+			description = "좋아요를 많이 받은 게시물 세개를 조회합니다. 매일 갱신됨",
+			responses = {
+					@ApiResponse(
+							responseCode = "200",
+							description = "커뮤니티 인기글 조회 성공"
+					),
+					@ApiResponse(
+							responseCode = "404",
+							description = "인기글을 찾을 수 없음"
+					),
+					@ApiResponse(
+							responseCode = "500",
+							description = "서버 에러"
+					)
+			}
+	)
+	@GetMapping("/popular")
+	public ResponseEntity<CommonApiResponse<List<CommunityDto.CombinedCategoryResponse>>> getTopLikeCommunityPosts(
+			@RequestParam Long memberId
+	)
+	{
+		List<CommunityDto.CombinedCategoryResponse> responses = postLikeService.getTopLikeCommunityPosts(memberId);
+		return ResponseEntity.ok(CommonApiResponse.onSuccess(responses));
+	}
+
     @Operation(
             summary = "커뮤니티 프로필 클릭 시 게시글 조회 API",
             description = "커뮤니티에서 프로필 클릭 시 그 프로필에 해당하는 사람이 작성한 게시글들을 확인니다. 최신순으로 정렬되어있습니다.",
