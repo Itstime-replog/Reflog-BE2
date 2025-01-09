@@ -4,128 +4,24 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Reflog Reminder</title>
-    <style>
-        body {
-            font-family: 'Arial', sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: #f8f9fa;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-        }
-
-        .container {
-            padding: 20px;
-            background-color: white;
-            width: 600px;
-            height: 711px;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-            text-align: center;
-            position: relative;
-        }
-
-        .header img {
-            width: 606px;
-            height: 82px;
-            position: absolute;
-            top: 16px;
-            left: 17px;
-            object-fit: cover;
-        }
-
-        .content h2, .content p {
-            font-family: 'Pretendard', Arial, sans-serif;
-            position: absolute;
-            left: 65px;
-            margin: 0;
-            width: calc(640px - 2 * 65px);
-        }
-
-        .content h2 {
-            font-size: 25px;
-            font-weight: 600;
-            color: #000000;
-            top: 174px;
-            line-height: 30px;
-            letter-spacing: 0.22px;
-            text-align: left;
-        }
-
-        .content p {
-            font-size: 14px;
-            font-weight: 500;
-            color: #494A4F;
-            line-height: 16.71px;
-            text-align: left;
-        }
-
-        .content p.intro {
-            top: 235px;
-        }
-
-        .content p.encouragement {
-            top: 259px;
-        }
-
-        .content p.a{
-            top: 283px;
-        }
-
-        .content p.b{
-            top: 307px;
-        }
-
-        .content p.c{
-            top: 350px;
-        }
-
-        .content p.action {
-            top: 374px;
-        }
-
-        .button {
-            display: inline-block;
-            width: 270px;
-            height: 33px;
-            line-height: 33px;
-            font-size: 14px;
-            font-weight: 500;
-            color: #0059FF;
-            text-align: center;
-            text-decoration: none;
-            border: 1.2px solid #0059FF;
-            border-radius: 24px;
-            position: absolute;
-            top: 580px;
-            left: 165px;
-            background-color: white;
-            transition: background-color 0.3s ease, color 0.3s ease;
-        }
-
-        .button:hover {
-            background-color: #0059FF;
-            color: white;
-        }
-    </style>
 </head>
-<body>
-<div class="container">
-    <div class="header">
-        <img th:src="@{/images/sample.png}" alt="Reflog 로고">
+<body style="font-family: Arial, sans-serif; margin: 0; padding: 0; background-color: #f8f9fa;">
+<div style="padding: 10px; background-color: white; width: 600px; max-width: 100%; margin: auto; box-shadow: none; text-align: center; border: 1px solid #e0e0e0; min-height: 711px; display: flex; flex-direction: column; ">
+    <div style="margin-bottom: 100px;">
+        <img src="http://localhost:8080/images/sample.png" alt="Reflog 로고" style="width: 100%; height: auto; max-width: 606px; object-fit: cover; margin-top: 0px;">
     </div>
-    <div class="content">
-        <h2 th:text="'[[${name}]]님, 안녕하세요!'"></h2>
-        <p class="intro">회고일지 작성을 잊은지 약 한 달이 지났어요😂</p>
-        <p class="encouragement">그러나 언제든 다시 시작할 수 있다는 사실!</p>
-        <p class="a">작은 습관이 큰 변화를 만들어요.</p>
-        <p class="b">오늘의 회고일지 작성으로 한 걸음 더 나아가보는건 어떨까요?</p>
+    <div style="text-align: left; padding: 0 40px;">
+        <h2 style="margin: 0; font-size: 25px; font-weight: 600; color: #000000; line-height: 30px;" th:text="${name} + '님, 안녕하세요!'"></h2> <br>
+        <p style="margin: 10px 0; font-size: 14px; font-weight: 500; color: #494A4F; line-height: 16.71px;">회고일지 작성을 잊은지 약 한 달이 지났어요😂</p>
+        <p style="margin: 10px 0; font-size: 14px; font-weight: 500; color: #494A4F; line-height: 16.71px;">그러나 언제든 다시 시작할 수 있다는 사실!</p>
+        <p style="margin: 10px 0; font-size: 14px; font-weight: 500; color: #494A4F; line-height: 16.71px;">작은 습관이 큰 변화를 만들어요.</p>
+        <p style="margin: 10px 0; font-size: 14px; font-weight: 500; color: #494A4F; line-height: 16.71px;">오늘의 회고일지 작성으로 한 걸음 더 나아가보는건 어떨까요?</p><br>
+        <p style="margin: 10px 0; font-size: 14px; font-weight: 500; color: #494A4F; line-height: 16.71px;">다른 유저들도 꾸준히 회고일지를 작성하고 있어요.</p>
+        <p style="margin: 10px 0; font-size: 14px; font-weight: 500; color: #494A4F; line-height: 16.71px;">일지 작성이 어렵다면 다른 사람의 회고일지를 확인해 동기를 부여받아 보세요!</p>
 
-        <p class="c">다른 유저들도 꾸준히 회고일지를 작성하고 있어요.</p>
-        <p class="action">일지 작성이 어렵다면 다른 사람의 회고일지를 확인해 동기를 부여받아 보세요!</p>
-        <a href="#" class="button">회고일지 작성하러 가기</a>
     </div>
+    <a href="#" style="padding: 0 70px; line-height: 33px; font-size: 14px; color: #0059FF; text-decoration: none; border: 1.2px solid #0059FF; border-radius: 24px; margin: 142px auto 20px;">회고일지 작성하러 가기</a>
 </div>
 </body>
 </html>
+
