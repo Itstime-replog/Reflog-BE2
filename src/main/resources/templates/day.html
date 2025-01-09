@@ -12,7 +12,7 @@
     </div>
     <div style="text-align: left; padding: 0 40px;">
         <h2 style="margin: 0; font-size: 25px; font-weight: 600; color: #000000; line-height: 30px;" th:text="${name} + '님, 안녕하세요!'"></h2> <br>
-        <p style="margin: 10px 0; font-size: 14px; font-weight: 500; color: #494A4F; line-height: 16.71px;">어제 회고일지 작성을 잊은 윤주님을 위해 찾아왔어요.</p>
+        <p style="margin: 10px 0; font-size: 14px; font-weight: 500; color: #494A4F; line-height: 16.71px;" th:text="'어제 회고일지 작성을 잊은 ' + ${name} + '님을 위해 찾아왔어요.'"></p>
         <p style="margin: 10px 0; font-size: 14px; font-weight: 500; color: #494A4F; line-height: 16.71px;">아직 포기하긴 일러요!</p>
         <p style="margin: 10px 0; font-size: 14px; font-weight: 500; color: #494A4F; line-height: 16.71px;">10분만 투자해 오늘의 생각과 배움을 기록하며 내일의 더 나은 나를 만들어봐요!</p>
     </div>
