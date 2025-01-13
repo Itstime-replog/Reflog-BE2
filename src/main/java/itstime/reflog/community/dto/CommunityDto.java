@@ -45,6 +45,7 @@ public class CommunityDto {
 		private Boolean isLike;
 		private int totalLike;
 		private Long totalComment;
+		private Long postId;
 
 		public static CombinedCategoryResponse fromCommunity(Community community, String writer, Boolean isLike, Integer totalLike, Long totalComment) {
 			return CombinedCategoryResponse.builder()
@@ -57,6 +58,7 @@ public class CommunityDto {
 					.totalComment(totalComment)
 					.totalLike(totalLike)
 					.writer(writer)
+					.postId(community.getId())
 					.build();
 		}
 
@@ -74,6 +76,7 @@ public class CommunityDto {
 					.totalLike(totalLike)
 					.totalComment(totalComment)
 					.writer(writer)
+					.postId(retrospect.getId())
 					.build();
 		}
 	}
