@@ -2,6 +2,7 @@ package itstime.reflog.community.service;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -65,7 +66,10 @@ public class CommunityService {
                 .createdAt(LocalDateTime.now())
                 .build();
 
-        dto.getFileUrls().forEach(tempUrl -> {
+        // null 체크 및 기본값 처리
+        List<String> fileUrls = dto.getFileUrls() != null ? dto.getFileUrls() : Collections.emptyList();
+
+        fileUrls.forEach(tempUrl -> {
             try {
                 // S3 파일 이동
                 String fileKey = amazonS3Manager.extractFileKeyFromUrl(tempUrl);
