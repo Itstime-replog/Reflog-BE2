@@ -6,6 +6,7 @@ import java.util.stream.Collectors;
 
 import itstime.reflog.comment.dto.CommentDto;
 import itstime.reflog.community.domain.Community;
+import itstime.reflog.postlike.domain.enums.PostType;
 import itstime.reflog.retrospect.domain.Retrospect;
 import lombok.*;
 
@@ -46,6 +47,7 @@ public class CommunityDto {
 		private int totalLike;
 		private Long totalComment;
 		private Long postId;
+		private PostType postType;
 
 		public static CombinedCategoryResponse fromCommunity(Community community, String writer, Boolean isLike, Integer totalLike, Long totalComment) {
 			return CombinedCategoryResponse.builder()
@@ -59,6 +61,7 @@ public class CommunityDto {
 					.totalLike(totalLike)
 					.writer(writer)
 					.postId(community.getId())
+					.postType(PostType.COMMUNITY)
 					.build();
 		}
 
@@ -77,6 +80,7 @@ public class CommunityDto {
 					.totalComment(totalComment)
 					.writer(writer)
 					.postId(retrospect.getId())
+					.postType(PostType.RETROSPECT)
 					.build();
 		}
 	}
