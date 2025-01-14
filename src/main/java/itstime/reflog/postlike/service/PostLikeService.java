@@ -197,19 +197,18 @@ public class PostLikeService {
     public List<CommunityDto.CombinedCategoryResponse> getTopLikeCommunityPosts(String memberId) {
         Member member = memberServiceHelper.findMemberByUuid(memberId);
 
-        //2. 커뮤니티, 회고일지 좋아요 순으로 각각 가져와서 하나의 배열에 저장
+        //1. 커뮤니티, 회고일지 좋아요 순으로 각각 가져와서 하나의 배열에 저장
         List<Object[]> postLikesTop = new ArrayList<>(postLikeRepository.findCommunityByPostLikeTop());
         postLikesTop.addAll(postLikeRepository.findARetrospectPostLikesTop());
 
-        //좋아요 수인 object[1]이 Object 타입이기 떄문에 Long 타입으로 바꿔 준 후 비교 정렬
+        //2. 좋아요 수인 object[1]이 Object 타입이기 떄문에 Long 타입으로 바꿔 준 후 비교 정렬
         postLikesTop.sort((o1, o2) -> Long.compare((Long) o2[2], (Long) o1[2]));
 
-        //이 중 상위 세개만 가져옴
+        //3. 이 중 상위 세개만 가져옴
         List<Object[]> postLikesTopThree = postLikesTop.stream().limit(3).toList();
 
         return postLikesTopThree.stream()
                 .map(popularPost -> {
-                    log.debug("인기글 조회", (String) popularPost[0]);
                     if (PostType.valueOf((String) popularPost[0]) == PostType.COMMUNITY) {
                         Community community = communityRepository.findById((Long)popularPost[1])
                                 .orElseThrow(() -> new GeneralException(ErrorStatus._POST_NOT_FOUND));
