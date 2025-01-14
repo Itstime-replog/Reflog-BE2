@@ -28,6 +28,7 @@ import org.springframework.stereotype.Service;
 
 import static itstime.reflog.mission.domain.Badge.POWER_OF_HEART;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -76,6 +77,7 @@ public class PostLikeService {
                     PostLike newPostLike = PostLike.builder()
                             .member(member)
                             .community(community)
+                            .createdDate(LocalDate.now())
                             .postType(PostType.COMMUNITY)
                             .likeType(LikeType.LIKE) //좋아요
                             .build();
@@ -102,6 +104,7 @@ public class PostLikeService {
                     PostLike newPostLike = PostLike.builder()
                             .member(member)
                             .community(community)
+                            .createdDate(LocalDate.now())
                             .postType(PostType.COMMUNITY)
                             .likeType(LikeType.BOOKMARK) //북마크
                             .build();
@@ -133,6 +136,7 @@ public class PostLikeService {
                             .member(member)
                             .retrospect(retrospect)
                             .postType(PostType.RETROSPECT)
+                            .createdDate(LocalDate.now())
                             .likeType(LikeType.LIKE)
                             .build();
 
@@ -160,6 +164,7 @@ public class PostLikeService {
                             .member(member)
                             .retrospect(retrospect)
                             .postType(PostType.RETROSPECT)
+                            .createdDate(LocalDate.now())
                             .likeType(LikeType.BOOKMARK) //북마크
                             .build();
 
@@ -204,7 +209,8 @@ public class PostLikeService {
 
         return postLikesTopThree.stream()
                 .map(popularPost -> {
-                    if (popularPost[0] == PostType.COMMUNITY) {
+                    log.debug("인기글 조회", (String) popularPost[0]);
+                    if (PostType.valueOf((String) popularPost[0]) == PostType.COMMUNITY) {
                         Community community = communityRepository.findById((Long)popularPost[1])
                                 .orElseThrow(() -> new GeneralException(ErrorStatus._POST_NOT_FOUND));
                         String nickname = myPageRepository.findByMember(community.getMember())
