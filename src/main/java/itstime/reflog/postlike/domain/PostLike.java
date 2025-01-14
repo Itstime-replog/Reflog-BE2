@@ -9,6 +9,8 @@ import itstime.reflog.retrospect.domain.Retrospect;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.LocalDate;
+
 @Entity
 @Getter
 @Builder
@@ -34,6 +36,9 @@ public class PostLike {
 
     @Enumerated(EnumType.STRING)
     private PostType postType;
+
+    @Column(name = "created_date")
+    private LocalDate createdDate;
 
     @Enumerated(EnumType.STRING)
     private LikeType likeType; //북마크인지 좋아요인지 구분하기 위해

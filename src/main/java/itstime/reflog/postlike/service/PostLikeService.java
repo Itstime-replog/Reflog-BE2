@@ -12,27 +12,28 @@ import itstime.reflog.mypage.domain.MyPage;
 import itstime.reflog.mypage.repository.MyPageRepository;
 import itstime.reflog.notification.domain.NotificationType;
 import itstime.reflog.notification.service.NotificationService;
-import itstime.reflog.postlike.domain.PopularPost;
 import itstime.reflog.member.service.MemberServiceHelper;
 import itstime.reflog.mission.service.MissionService;
 import itstime.reflog.postlike.domain.PostLike;
 import itstime.reflog.postlike.domain.enums.LikeType;
 import itstime.reflog.postlike.domain.enums.PostType;
 import itstime.reflog.postlike.dto.PostLikeDto;
-import itstime.reflog.postlike.repository.PopularPostRepository;
 import itstime.reflog.postlike.repository.PostLikeRepository;
 import itstime.reflog.retrospect.domain.Retrospect;
 import itstime.reflog.retrospect.repository.RetrospectRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import static itstime.reflog.mission.domain.Badge.POWER_OF_HEART;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class PostLikeService {
@@ -40,7 +41,6 @@ public class PostLikeService {
     private final CommunityRepository communityRepository;
     private final RetrospectRepository retrospectRepository;
     private final MyPageRepository myPageRepository;
-    private final PopularPostRepository popularPostRepository;
     private final MemberServiceHelper memberServiceHelper;
     private final MissionService missionService;
     private final CommentRepository commentRepository;
@@ -70,13 +70,14 @@ public class PostLikeService {
 
                 //2.좋아요 존재 여부 확인
                 if (postLike != null && postLike.getLikeType().equals(LikeType.LIKE)) {
-                    //좋아요가 이미 있다면 테이블 삭제
+                    //좋아요가 이미 있다면 엔티티 삭제
                     postLikeRepository.delete(postLike);
                 } else {
                     //좋아요가 없다면 테이블 생성
                     PostLike newPostLike = PostLike.builder()
                             .member(member)
                             .community(community)
+                            .createdDate(LocalDate.now())
                             .postType(PostType.COMMUNITY)
                             .likeType(LikeType.LIKE) //좋아요
                             .build();
@@ -103,6 +104,7 @@ public class PostLikeService {
                     PostLike newPostLike = PostLike.builder()
                             .member(member)
                             .community(community)
+                            .createdDate(LocalDate.now())
                             .postType(PostType.COMMUNITY)
                             .likeType(LikeType.BOOKMARK) //북마크
                             .build();
@@ -134,6 +136,7 @@ public class PostLikeService {
                             .member(member)
                             .retrospect(retrospect)
                             .postType(PostType.RETROSPECT)
+                            .createdDate(LocalDate.now())
                             .likeType(LikeType.LIKE)
                             .build();
 
@@ -145,7 +148,6 @@ public class PostLikeService {
                     // 알림
                     sendRetrospectLikeNotification(retrospect, member);
 
-
                 }
             } else if (LikeType.BOOKMARK == LikeType.valueOf(dto.getLikeType())) { //북마크한경우
                 //커뮤니티, 멤버 id와 일치하는 북마크 가져오기
@@ -155,12 +157,14 @@ public class PostLikeService {
                 if (postLike != null && postLike.getLikeType().equals(LikeType.BOOKMARK)) {
                     //북마크가 이미 있다면 테이블 삭제
                     postLikeRepository.delete(postLike);
+
                 } else {
                     //좋아요가 없다면 테이블 생성
                     PostLike newPostLike = PostLike.builder()
                             .member(member)
                             .retrospect(retrospect)
                             .postType(PostType.RETROSPECT)
+                            .createdDate(LocalDate.now())
                             .likeType(LikeType.BOOKMARK) //북마크
                             .build();
 
@@ -193,12 +197,20 @@ public class PostLikeService {
     public List<CommunityDto.CombinedCategoryResponse> getTopLikeCommunityPosts(String memberId) {
         Member member = memberServiceHelper.findMemberByUuid(memberId);
 
-        List<PopularPost> postLikesTopThree = popularPostRepository.findAll();
+        //1. 커뮤니티, 회고일지 좋아요 순으로 각각 가져와서 하나의 배열에 저장
+        List<Object[]> postLikesTop = new ArrayList<>(postLikeRepository.findCommunityByPostLikeTop());
+        postLikesTop.addAll(postLikeRepository.findARetrospectPostLikesTop());
+
+        //2. 좋아요 수인 object[1]이 Object 타입이기 떄문에 Long 타입으로 바꿔 준 후 비교 정렬
+        postLikesTop.sort((o1, o2) -> Long.compare((Long) o2[2], (Long) o1[2]));
+
+        //3. 이 중 상위 세개만 가져옴
+        List<Object[]> postLikesTopThree = postLikesTop.stream().limit(3).toList();
 
         return postLikesTopThree.stream()
                 .map(popularPost -> {
-                    if (popularPost.getPostType() == PostType.COMMUNITY) {
-                        Community community = communityRepository.findById(popularPost.getPostId())
+                    if (PostType.valueOf((String) popularPost[0]) == PostType.COMMUNITY) {
+                        Community community = communityRepository.findById((Long)popularPost[1])
                                 .orElseThrow(() -> new GeneralException(ErrorStatus._POST_NOT_FOUND));
                         String nickname = myPageRepository.findByMember(community.getMember())
                                 .map(MyPage::getNickname)
@@ -211,8 +223,8 @@ public class PostLikeService {
 
                         return CommunityDto.CombinedCategoryResponse.fromCommunity(community, nickname, isLike, totalLike, totalComment);
 
-                    } else if (popularPost.getPostType() == PostType.RETROSPECT) {
-                        Retrospect retrospect = retrospectRepository.findById(popularPost.getPostId())
+                    } else if (popularPost[0] == PostType.RETROSPECT) {
+                        Retrospect retrospect = retrospectRepository.findById((Long)popularPost[1])
                                 .orElseThrow(() -> new GeneralException(ErrorStatus._POST_NOT_FOUND));
                         String nickname = myPageRepository.findByMember(retrospect.getMember())
                                 .map(MyPage::getNickname)
