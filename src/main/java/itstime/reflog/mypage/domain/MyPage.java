@@ -27,6 +27,8 @@ public class MyPage {
     @Column(nullable = false)
     private String email;
 
+    private String imageUrl;
+
     @OneToMany(mappedBy = "myPage", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<UserBadge> userBadges;
 
@@ -40,6 +42,7 @@ public class MyPage {
     public void update(MyPageDto.MyPageProfileRequest dto, Member member) {
         this.nickname = dto.getNickname();
         this.email = dto.getEmail();
+        this.imageUrl = dto.getImageUrl();
         this.member = member;
     }
 }
