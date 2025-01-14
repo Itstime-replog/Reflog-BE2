@@ -12,19 +12,18 @@ import itstime.reflog.mypage.domain.MyPage;
 import itstime.reflog.mypage.repository.MyPageRepository;
 import itstime.reflog.notification.domain.NotificationType;
 import itstime.reflog.notification.service.NotificationService;
-import itstime.reflog.postlike.domain.PopularPost;
 import itstime.reflog.member.service.MemberServiceHelper;
 import itstime.reflog.mission.service.MissionService;
 import itstime.reflog.postlike.domain.PostLike;
 import itstime.reflog.postlike.domain.enums.LikeType;
 import itstime.reflog.postlike.domain.enums.PostType;
 import itstime.reflog.postlike.dto.PostLikeDto;
-import itstime.reflog.postlike.repository.PopularPostRepository;
 import itstime.reflog.postlike.repository.PostLikeRepository;
 import itstime.reflog.retrospect.domain.Retrospect;
 import itstime.reflog.retrospect.repository.RetrospectRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import static itstime.reflog.mission.domain.Badge.POWER_OF_HEART;
@@ -33,6 +32,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class PostLikeService {
@@ -40,7 +40,6 @@ public class PostLikeService {
     private final CommunityRepository communityRepository;
     private final RetrospectRepository retrospectRepository;
     private final MyPageRepository myPageRepository;
-    private final PopularPostRepository popularPostRepository;
     private final MemberServiceHelper memberServiceHelper;
     private final MissionService missionService;
     private final CommentRepository commentRepository;
@@ -193,12 +192,20 @@ public class PostLikeService {
     public List<CommunityDto.CombinedCategoryResponse> getTopLikeCommunityPosts(String memberId) {
         Member member = memberServiceHelper.findMemberByUuid(memberId);
 
-        List<PopularPost> postLikesTopThree = popularPostRepository.findAll();
+        //2. 커뮤니티, 회고일지 좋아요 순으로 각각 가져와서 하나의 배열에 저장
+        List<Object[]> postLikesTop = new ArrayList<>(postLikeRepository.findCommunityByPostLikeTop());
+        postLikesTop.addAll(postLikeRepository.findARetrospectPostLikesTop());
+
+        //좋아요 수인 object[1]이 Object 타입이기 떄문에 Long 타입으로 바꿔 준 후 비교 정렬
+        postLikesTop.sort((o1, o2) -> Long.compare((Long) o2[2], (Long) o1[2]));
+
+        //이 중 상위 세개만 가져옴
+        List<Object[]> postLikesTopThree = postLikesTop.stream().limit(3).toList();
 
         return postLikesTopThree.stream()
                 .map(popularPost -> {
-                    if (popularPost.getPostType() == PostType.COMMUNITY) {
-                        Community community = communityRepository.findById(popularPost.getPostId())
+                    if (popularPost[0] == PostType.COMMUNITY) {
+                        Community community = communityRepository.findById((Long)popularPost[1])
                                 .orElseThrow(() -> new GeneralException(ErrorStatus._POST_NOT_FOUND));
                         String nickname = myPageRepository.findByMember(community.getMember())
                                 .map(MyPage::getNickname)
@@ -211,8 +218,8 @@ public class PostLikeService {
 
                         return CommunityDto.CombinedCategoryResponse.fromCommunity(community, nickname, isLike, totalLike, totalComment);
 
-                    } else if (popularPost.getPostType() == PostType.RETROSPECT) {
-                        Retrospect retrospect = retrospectRepository.findById(popularPost.getPostId())
+                    } else if (popularPost[0] == PostType.RETROSPECT) {
+                        Retrospect retrospect = retrospectRepository.findById((Long)popularPost[1])
                                 .orElseThrow(() -> new GeneralException(ErrorStatus._POST_NOT_FOUND));
                         String nickname = myPageRepository.findByMember(retrospect.getMember())
                                 .map(MyPage::getNickname)
