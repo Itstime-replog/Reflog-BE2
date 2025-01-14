@@ -78,10 +78,12 @@ public class ScheduleService {
 
     @Transactional
     public ScheduleDto.ScheduleResponse getSchedule(Long scheduleId, String memberId){
+        // 1. 멤버 조회
+        Member member = memberServiceHelper.findMemberByUuid(memberId);
+
+        // 2. 일정 조회
         Schedule schedule = scheduleRepository.findById(scheduleId)
                 .orElseThrow(() -> new GeneralException(ErrorStatus._SCHEDULE_NOT_FOUND));
-
-        Member member = memberServiceHelper.findMemberByUuid(memberId);
 
         return new ScheduleDto.ScheduleResponse(
                 schedule.getId(),
@@ -96,8 +98,10 @@ public class ScheduleService {
 
     @Transactional
     public List<ScheduleDto.ScheduleAllResponse> getAllSchedule(String memberId, int month) {
+        // 1. 멤버 조회
         Member member = memberServiceHelper.findMemberByUuid(memberId);
 
+        // 2. 일정 전체 조회
         List<Schedule> schedules = scheduleRepository.findByMemberAndStartDateTimeMonth(member.getId(), month);
 
         return schedules.stream()
