@@ -70,7 +70,7 @@ public class PostLikeService {
 
                 //2.좋아요 존재 여부 확인
                 if (postLike != null && postLike.getLikeType().equals(LikeType.LIKE)) {
-                    //좋아요가 이미 있다면 테이블 삭제
+                    //좋아요가 이미 있다면 엔티티 삭제
                     postLikeRepository.delete(postLike);
                 } else {
                     //좋아요가 없다면 테이블 생성
@@ -148,7 +148,6 @@ public class PostLikeService {
                     // 알림
                     sendRetrospectLikeNotification(retrospect, member);
 
-
                 }
             } else if (LikeType.BOOKMARK == LikeType.valueOf(dto.getLikeType())) { //북마크한경우
                 //커뮤니티, 멤버 id와 일치하는 북마크 가져오기
@@ -158,6 +157,7 @@ public class PostLikeService {
                 if (postLike != null && postLike.getLikeType().equals(LikeType.BOOKMARK)) {
                     //북마크가 이미 있다면 테이블 삭제
                     postLikeRepository.delete(postLike);
+
                 } else {
                     //좋아요가 없다면 테이블 생성
                     PostLike newPostLike = PostLike.builder()
