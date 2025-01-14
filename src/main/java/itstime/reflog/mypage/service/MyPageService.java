@@ -42,12 +42,15 @@ public class MyPageService {
     private final PostLikeService postLikeService;
     private final MemberServiceHelper memberServiceHelper;
     private final UserBadgeRepository userBadgeRepository;
+    private final NotificationSettingsService notificationSettingsService;
 
 
     @Transactional
     public MyPageDto.MyPageInfoResponse getMyInformation(String memberId) {
+        // 1. 멤버 조회
         Member member = memberServiceHelper.findMemberByUuid(memberId);
 
+        // 2. 마이페이지 조회
         MyPage myPage = myPageRepository.findByMember(member)
                 .orElseThrow(() -> new GeneralException(ErrorStatus._MYPAGE_NOT_FOUND));
 
@@ -69,25 +72,38 @@ public class MyPageService {
             throw new GeneralException(ErrorStatus._DUPLICATE_EMAIL);
         }
 
-        // 3. 마이페이지 생성
+        // 3. imageUrl null 확인
+        String imageUrl = null;
+        if(dto.getImageUrl() == null){
+            imageUrl = member.getProfileImageUrl();
+        } else{
+            imageUrl = dto.getImageUrl();
+        }
+
+        // 4. 마이페이지 생성
         MyPage myPage = MyPage.builder()
                 .nickname(dto.getNickname())
                 .email(dto.getEmail())
+                .imageUrl(imageUrl)
                 .member(member)
                 .build();
 
         myPageRepository.save(myPage);
         myPageRepository.flush();
 
-        // 4. 유저 미션&배지 생성
+        // 5. 미션세팅 생성
+        notificationSettingsService.createDefaultSettings(member);
+
+        // 6. 유저 미션&배지 생성
         initializationService.initializeForNewMember(myPage);
 
-        // 5. 미션
+        // 7. 미션
         missionService.incrementMissionProgress(member.getId(), myPage, FIRST_MEETING);
     }
 
     @Transactional
     public MyPageDto.MyPageProfileResponse getProfile(String memberId) {
+        // 1. 멤버 조회
         Member member = memberServiceHelper.findMemberByUuid(memberId);
 
         MyPage myPage = myPageRepository.findByMember(member)
@@ -95,14 +111,17 @@ public class MyPageService {
 
         return new MyPageDto.MyPageProfileResponse(
                 myPage.getNickname(),
-                myPage.getEmail()
+                myPage.getEmail(),
+                myPage.getImageUrl()
         );
     }
 
     @Transactional
     public void updateProfile(String memberId, MyPageDto.MyPageProfileRequest dto) {
+        // 1. 멤버 조회
         Member member = memberServiceHelper.findMemberByUuid(memberId);
 
+        // 2. 마이페이지 수정
         MyPage myPage = myPageRepository.findByMember(member)
                 .orElseThrow(() -> new GeneralException(ErrorStatus._MYPAGE_NOT_FOUND));
 

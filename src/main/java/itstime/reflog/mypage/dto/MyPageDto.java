@@ -32,6 +32,8 @@ public class MyPageDto {
 
         @Email(message = "이메일 정보가 올바르지 않습니다.")
         private String email;
+
+        private String imageUrl;
     }
 
     @Getter
@@ -39,6 +41,7 @@ public class MyPageDto {
     public static class MyPageProfileResponse {
         private String nickname;
         private String email;
+        private String imageUrl;
     }
 
     @Getter
