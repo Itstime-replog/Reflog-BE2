@@ -91,12 +91,13 @@ public class MyPageService {
         myPageRepository.save(myPage);
         myPageRepository.flush();
 
+        // 5. 미션세팅 생성
         notificationSettingsService.createDefaultSettings(member);
 
-        // 5. 유저 미션&배지 생성
+        // 6. 유저 미션&배지 생성
         initializationService.initializeForNewMember(myPage);
 
-        // 6. 미션
+        // 7. 미션
         missionService.incrementMissionProgress(member.getId(), myPage, FIRST_MEETING);
     }
 

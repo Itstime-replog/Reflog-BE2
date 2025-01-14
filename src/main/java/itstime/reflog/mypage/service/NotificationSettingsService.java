@@ -26,9 +26,9 @@ public class NotificationSettingsService {
         // 1. 멤버 조회
         Member member = memberServiceHelper.findMemberByUuid(memberId);
 
-        // 2. 알림 설정 생성&조회
-        NotificationSettings settings = notificationSettingsRepository.findByMemberId(member.getId())
-                .orElseGet(() -> createDefaultSettings(member));
+        // 2. 알림 설정 조회
+        NotificationSettings settings =  notificationSettingsRepository.findByMemberId(member.getId())
+                .orElseThrow(() -> new GeneralException(ErrorStatus._NOTIFICATIONSETTINGS_NOT_FOUND));
 
         // 3. 전체 알림 설정 업데이트
         settings.setAllNotificationsEnabled(allNotificationsEnabled);
@@ -61,7 +61,8 @@ public class NotificationSettingsService {
         );
     }
 
-    private NotificationSettings createDefaultSettings(Member member) {
+
+        void createDefaultSettings(Member member) {
         // 1. 알림 설정 생성
         NotificationSettings settings = new NotificationSettings();
         settings.setMember(member);
@@ -74,6 +75,6 @@ public class NotificationSettingsService {
         }
         settings.setNotificationPreferences(defaultPreferences);
 
-        return notificationSettingsRepository.save(settings);
+        notificationSettingsRepository.save(settings);
     }
 }
