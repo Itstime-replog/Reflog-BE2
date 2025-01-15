@@ -32,5 +32,4 @@ public interface CommunityRepository extends JpaRepository<Community, Long> {
     //내가 작성한 글 모두 찾기
     List<Community> findAllByMemberOrderByIdDesc(Member member);
 
-
 }
