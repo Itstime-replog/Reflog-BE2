@@ -229,6 +229,9 @@ public class CommunityService {
                             .map(MyPage::getNickname)
                             .orElse("닉네임 없음");
 
+                    List<String> communityPostTypes = new ArrayList<>(community.getPostTypes()); // 강제 초기화
+                    List<String> communityLearningTypes = new ArrayList<>(community.getLearningTypes()); // 강제 초기화
+
                     //좋아요 있는지 없는지 플래그
                     Boolean isLike = postLikeRepository.findLikeByMemberAndCommunity(member, community).isPresent();
 
@@ -237,7 +240,7 @@ public class CommunityService {
 
                     //게시물마다 댓글 수 반환
                     Long totalComment = commentRepository.countByCommunity(community);
-                    return CommunityDto.CombinedCategoryResponse.fromCommunity(community, nickname, isLike, totalLike, totalComment);
+                    return CommunityDto.CombinedCategoryResponse.fromCommunity(community,communityPostTypes, communityLearningTypes, nickname, isLike, totalLike, totalComment);
                 })
                 .collect(Collectors.toList());
 
@@ -283,6 +286,9 @@ public class CommunityService {
                             .map(MyPage::getNickname)
                             .orElse("닉네임 없음");
 
+                    List<String> postTypes = new ArrayList<>(community.getPostTypes()); // 강제 초기화
+                    List<String> learningTypes = new ArrayList<>(community.getLearningTypes()); // 강제 초기화
+
                     //좋아요 있는지 없는지 플래그
                     Boolean isLike = postLikeRepository.findLikeByMemberAndCommunity(member, community).isPresent();
 
@@ -291,7 +297,7 @@ public class CommunityService {
 
                     //게시물마다 댓글 수 반환
                     Long totalComment = commentRepository.countByCommunity(community);
-                    return CommunityDto.CombinedCategoryResponse.fromCommunity(community, nickname, isLike, totalLike, totalComment);
+                    return CommunityDto.CombinedCategoryResponse.fromCommunity(community,postTypes, learningTypes, nickname, isLike, totalLike, totalComment);
                 })
                 .collect(Collectors.toList());
 
@@ -352,6 +358,9 @@ public class CommunityService {
                             .map(MyPage::getNickname)
                             .orElse("닉네임 없음");
 
+                    List<String> postTypes = new ArrayList<>(community.getPostTypes()); // 강제 초기화
+                    List<String> learningTypes = new ArrayList<>(community.getLearningTypes()); // 강제 초기화
+
                     //좋아요 있는지 없는지 플래그
                     Boolean isLike = postLikeRepository.findBookmarkByMemberAndCommunity(member, community).isPresent();
 
@@ -361,7 +370,7 @@ public class CommunityService {
                     //게시물마다 댓글 수 반환
                     Long totalComment = commentRepository.countByCommunity(community);
 
-                    return CommunityDto.CombinedCategoryResponse.fromCommunity(community, nickname, isLike, totalLike, totalComment);
+                    return CommunityDto.CombinedCategoryResponse.fromCommunity(community,postTypes, learningTypes, nickname, isLike, totalLike, totalComment);
                 })
                 .collect(Collectors.toList());
 
@@ -388,12 +397,15 @@ public class CommunityService {
         List<MyPageDto.MyPagePostResponse> responses = communityList.stream()
                 .map(community -> {
 
+                    List<String> postTypes = new ArrayList<>(community.getPostTypes()); // 강제 초기화
+                    List<String> learningTypes = new ArrayList<>(community.getLearningTypes()); // 강제 초기화
+
                     // 좋아요 총 개수
                     int totalLike = postLikeService.getSumCommunityPostLike(community);
                     // 댓글 총 개수
                     long commentCount = commentRepository.countByCommunity(community);
 
-                    return MyPageDto.MyPagePostResponse.fromCommunity(community, totalLike, commentCount);
+                    return MyPageDto.MyPagePostResponse.fromCommunity(community, postTypes, learningTypes,totalLike, commentCount);
                 })
                 .collect(Collectors.toList());
 
