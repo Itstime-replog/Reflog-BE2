@@ -33,7 +33,6 @@ import org.hibernate.annotations.BatchSize;
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-@BatchSize(size = 50)
 public class Community {
 
 	@Id
