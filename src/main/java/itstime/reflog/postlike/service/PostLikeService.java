@@ -21,10 +21,10 @@ import itstime.reflog.postlike.dto.PostLikeDto;
 import itstime.reflog.postlike.repository.PostLikeRepository;
 import itstime.reflog.retrospect.domain.Retrospect;
 import itstime.reflog.retrospect.repository.RetrospectRepository;
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import static itstime.reflog.mission.domain.Badge.POWER_OF_HEART;
 
@@ -45,8 +45,6 @@ public class PostLikeService {
     private final MissionService missionService;
     private final CommentRepository commentRepository;
     private final NotificationService notificationService;
-
-    private final MemberRepository memberRepository;
 
     @Transactional
     public void togglePostLike(String memberId, Long postId, PostLikeDto.PostLikeSaveRequest dto){
@@ -183,17 +181,17 @@ public class PostLikeService {
     }
 
     //게시물마다 좋아요 갯수 항상 0이상이므로 int로
-    @Transactional
+    @Transactional(readOnly = true)
     public int getSumCommunityPostLike(Community community) {
         return postLikeRepository.countByCommunity(community);
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
     public int getSumRetrospectPostLike(Retrospect retrospect) {
         return postLikeRepository.countByRetrospect(retrospect);
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
     public List<CommunityDto.CombinedCategoryResponse> getTopLikeCommunityPosts(String memberId) {
         Member member = memberServiceHelper.findMemberByUuid(memberId);
 
@@ -212,16 +210,21 @@ public class PostLikeService {
                     if (PostType.valueOf((String) popularPost[0]) == PostType.COMMUNITY) {
                         Community community = communityRepository.findById((Long)popularPost[1])
                                 .orElseThrow(() -> new GeneralException(ErrorStatus._POST_NOT_FOUND));
+
                         String nickname = myPageRepository.findByMember(community.getMember())
                                 .map(MyPage::getNickname)
                                 .orElse("닉네임 없음");
+
                         Boolean isLike = postLikeRepository.findLikeByMemberAndCommunity(member, community).isPresent();
                         int totalLike = getSumCommunityPostLike(community);
+
+                        List<String> postTypes = new ArrayList<>(community.getPostTypes()); // 강제 초기화
+                        List<String> learningTypes = new ArrayList<>(community.getLearningTypes()); // 강제 초기화
 
                         //게시물마다 댓글 수 반환
                         Long totalComment = commentRepository.countByCommunity(community);
 
-                        return CommunityDto.CombinedCategoryResponse.fromCommunity(community, nickname, isLike, totalLike, totalComment);
+                        return CommunityDto.CombinedCategoryResponse.fromCommunity(community,postTypes, learningTypes, nickname, isLike, totalLike, totalComment);
 
                     } else if (popularPost[0] == PostType.RETROSPECT) {
                         Retrospect retrospect = retrospectRepository.findById((Long)popularPost[1])
@@ -244,7 +247,7 @@ public class PostLikeService {
                 .collect(Collectors.toList());
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
     public List<PostLikeDto.BookMarkResponse> getBookmarks(String memberId){
         Member member = memberServiceHelper.findMemberByUuid(memberId);
 

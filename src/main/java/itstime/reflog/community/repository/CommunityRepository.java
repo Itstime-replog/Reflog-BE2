@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface CommunityRepository extends JpaRepository<Community, Long> {
 
@@ -30,4 +31,5 @@ public interface CommunityRepository extends JpaRepository<Community, Long> {
 
     //내가 작성한 글 모두 찾기
     List<Community> findAllByMemberOrderByIdDesc(Member member);
+
 }

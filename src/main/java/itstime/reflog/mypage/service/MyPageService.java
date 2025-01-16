@@ -23,6 +23,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -142,12 +143,15 @@ public class MyPageService {
         List<MyPageDto.MyPagePostResponse> responses = communityList.stream()
                 .map(community -> {
 
+                    List<String> postTypes = new ArrayList<>(community.getPostTypes()); // 강제 초기화
+                    List<String> learningTypes = new ArrayList<>(community.getLearningTypes()); // 강제 초기화
+
                     // 좋아요 총 개수
                     int totalLike = postLikeService.getSumCommunityPostLike(community);
                     // 댓글 총 개수
                     long commentCount = commentRepository.countByCommunity(community);
 
-                    return MyPageDto.MyPagePostResponse.fromCommunity(community, totalLike, commentCount);
+                    return MyPageDto.MyPagePostResponse.fromCommunity(community, postTypes, learningTypes, totalLike, commentCount);
                 })
                 .collect(Collectors.toList());
 
@@ -181,13 +185,17 @@ public class MyPageService {
         // 3. 내가 좋아요 한 커뮤니티 글 정리
         List<MyPageDto.MyPagePostResponse> responses = postLikeList.stream()
                 .map(postLike -> {
+                    Community community = postLike.getCommunity();
+
+                    List<String> postTypes = new ArrayList<>(community.getPostTypes()); // 강제 초기화
+                    List<String> learningTypes = new ArrayList<>(community.getLearningTypes()); // 강제 초기화
 
                     // 좋아요 총 개수
                     int totalLike = postLikeService.getSumCommunityPostLike(postLike.getCommunity());
                     // 댓글 총 개수
                     long commentCount = commentRepository.countByCommunity(postLike.getCommunity());
 
-                    return MyPageDto.MyPagePostResponse.fromCommunity(postLike.getCommunity(), totalLike, commentCount);
+                    return MyPageDto.MyPagePostResponse.fromCommunity(community, postTypes, learningTypes, totalLike, commentCount);
                 })
                 .collect(Collectors.toList());
 

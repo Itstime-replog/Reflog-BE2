@@ -9,7 +9,9 @@ import itstime.reflog.community.domain.Community;
 import itstime.reflog.postlike.domain.enums.PostType;
 import itstime.reflog.retrospect.domain.Retrospect;
 import lombok.*;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 public class CommunityDto {
 
 	@Getter
@@ -49,13 +51,15 @@ public class CommunityDto {
 		private Long postId;
 		private PostType postType;
 
-		public static CombinedCategoryResponse fromCommunity(Community community, String writer, Boolean isLike, Integer totalLike, Long totalComment) {
+		public static CombinedCategoryResponse fromCommunity(Community community, List<String> postTypes,List<String> learningTypes, String writer, Boolean isLike, Integer totalLike, Long totalComment) {
+
+
 			return CombinedCategoryResponse.builder()
 					.title(community.getTitle())
 					.content(community.getContent())
 					.createdDate(community.getCreatedAt())
-					.postTypes(community.getPostTypes())
-					.learningTypes(community.getLearningTypes())
+					.postTypes(postTypes)
+					.learningTypes(learningTypes)
 					.isLike(isLike)
 					.totalComment(totalComment)
 					.totalLike(totalLike)

@@ -60,7 +60,7 @@ public class MyPageDto {
         private int totalLike;
         private long commentCount;
 
-        public static MyPagePostResponse fromCommunity(Community community, int totalLike, long commentCount){
+        public static MyPagePostResponse fromCommunity(Community community, List<String> postTypes,List<String> learningTypes, int totalLike, long commentCount){
             return MyPagePostResponse.builder()
                     .id(community.getId())
                     .title(community.getTitle())

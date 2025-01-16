@@ -26,6 +26,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.BatchSize;
 
 @Entity
 @Getter
@@ -42,12 +43,12 @@ public class Community {
 
 	private String content; // 게시글 내용
 
-	@ElementCollection(fetch = FetchType.EAGER)
+	@ElementCollection(fetch = FetchType.LAZY)
 	@CollectionTable(name = "community_post_types", joinColumns = @JoinColumn(name = "community_id"))
 	@Column(name = "post_type")
 	private List<String> postTypes; // 글 유형 (최대 2개)
 
-	@ElementCollection(fetch = FetchType.EAGER)
+	@ElementCollection(fetch = FetchType.LAZY)
 	@CollectionTable(name = "community_learning_types", joinColumns = @JoinColumn(name = "community_id"))
 	@Column(name = "learning_type")
 	private List<String> learningTypes; // 학습 유형 (최대 2개)
