@@ -8,6 +8,13 @@
 
 ![Slide 16_9 - 15](https://github.com/user-attachments/assets/9f133179-2b86-4e2a-b675-83f352669d23)
 
+## 🤼‍♀️DEVELOPER
+
+| [백지현](https://github.com/qormoon) | [차현정](https://github.com/jeong724) | [정동훈](https://github.com/dhun0103)|
+|--------|------- |---------- |
+| <img width="600px" src= "https://github.com/qormoon.png"> | <img width="600px" src="https://github.com/jeong724.png">  | <img width="600px" src="https://github.com/dhun0103.png"> |
+
+
 
 ## System Architecture
 ![Slide 16_9 - 23](https://github.com/user-attachments/assets/35918f4d-472c-4c0a-98b3-ce9f49891fa9)
