@@ -1,53 +1,104 @@
+##  서비스명
+메타 인지 회고 서비스, Reflog (Reflog : *Reflect: 성찰하다 + Log: 기록하다*)
+
+## 서비스 소개
+> 리플로그의 핵심 가치: 개인의 성장 , 간편함, 공감(서로의 학습 경험 공유)하는 서비스입니다.
+> 
 ![image](https://github.com/user-attachments/assets/00cb07e2-289b-4ad2-8b1b-e7235d3cdf70)
-![image](https://github.com/user-attachments/assets/7c3fa56e-ccfd-4d1a-8060-8e6a8171dee9)
-![image](https://github.com/user-attachments/assets/5f0a44ac-63be-4bb9-886b-1c1fa20f3138)
-![image](https://github.com/user-attachments/assets/4abff65f-b634-4086-a544-8ddd73f933ea)
-![image](https://github.com/user-attachments/assets/1e9662e3-5f82-4b6e-b7c6-a8f35aae78b1)
-![image](https://github.com/user-attachments/assets/a1a1511b-2a4b-474e-b2ea-0a0c4c2b3322)
-![image](https://github.com/user-attachments/assets/0b3115ff-4809-47fd-a99b-aeeb2d6f3ba1)
-![image](https://github.com/user-attachments/assets/25166164-7192-4945-8c09-8eebbfca9cc4)
-![image](https://github.com/user-attachments/assets/41c92704-a845-4686-aacb-b22e3ca37704)
-![image](https://github.com/user-attachments/assets/6a5e85a1-6d51-458a-a7bd-4dce5bd61668)
-![image](https://github.com/user-attachments/assets/54c2053d-a06d-4468-8de2-6eda8151c782)
-![image](https://github.com/user-attachments/assets/9f5d58e7-6008-4fc2-bea3-348adbdf3bbb)
-![image](https://github.com/user-attachments/assets/2b3f133a-a8a2-486e-bd15-dfe458f703f7)
-![image](https://github.com/user-attachments/assets/ce819cab-7f2e-48a0-a8d0-521e141b92a1)
-![image](https://github.com/user-attachments/assets/8d464806-fefa-4a46-8c81-98595d32335f)
-![image](https://github.com/user-attachments/assets/c8941b3b-cc44-4a17-af7f-e602ef0a7869)
-![image](https://github.com/user-attachments/assets/465e44b1-63c4-4d53-88ff-07a5fc903bdd)
-![image](https://github.com/user-attachments/assets/cc72e003-3e38-4967-ab3d-68efd6af55b3)
-![image](https://github.com/user-attachments/assets/d4f684f9-d730-4792-bede-0ef07eb2df5c)
-![image](https://github.com/user-attachments/assets/28a39d17-e9fc-4de1-bef7-e449ab8c7532)
-![image](https://github.com/user-attachments/assets/8ba21c7f-7fda-4d55-ae89-971797df8a9b)
-![image](https://github.com/user-attachments/assets/3b4c1ca1-4188-473c-a678-70fce237171c)
-![image](https://github.com/user-attachments/assets/f3d503c9-ee7c-4eca-b01e-b651bacc15db)
-![image](https://github.com/user-attachments/assets/0575b0d8-b4cb-4e91-a7aa-283440a6fd27)
-![image](https://github.com/user-attachments/assets/2d239d88-1446-4f1f-abbf-b6bc5daddb24)
-![image](https://github.com/user-attachments/assets/d397daec-41e0-4051-b03c-65e69a9a6752)
-![image](https://github.com/user-attachments/assets/b1e6861e-30da-4a26-adad-d2cee38417f8)
-![image](https://github.com/user-attachments/assets/73a22e1a-c3d2-4315-8823-dfd61cab516c)
-![image](https://github.com/user-attachments/assets/2308af27-1aa8-4616-9548-9945ffdbfb46)
-![image](https://github.com/user-attachments/assets/871e4344-4f7e-4f12-85d3-f47c6c92d9d4)
-![image](https://github.com/user-attachments/assets/7b879057-14ef-4e13-b564-45b9d19be18b)
-![image](https://github.com/user-attachments/assets/3390b780-87a1-4850-91df-542fff70c388)
-![image](https://github.com/user-attachments/assets/00d647c1-7dd5-4a26-a457-3de4c3e752bc)
-![image](https://github.com/user-attachments/assets/7df10584-e218-488d-88f3-0423476e1482)
-![image](https://github.com/user-attachments/assets/c38f7166-6b69-437e-9fa0-ee010c9d376d)
+
+![Slide 16_9 - 15](https://github.com/user-attachments/assets/9f133179-2b86-4e2a-b675-83f352669d23)
 
 
+## System Architecture
+![Slide 16_9 - 23](https://github.com/user-attachments/assets/35918f4d-472c-4c0a-98b3-ce9f49891fa9)
 
+## 📜 ERD
+![Slide 16_9 - 22](https://github.com/user-attachments/assets/67ccaed0-65fc-43b0-bf34-ab27a9ae4bea)
 
+## ⚒️ Tech Stack
+### Back-end
+![Spring Boot](https://img.shields.io/badge/Spring%20Boot-%6DB33F?logo=springboot&logoColor=white)
+![Spring Security](https://img.shields.io/badge/Spring%20Security-%6DB33F?logo=springsecurity&logoColor=white)
+![Spring JPA](https://img.shields.io/badge/Spring%20JPA-%6DB33F?logo=&logoColor=white)
+![Amazon EC2](https://img.shields.io/badge/Amazon%20EC2-FF9900?logo=amazonec2&logoColor=white)
+![Amazon RDS](https://img.shields.io/badge/Amazon%20RDS-527FFF?logo=amazonRDS&logoColor=white)
+![Amazon S3](https://img.shields.io/badge/Amazon%20S3-FC390E?logo=amazons3&logoColor=white) <br>
+![Github Actions](https://img.shields.io/badge/Github%20Actions-2088FF?logo=githubactions&logoColor=white) ![Swagger](https://img.shields.io/badge/Swagger-85EA2D?logo=swagger&logoColor=white)
+![QueryDSL](https://img.shields.io/badge/QueryDSL-00465B?logo=&logoColor=white)
+![JWT](https://img.shields.io/badge/JWT-512BD4?logo=&logoColor=white) <br>
 
+### Co-Work Tool
+![Github](https://img.shields.io/badge/Github-181717?logo=github&logoColor=white)
+![figma](https://img.shields.io/badge/Figma-F24E1E?logo=figma&logoColor=white)
+![notion](https://img.shields.io/badge/Notion-000000?logo=notion&logoColor=white)
 
+## 💻 기술 스택 선정 이유
+### Back-end
+- **Spring Boot**
+  - 스프링 프레임워크 기반으로 자동 설정과 스타터 의존성을 제공해 빠른 웹 애플리케이션 개발과 배포를 가능하게 합니다.
 
+- **JPA (Java Persistence API)**
+  - 객체 지향 프로그래밍 방식으로 데이터베이스와 상호작용을 할 수 있게 하며, SQL 작성 없이 데이터를 관리할 수 있는 표준 ORM 기술입니다.
 
+- **Querydsl**
+  - 타입 안정성을 보장하며, 컴파일 시점에서 오류를 잡아주는 기능을 통해 복잡한 쿼리를 직관적이고 효율적으로 작성할 수 있습니다.
 
+- **AWS RDS (MySQL)**
+  - 관리형 MySQL 데이터베이스 서비스로, 유지보수와 패치 관리를 AWS에서 담당하여 안정성과 확장성을 제공합니다.
 
+- **AWS S3 Storage**
+  - 대량의 데이터를 안전하게 저장하고, 간편하게 액세스할 수 있는 객체 스토리지 서비스로, 높은 가용성과 보안을 제공합니다.
 
+- **Java 17**
+  - 장기 지원(LTS) 버전으로, 최신 기능과 보안 패치, 성능 최적화를 제공하며 안정적인 개발 환경을 제공합니다.
+  
+- **Spring Security**
+  - 스프링 기반 애플리케이션의 보안을 강화하며, 인증과 권한 부여, CSRF 방어 등을 포함한 종합적인 보안 솔루션을 제공합니다.
 
+- **JWT (JSON Web Tokens)**
+  - 상태를 저장하지 않는 인증 시스템으로, 클라이언트와 서버 간 정보를 간단하고 안전하게 교환할 수 있습니다.
 
+- **GitHub Actions**
+  - 코드 빌드, 테스트, 배포를 자동화하여 CI/CD 워크플로우를 간소화하고 개발 생산성을 높입니다.
+ 
+- **Spring Scheduler**
+  - 스프링 프레임워크 내에서 주기적인 작업을 쉽게 설정하고 관리할 수 있게 해주는 스케줄링 기능입니다.
 
+- **Swagger**
+  - RESTful API의 설계, 빌드, 문서화를 지원하며 프론트와 백엔드 개발자 간의 협업과 API 이해를 증진시키는 소프트웨어 프레임워크입니다.
 
+- **Gmail API**
+  - Gmail을 통해 이메일 전송 및 관리를 구현하며, 안정적인 이메일 통신을 가능하게 합니다.
+  
+- **Server-Sent Events (SSE)**
+  - 클라이언트와 서버 간 실시간 이벤트 기반 통신을 제공하여 알림과 같은 실시간 기능을 구현할 수 있습니다.
+
+## 📌 Convention
+### Commit Convention
+[커밋 컨벤션 보러가기](https://ebony-booklet-855.notion.site/18c84ddcb3c380abb776fa44c61c0b24?pvs=4)
+
+| Tag      | Description                                         |
+|----------|-----------------------------------------------------|
+| `feat`   | Commits that add a new feature.                     |
+| `fix`    | Commits that fix a bug.                             |
+| `hotfix` | Fix an urgent bug in issue or QA.                   |
+| `build`  | Commits that affect build components.               |
+| `chore`  | Miscellaneous commits.                              |
+| `style`  | Commits for code styling or format.                 |
+| `docs`   | Commits that affect documentation only.             |
+| `test`   | Commits that add missing tests or correcting existing tests. |
+| `refactor`| Commits for code refactoring.                      |
+
+### Naming Convention
+- 파일 : CamelCase + SnakeCase
+- 클래스명 : PascalCase
+- 함수/변수명 : CamelCase
+
+### Branch Naming Convention
+- main
+- develop
+- feature/Issue#
+- refactor/Issue#
 
 
 
