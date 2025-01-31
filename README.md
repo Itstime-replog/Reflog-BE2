@@ -101,7 +101,7 @@
 
 ## 📌 Convention
 ### Commit Convention
-[커밋 컨벤션 보러가기](https://ebony-booklet-855.notion.site/18c84ddcb3c380abb776fa44c61c0b24?pvs=4)
+[커밋 컨벤션 보러가기](https://www.notion.so/18c84ddcb3c380788631c40a9eb03b34?pvs=4)
 
 | Tag      | Description                                         |
 |----------|-----------------------------------------------------|
