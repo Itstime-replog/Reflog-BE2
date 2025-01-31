@@ -15,6 +15,44 @@
 ## 📜 ERD
 ![Slide 16_9 - 22](https://github.com/user-attachments/assets/67ccaed0-65fc-43b0-bf34-ab27a9ae4bea)
 
+<br><br>
+## 🗂️ Package
+```
+├── 🗂️ Dockerfile
+├── 🗂️ server-yml
+├── 🗂️ org.Reflog.Reflog
+│   └── 🗂️ Reflog
+│       ├── 💽 ReflogApplication
+│       │   ├── 🗂️ ai
+│       │   │   ├── 📂 dto
+│       │   │   └── 📂 service
+│       │   ├── 🗂️ common
+│       │   │   ├── 📂 annotation
+│       │   │   ├── 📂 code
+│       │   │   ├── 📂 exception
+│       │   │   └── 📂 resolver
+│       │   ├── 🗂️ community
+│       │   │   ├── 📂 controller
+│       │   │   ├── 📂 domain
+│       │   │   ├── 📂 dto
+│       │   │   ├── 📂 repository
+│       │   │   └── 📂 service
+│       │   ├── 🗂️ comment
+│       │   ├── 🗂️ email
+│       │   ├── 🗂️ retrospect
+│       │   ├── 🗂️ schedule
+│       │   ├── 🗂️ todolist
+│       │   ├── 🗂️ member
+│       │   ├── 🗂️ mission
+│       │   ├── 🗂️ notification
+│       │   ├── 🗂️ oauth
+│       │   │   ├── 📂 domain
+│       │   │   ├── 📂 handler
+│       │   │   ├── 📂 info
+│       │   │   └── 📂 token
+```
+<br><br>
+
 ## ⚒️ Tech Stack
 ### Back-end
 ![Spring Boot](https://img.shields.io/badge/Spring%20Boot-%6DB33F?logo=springboot&logoColor=white)
