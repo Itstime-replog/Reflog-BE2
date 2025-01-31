@@ -70,47 +70,6 @@
 ![figma](https://img.shields.io/badge/Figma-F24E1E?logo=figma&logoColor=white)
 ![notion](https://img.shields.io/badge/Notion-000000?logo=notion&logoColor=white)
 
-## 💻 기술 스택 선정 이유
-### Back-end
-- **Spring Boot**
-  - 스프링 프레임워크 기반으로 자동 설정과 스타터 의존성을 제공해 빠른 웹 애플리케이션 개발과 배포를 가능하게 합니다.
-
-- **JPA (Java Persistence API)**
-  - 객체 지향 프로그래밍 방식으로 데이터베이스와 상호작용을 할 수 있게 하며, SQL 작성 없이 데이터를 관리할 수 있는 표준 ORM 기술입니다.
-
-- **Querydsl**
-  - 타입 안정성을 보장하며, 컴파일 시점에서 오류를 잡아주는 기능을 통해 복잡한 쿼리를 직관적이고 효율적으로 작성할 수 있습니다.
-
-- **AWS RDS (MySQL)**
-  - 관리형 MySQL 데이터베이스 서비스로, 유지보수와 패치 관리를 AWS에서 담당하여 안정성과 확장성을 제공합니다.
-
-- **AWS S3 Storage**
-  - 대량의 데이터를 안전하게 저장하고, 간편하게 액세스할 수 있는 객체 스토리지 서비스로, 높은 가용성과 보안을 제공합니다.
-
-- **Java 17**
-  - 장기 지원(LTS) 버전으로, 최신 기능과 보안 패치, 성능 최적화를 제공하며 안정적인 개발 환경을 제공합니다.
-  
-- **Spring Security**
-  - 스프링 기반 애플리케이션의 보안을 강화하며, 인증과 권한 부여, CSRF 방어 등을 포함한 종합적인 보안 솔루션을 제공합니다.
-
-- **JWT (JSON Web Tokens)**
-  - 상태를 저장하지 않는 인증 시스템으로, 클라이언트와 서버 간 정보를 간단하고 안전하게 교환할 수 있습니다.
-
-- **GitHub Actions**
-  - 코드 빌드, 테스트, 배포를 자동화하여 CI/CD 워크플로우를 간소화하고 개발 생산성을 높입니다.
- 
-- **Spring Scheduler**
-  - 스프링 프레임워크 내에서 주기적인 작업을 쉽게 설정하고 관리할 수 있게 해주는 스케줄링 기능입니다.
-
-- **Swagger**
-  - RESTful API의 설계, 빌드, 문서화를 지원하며 프론트와 백엔드 개발자 간의 협업과 API 이해를 증진시키는 소프트웨어 프레임워크입니다.
-
-- **Gmail API**
-  - Gmail을 통해 이메일 전송 및 관리를 구현하며, 안정적인 이메일 통신을 가능하게 합니다.
-  
-- **Server-Sent Events (SSE)**
-  - 클라이언트와 서버 간 실시간 이벤트 기반 통신을 제공하여 알림과 같은 실시간 기능을 구현할 수 있습니다.
-
 ## 📌 Convention
 ### Commit Convention
 [커밋 컨벤션 보러가기](https://ebony-booklet-855.notion.site/18c84ddcb3c380abb776fa44c61c0b24?pvs=4)
