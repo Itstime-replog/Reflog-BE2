@@ -19,9 +19,6 @@
 ## System Architecture
 ![Slide 16_9 - 23](https://github.com/user-attachments/assets/35918f4d-472c-4c0a-98b3-ce9f49891fa9)
 
-## 📜 ERD
-![Slide 16_9 - 22](https://github.com/user-attachments/assets/67ccaed0-65fc-43b0-bf34-ab27a9ae4bea)
-
 <br><br>
 ## 🗂️ Package
 ```
@@ -105,6 +102,9 @@
     - Gmail을 통해 이메일 전송 및 관리를 구현하며, 안정적인 이메일 통신을 가능하게 합니다.
 - **Server-Sent Events (SSE)**
     - 클라이언트와 서버 간 실시간 이벤트 기반 통신을 제공하여 알림과 같은 실시간 기능을 구현할 수 있습니다.
+ 
+## 📜 ERD
+![Slide 16_9 - 22](https://github.com/user-attachments/assets/67ccaed0-65fc-43b0-bf34-ab27a9ae4bea)
 
 ## 📌 Convention
 ### Commit Convention
